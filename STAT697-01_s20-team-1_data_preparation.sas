@@ -5,34 +5,49 @@
 
 /* 
 [Dataset 1 Name] acgr19
-[Dataset Description] Adjusted Cohort Graduation Rate and Outcome Data, AY2018-19
+[Dataset Description] Adjusted Cohort Graduation Rate and Outcome Data,
+AY2018-19
 [Experimental Unit Description] California public K-12 schools in AY2018-19
 [Number of Observations] 198,022
 [Number of Features] 34
-[Data Source] ftp://ftp.cde.ca.gov/demo/acgr/cohort1819.txt
+[Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1819.txt was
+downloaded and edited to produce file cohort1819-edited.xlsx by opening in
+Excel. Certain columns has been deleted to reduce file size.
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
-[Unique ID Schema] The columns "County Code", "District Code", and "School Code" form a composite key, which together are equivalent to the unique id column "County Code", "District Code", and "School Code" in dataset acgr18, and which together are also equivalent to the unique id column CDS in dataset elsch19.
+[Unique ID Schema] The columns "County Code", "District Code", and "School
+Code" form a composite key, which together are equivalent to the unique id
+column "County Code", "District Code", and "School Code" in dataset acgr18, and
+which together are also equivalent to the unique id column CDS in dataset
+elsch19.
 */
-%let inputDataset1DSN = frpm1415_raw;
+%let inputDataset1DSN = cohort1819-edited;
 %let inputDataset1URL =
-https://github.com/stat697/team-0_project_repo/blob/master/data/frpm1415-edited.xls?raw=true
+https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1819-edited.xlsx
 ;
 %let inputDataset1Type = XLSX;
 
 
 /*
 [Dataset 2 Name] acgr18
-[Dataset Description] Adjusted Cohort Graduation Rate and Outcome Data, AY2017-18
+[Dataset Description] Adjusted Cohort Graduation Rate and Outcome Data,
+AY2017-18
 [Experimental Unit Description] California public K-12 schools in AY2017-18
 [Number of Observations] 202,115
 [Number of Features] 34
-[Data Source] ftp://ftp.cde.ca.gov/demo/acgr/cohort1718.txt
+[Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1718.txt was
+downloaded and edited to produce file cohort1718-edited.xls by opening in Excel
+and setting all cell values to "Text" format.
+Certain columns has been deleted to reduce file size.
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
-[Unique ID Schema] The columns "County Code", "District Code", and "School Code" form a composite key, which together are equivalent to the unique id column "County Code", "District Code", and "School Code" in dataset acgr19, and which together are also equivalent to the unique id column CDS in dataset elsch19.
+[Unique ID Schema] The columns "County Code", "District Code", and "School
+Code" form a composite key, which together are equivalent to the unique id
+column "County Code", "District Code", and "School Code" in dataset acgr19, and
+which together are also equivalent to the unique id column CDS in dataset
+elsch19.
 */
-%let inputDataset2DSN = frpm1516_raw;
+%let inputDataset2DSN = cohort1718-edited;
 %let inputDataset2URL =
-https://github.com/stat697/team-0_project_repo/blob/master/data/frpm1516-edited.xls?raw=true
+https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1718-edited.xlsx
 ;
 %let inputDataset2Type = XLSX;
 
@@ -40,35 +55,41 @@ https://github.com/stat697/team-0_project_repo/blob/master/data/frpm1516-edited.
 /*
 [Dataset 3 Name] elsch19
 [Dataset Description] English Learners by Grade & Language, AY2018-19
-[Experimental Unit Description] English Learns (Els), formerly limited-English-proficient (LEP) students, by grade, language and school, AY2018-19
+[Experimental Unit Description] English Learns (Els), formerly
+limited-English-proficient (LEP) students, by grade, language and school,
+AY2018-19
 [Number of Observations] 62,911
 [Number of Features] 21
-[Data Source] http://dq.cde.ca.gov/dataquest/dlfile/dlfile.aspx?cLevel=School&cYear=2018-19&cCat=EL&cPage=fileselsch
+[Data Source] The file 
+http://dq.cde.ca.gov/dataquest/dlfile/dlfile.aspx?cLevel=School&cYear=2018-19&cCat=EL&cPage=fileselsch 
+was downloaded and edited to produce file fileselsch.xlsx by opening in Excel, 
+and setting all cell values to "Text" format.
 [Data Dictionary] http://www.cde.ca.gov/ds/sd/sd/fselsch.asp
 [Unique ID Schema] The column CDS is a unique id.
 */
-%let inputDataset3DSN = gradaf15_raw;
+%let inputDataset3DSN = fileselsch;
 %let inputDataset3URL =
-https://github.com/stat697/team-0_project_repo/blob/master/data/gradaf15.xls?raw=true
+https://github.com/stat697/team-1_project_repo/blob/master/data/fileselsch.xlsx
 ;
 %let inputDataset3Type = XLSX;
 
 
 /*
-[Dataset 4 Name] sat15
-[Dataset Description] SAT Test Results, AY2014-15
-[Experimental Unit Description] California public K-12 schools in AY2014-15
-[Number of Observations] 2,331
-[Number of Features] 12
-[Data Source]  The file http://www3.cde.ca.gov/researchfiles/satactap/sat15.xls
-was downloaded and edited to produce file sat15-edited.xls by opening in Excel
-and setting all cell values to "Text" format
-[Data Dictionary] http://www.cde.ca.gov/ds/sp/ai/reclayoutsat.asp
-[Unique ID Schema] The column CDS is a unique id.
+*** To be filled by Becky***
+[Dataset 4 Name] 
+[Dataset Description] 
+[Experimental Unit Description] 
+[Number of Observations] 
+[Number of Features] 
+[Data Source]  The file <URL>
+was downloaded and edited to produce file filesgradaf.xlsx by opening in Excel
+and setting all cell values to "Text" format.
+[Data Dictionary] 
+[Unique ID Schema] 
 */
-%let inputDataset4DSN = sat15_raw;
+%let inputDataset4DSN = filesgradaf;
 %let inputDataset4URL =
-https://github.com/stat697/team-0_project_repo/blob/master/data/sat15-edited.xls?raw=true
+https://github.com/stat697/team-1_project_repo/blob/master/data/filesgradaf.xlsx
 ;
 %let inputDataset4Type = XLSX;
 
