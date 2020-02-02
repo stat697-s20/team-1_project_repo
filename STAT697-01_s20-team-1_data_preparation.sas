@@ -5,15 +5,22 @@
 
 /* 
 [Dataset 1 Name] acgr19
+
 [Dataset Description] Adjusted Cohort Graduation Rate and Outcome Data,
 AY2018-19
+
 [Experimental Unit Description] California public K-12 schools in AY2018-19
+
 [Number of Observations] 198,022
+
 [Number of Features] 34
+
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1819.txt was
 downloaded and edited to produce file cohort1819-edited.xlsx by opening in
 Excel. Certain columns has been deleted to reduce file size.
+
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
+
 [Unique ID Schema] The columns "County Code", "District Code", and "School
 Code" form a composite key, which together are equivalent to the unique id
 column "County Code", "District Code", and "School Code" in dataset acgr18, and
@@ -29,16 +36,23 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1819-edite
 
 /*
 [Dataset 2 Name] acgr18
+
 [Dataset Description] Adjusted Cohort Graduation Rate and Outcome Data,
 AY2017-18
+
 [Experimental Unit Description] California public K-12 schools in AY2017-18
+
 [Number of Observations] 202,115
+
 [Number of Features] 34
+
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1718.txt was
 downloaded and edited to produce file cohort1718-edited.xls by opening in Excel
 and setting all cell values to "Text" format.
 Certain columns has been deleted to reduce file size.
+
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
+
 [Unique ID Schema] The columns "County Code", "District Code", and "School
 Code" form a composite key, which together are equivalent to the unique id
 column "County Code", "District Code", and "School Code" in dataset acgr19, and
@@ -54,17 +68,24 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1718-edite
 
 /*
 [Dataset 3 Name] elsch19
+
 [Dataset Description] English Learners by Grade & Language, AY2018-19
+
 [Experimental Unit Description] English Learns (Els), formerly
 limited-English-proficient (LEP) students, by grade, language and school,
 AY2018-19
+
 [Number of Observations] 62,911
+
 [Number of Features] 21
+
 [Data Source] The file 
 http://dq.cde.ca.gov/dataquest/dlfile/dlfile.aspx?cLevel=School&cYear=2018-19&cCat=EL&cPage=fileselsch 
 was downloaded and edited to produce file fileselsch.xlsx by opening in Excel, 
 and setting all cell values to "Text" format.
+
 [Data Dictionary] http://www.cde.ca.gov/ds/sd/sd/fselsch.asp
+
 [Unique ID Schema] The column CDS is a unique id.
 */
 %let inputDataset3DSN = fileselsch;
@@ -75,17 +96,25 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/fileselsch.xlsx
 
 
 /*
-*** To be filled by Becky***
-[Dataset 4 Name] 
-[Dataset Description] 
-[Experimental Unit Description] 
-[Number of Observations] 
-[Number of Features] 
-[Data Source]  The file <URL>
+[Dataset 4 Name] Graduates Meeting UC/CSU Entrance Requirements
+
+[Dataset Description] Graduates meeting University of California/California State
+University (UC/CSU) entrance requirements.
+
+[Experimental Unit Description] California K-12 School Data 2017
+
+[Number of Observations] 2536
+
+[Number of Features] 15
+
+[Data Source]  The file https://www.cde.ca.gov/ds/sd/sd/filesgradaf.asp
 was downloaded and edited to produce file filesgradaf.xlsx by opening in Excel
 and setting all cell values to "Text" format.
-[Data Dictionary] 
-[Unique ID Schema] 
+
+[Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsgradaf09.asp
+
+[Unique ID Schema] The CDS_CODE in this dataset can be used as the primary key
+for this dataset as each entry has its own unique identification number.
 */
 %let inputDataset4DSN = filesgradaf;
 %let inputDataset4URL =
