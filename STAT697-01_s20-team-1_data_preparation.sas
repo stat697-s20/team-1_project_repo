@@ -17,7 +17,10 @@ AY2018-19
 
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1819.txt was
 downloaded and edited to produce file cohort1819-edited.xlsx by opening in
-Excel. Certain columns has been deleted to reduce file size.
+Excel. Certain columns has been deleted to reduce file size. We only kept the
+columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
+Diploma Graduates (Rate), Met UC/CSU Grad Req's (Rate) and Seal of 
+Biliteracy (Rate).
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
 
@@ -49,7 +52,10 @@ AY2017-18
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1718.txt was
 downloaded and edited to produce file cohort1718-edited.xls by opening in Excel
 and setting all cell values to "Text" format.
-Certain columns has been deleted to reduce file size.
+Certain columns has been deleted to reduce file size. We only kept the
+columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
+Diploma Graduates (Rate), Met UC/CSU Grad Req's (Rate) and Seal of 
+Biliteracy (Rate).
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
 
@@ -103,7 +109,7 @@ University (UC/CSU) entrance requirements.
 
 [Experimental Unit Description] California K-12 School Data 2017
 
-[Number of Observations] 2536
+[Number of Observations] 2,536
 
 [Number of Features] 15
 
