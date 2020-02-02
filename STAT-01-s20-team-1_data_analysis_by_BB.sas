@@ -9,7 +9,9 @@ ethnicities?
 Rationale: This could help schools better understand the type of learing 
 environment that is best for students who are ELs and LEP students?
 
-Note: This compares the Met UC/CSU Grad Req' (Rate) with the 
+Note: This utilizes the Met UC/CSU Grad Req' as the response and uses with the 
+ELs/LEP indicator along with the indicator for Charter school or non Charter
+School.
 */
 
 
@@ -24,7 +26,9 @@ Rationale: Having an understadnign of how the various factors effect ELs and
 LEP Students could help schools and parents determine which type of learning
 environment will best serve these students.
 
-Note: 
+Note: This utilizes the Met UC/CSU Grad Req' as the response and uses with the 
+ELs/LEP indicator along with the factors for Charter school or non Charter
+School (district, county, etc).
 */
 
 
@@ -40,7 +44,9 @@ of underserved/ underrepresented student populations compared to their 'White,
 not Hispanic' peers, and learn which student population need the most additional
 support.
 
-Note: This compares the Met UC/CSU Grad Req' (Rate) with the
+Note: This compares the odds ratio of Met UC/CSU Grad Req' (Rate) of 'White, not 
+Hispanic' with the odds ratio of students of the other ethnic origins through
+categorical analysis methods.
 */
 
 
@@ -55,7 +61,8 @@ Rationale: From the odds we can gain a better perspective on the success rates
 of ELs/LEP students compared to non ELs/LEP strudents to see just how much any
 descrpencies in support impacts this student population.
 
-Note: This compares the Met UC/CSU Grad Req' (Rate) with the
+Note: This compares the odds ratio of ELs/LEP students with the odds ratio of 
+students of who are not ELs/LEP students through categorical analysis methods.
 */
 
 
