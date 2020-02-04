@@ -6,7 +6,6 @@
 /* load external file that will generate final analytic file */
 %include './STAT697-01_s20-team-1_data_preparation.sas';
 
-
 *******************************************************************************;
 * Research Question 1 Analysis Starting Point;
 *******************************************************************************;

@@ -13,7 +13,7 @@ AY2018-19
 
 [Number of Observations] 198,022
 
-[Number of Features] 34
+[Number of Features] 6
 
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1819.txt was
 downloaded and edited to produce file cohort1819-edited.xlsx by opening in
@@ -24,11 +24,9 @@ Biliteracy (Rate).
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
 
-[Unique ID Schema] The columns "County Code", "District Code", and "School
-Code" form a composite key, which together are equivalent to the unique id
-column "County Code", "District Code", and "School Code" in dataset acgr18, and
-which together are also equivalent to the unique id column CDS in dataset
-elsch19.
+[Unique ID Schema] The column "ReportingCategory" in this data set is unique as
+it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
+column "Language" in data set "fileselsch.xlsx".
 */
 %let inputDataset1DSN = cohort1819-edited;
 %let inputDataset1URL =
@@ -47,7 +45,7 @@ AY2017-18
 
 [Number of Observations] 202,115
 
-[Number of Features] 34
+[Number of Features] 6
 
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1718.txt was
 downloaded and edited to produce file cohort1718-edited.xls by opening in Excel
@@ -59,11 +57,9 @@ Biliteracy (Rate).
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
 
-[Unique ID Schema] The columns "County Code", "District Code", and "School
-Code" form a composite key, which together are equivalent to the unique id
-column "County Code", "District Code", and "School Code" in dataset acgr19, and
-which together are also equivalent to the unique id column CDS in dataset
-elsch19.
+[Unique ID Schema] The column "ReportingCategory" in this data set is unique as
+it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
+column "Language" in data set "fileselsch.xlsx".
 */
 %let inputDataset2DSN = cohort1718-edited;
 %let inputDataset2URL =
@@ -109,7 +105,7 @@ University (UC/CSU) entrance requirements.
 
 [Experimental Unit Description] California K-12 School Data 2017
 
-[Number of Observations] 2,536
+[Number of Observations] 2,535
 
 [Number of Features] 15
 
