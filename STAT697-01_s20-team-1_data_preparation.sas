@@ -168,8 +168,181 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/filesgradaf.xlsx
 %mend;
 %loadDatasets
 
+/* to be edited */
 
-/* print the names of all datasets/tables created above by querying the
+/* In PROC SQL, for dataset 1 - dataset 4, we remove the rows with number of
+students less than 30 because it affects the result of analyzing the effect
+of education. Also we will remove the rows with "*" as it indicates data less
+then 10. According to the cde.ca.gov, Data are suppressed (*) on the data file
+if the cell size within a selected student population (cohort students) is 10
+or less. Additionally, the "Not Reported" race/ethnicity is suppressed, 
+regardless of actual cell size, if the student population for one or more other
+race/ethnicity groups is suppressed. */
+
+/* check dataset1 */
+
+* check (frpm1415_raw) for bad unique id values, where the columns (County_Code)
+,(District_Code), and (School_Code) are intended to form a composite key;
+proc sql;
+    /* check for duplicate unique id values; after executing this query, we
+       see that frpm1415_raw_dups only has one row, which just happens to 
+       have all three elements of the componsite key missing, which we can
+       mitigate as part of eliminating rows having missing unique id component
+       in the next query */
+    create table cohort1819-edited_dup as
+        select
+             County_Code
+            ,District_Code
+            ,School_Code
+            ,count(*) as row_count_for_unique_id_value
+        from
+            cohort1819-edited
+        group by
+             County_Code
+            ,District_Code
+            ,School_Code
+        having
+            row_count_for_unique_id_value > 1
+    ;
+    /* remove rows with missing unique id components, or with unique ids that
+       do not correspond to schools; after executing this query, the new
+       dataset frpm1415 will have no duplicate/repeated unique id values,
+       and all unique id values will correspond to our experimenal units of
+       interest, which are California Public K-12 schools; this means the 
+       columns County_Code, District_Code, and School_Code in frpm1415 are 
+       guaranteed to form a composite key */
+    create table cohort1819 as
+        select
+            *
+        from
+            cohort1819-edited
+        where
+            /* remove rows with missing unique id value components */
+            not(missing(County_Code))
+            and
+            not(missing(District_Code))
+            and
+            not(missing(School_Code))
+            and
+            /* remove rows for District Offices and non-public schools */
+            School_Code not in ("0000000","0000001")
+    ;
+quit;
+
+/* check dataset2 */
+
+proc sql;
+    create table cohort1718-edited_dups as
+        select
+             County_Code
+            ,District_Code
+            ,School_Code
+            ,count(*) as row_count_for_unique_id_value
+        from
+            cohort1718-edited
+        group by
+             County_Code
+            ,District_Code
+            ,School_Code
+        having
+            row_count_for_unique_id_value > 1
+    ;
+    create table cohort1718 as
+        select
+            *
+        from
+            cohort1718-edited
+        where
+            /* remove rows with missing unique id value components */
+            not(missing(County_Code))
+            and
+            not(missing(District_Code))
+            and
+            not(missing(School_Code))
+            and
+            /* remove rows for District Offices and non-public schools */
+            School_Code not in ("0000000","0000001")
+    ;
+quit;
+
+/* check dataset 3 */
+
+proc sql;
+    create table frpm1415_raw_dups as
+        select
+             County_Code
+            ,District_Code
+            ,School_Code
+            ,count(*) as row_count_for_unique_id_value
+        from
+            frpm1415_raw
+        group by
+             County_Code
+            ,District_Code
+            ,School_Code
+        having
+            row_count_for_unique_id_value > 1
+    ;
+    create table frpm1415 as
+        select
+            *
+        from
+            frpm1415_raw
+        where
+            /* remove rows with missing unique id value components */
+            not(missing(County_Code))
+            and
+            not(missing(District_Code))
+            and
+            not(missing(School_Code))
+            and
+            /* remove rows for District Offices and non-public schools */
+            School_Code not in ("0000000","0000001")
+    ;
+quit;
+
+/* check dataset 4 */
+
+proc sql;
+    create table frpm1415_raw_dups as
+        select
+             County_Code
+            ,District_Code
+            ,School_Code
+            ,count(*) as row_count_for_unique_id_value
+        from
+            frpm1415_raw
+        group by
+             County_Code
+            ,District_Code
+            ,School_Code
+        having
+            row_count_for_unique_id_value > 1
+    ;
+    create table frpm1415 as
+        select
+            *
+        from
+            frpm1415_raw
+        where
+            /* remove rows with missing unique id value components */
+            not(missing(County_Code))
+            and
+            not(missing(District_Code))
+            and
+            not(missing(School_Code))
+            and
+            /* remove rows for District Offices and non-public schools */
+            School_Code not in ("0000000","0000001")
+    ;
+quit;
+
+/* end to be edited */
+
+/* The original data set will be uploaded later during week 3 to compare with
+the modified data. The filename will be xxxxxx-original.xlsx */
+
+/* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
 
 proc sql;
