@@ -16,7 +16,7 @@ AY2018-19
 [Number of Features] 6
 
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1819.txt was
-downloaded and edited to produce file cohort1819-edited.xlsx by opening in
+downloaded and edited to produce file cohort1819_edited.xlsx by opening in
 Excel. Certain columns has been deleted to reduce file size. We only kept the
 columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
 Diploma Graduates (Rate), Met UC/CSU Grad Req's (Rate) and Seal of 
@@ -48,7 +48,7 @@ AY2017-18
 [Number of Features] 6
 
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1718.txt was
-downloaded and edited to produce file cohort1718-edited.xls by opening in Excel
+downloaded and edited to produce file cohort1718_edited.xls by opening in Excel
 and setting all cell values to "Text" format.
 Certain columns has been deleted to reduce file size. We only kept the
 columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
