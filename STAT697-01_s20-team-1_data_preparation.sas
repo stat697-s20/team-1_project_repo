@@ -28,9 +28,9 @@ Biliteracy (Rate).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset1DSN = cohort1819-edited;
+%let inputDataset1DSN = cohort1819_edited;
 %let inputDataset1URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1819-edited.xlsx
+https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1819_edited.xlsx
 ;
 %let inputDataset1Type = XLSX;
 
@@ -61,9 +61,9 @@ Biliteracy (Rate).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset2DSN = cohort1718-edited;
+%let inputDataset2DSN = cohort1718_edited;
 %let inputDataset2URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1718-edited.xlsx
+https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1718_edited.xlsx
 ;
 %let inputDataset2Type = XLSX;
 
