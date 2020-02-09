@@ -16,7 +16,7 @@ AY2018-19
 [Number of Features] 6
 
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1819.txt was
-downloaded and edited to produce file cohort1819-edited.xlsx by opening in
+downloaded and edited to produce file cohort1819_edited.xlsx by opening in
 Excel. Certain columns has been deleted to reduce file size. We only kept the
 columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
 Diploma Graduates (Rate), Met UC/CSU Grad Req's (Rate) and Seal of 
@@ -48,7 +48,7 @@ AY2017-18
 [Number of Features] 6
 
 [Data Source] The file ftp://ftp.cde.ca.gov/demo/acgr/cohort1718.txt was
-downloaded and edited to produce file cohort1718-edited.xls by opening in Excel
+downloaded and edited to produce file cohort1718_edited.xls by opening in Excel
 and setting all cell values to "Text" format.
 Certain columns has been deleted to reduce file size. We only kept the
 columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
@@ -100,8 +100,8 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/fileselsch.xlsx
 /*
 [Dataset 4 Name] Graduates Meeting UC/CSU Entrance Requirements
 
-[Dataset Description] Graduates meeting University of California/California State
-University (UC/CSU) entrance requirements.
+[Dataset Description] filesgradaf (Graduates meeting University of California/California State
+University (UC/CSU) entrance requirements)
 
 [Experimental Unit Description] California K-12 School Data 2017
 
@@ -109,7 +109,7 @@ University (UC/CSU) entrance requirements.
 
 [Number of Features] 15
 
-[Data Source]  The file https://www.cde.ca.gov/ds/sd/sd/filesgradaf.asp
+[Data Source] The file https://www.cde.ca.gov/ds/sd/sd/filesgradaf.asp
 was downloaded and edited to produce file filesgradaf.xlsx by opening in Excel
 and setting all cell values to "Text" format.
 
@@ -168,6 +168,8 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/filesgradaf.xlsx
 %mend;
 %loadDatasets
 
+/* The original data set will be uploaded later during week 3 to compare with
+the modified data. The filename will be xxxxxx-original.xlsx */
 
 
 /* In PROC SQL, for dataset 1 - dataset 4, we remove the rows with number of
@@ -341,6 +343,8 @@ the modified data. The filename will be xxxxxx-original.xlsx */
 
 /* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
+
+
 proc sql;
     select *
     from dictionary.tables
