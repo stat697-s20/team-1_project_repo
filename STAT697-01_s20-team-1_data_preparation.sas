@@ -28,9 +28,9 @@ Biliteracy (Rate).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset1DSN = cohort1819-edited;
+%let inputDataset1DSN = cohort1819_edited;
 %let inputDataset1URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1819-edited.xlsx
+https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1819_edited.xlsx
 ;
 %let inputDataset1Type = XLSX;
 
@@ -61,9 +61,9 @@ Biliteracy (Rate).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset2DSN = cohort1718-edited;
+%let inputDataset2DSN = cohort1718_edited;
 %let inputDataset2URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1718-edited.xlsx
+https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1718_edited.xlsx
 ;
 %let inputDataset2Type = XLSX;
 
@@ -168,7 +168,7 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/filesgradaf.xlsx
 %mend;
 %loadDatasets
 
-/* to be edited */
+
 
 /* In PROC SQL, for dataset 1 - dataset 4, we remove the rows with number of
 students less than 30 because it affects the result of analyzing the effect
@@ -179,115 +179,110 @@ or less. Additionally, the "Not Reported" race/ethnicity is suppressed,
 regardless of actual cell size, if the student population for one or more other
 race/ethnicity groups is suppressed. */
 
+
 /* check dataset1 */
 
-* check (frpm1415_raw) for bad unique id values, where the columns (County_Code)
-,(District_Code), and (School_Code) are intended to form a composite key;
+
+/* check cohort1819_edited to first remove any non-numeric value and rows of 
+Cohort Students less than 30 to improve accuracy*/
 proc sql;
-    /* check for duplicate unique id values; after executing this query, we
-       see that frpm1415_raw_dups only has one row, which just happens to 
-       have all three elements of the componsite key missing, which we can
-       mitigate as part of eliminating rows having missing unique id component
-       in the next query */
-    create table cohort1819-edited_dup as
+    create table cohort1819_edited_dup1 as
         select
-             County_Code
-            ,District_Code
-            ,School_Code
-            ,count(*) as row_count_for_unique_id_value
+             CharterSchool
+             ,DASS
+             ,ReportingCategory
+             ,CohortStudents
+             ,Regular_HS_Diploma_Graduates_(Count)
+             ,Met_UC/CSU_Grad_Reqs_(Count)
+             ,Seal_of_Biliteracy_(Count)
         from
-            cohort1819-edited
+            cohort1819_edited
+        where
+            not(missing(CohortStudents))
         group by
-             County_Code
-            ,District_Code
-            ,School_Code
+             CharterSchool
         having
-            row_count_for_unique_id_value > 1
+            CohortStudents >= 30
     ;
-    /* remove rows with missing unique id components, or with unique ids that
-       do not correspond to schools; after executing this query, the new
-       dataset frpm1415 will have no duplicate/repeated unique id values,
-       and all unique id values will correspond to our experimenal units of
-       interest, which are California Public K-12 schools; this means the 
-       columns County_Code, District_Code, and School_Code in frpm1415 are 
-       guaranteed to form a composite key */
+    /* combining the reporting category together */
     create table cohort1819 as
         select
-            *
+            CharterSchool
+            ,ReportingCategory
+            ,sum(CohortStudents)
+            ,sum(Regular_HS_Diploma_Graduates_(Count))
+            ,sum(Met_UC/CSU_Grad_Reqs_(Count))
+            ,sum(Seal_of_Biliteracy_(Count))
         from
-            cohort1819-edited
-        where
-            /* remove rows with missing unique id value components */
-            not(missing(County_Code))
-            and
-            not(missing(District_Code))
-            and
-            not(missing(School_Code))
-            and
-            /* remove rows for District Offices and non-public schools */
-            School_Code not in ("0000000","0000001")
+            cohort1819_edited_dup1
+        group by 
+            CharterSchool, ReportingCategory
+        order by
+            ReportingCategory    
     ;
 quit;
 
+
 /* check dataset2 */
 
+
+/* check cohort1718_edited to first remove any non-numeric value and rows of 
+Cohort Students less than 30 to improve accuracy*/
 proc sql;
-    create table cohort1718-edited_dups as
+    create table cohort1718_edited_dup1 as
         select
-             County_Code
-            ,District_Code
-            ,School_Code
-            ,count(*) as row_count_for_unique_id_value
+             CharterSchool
+             ,DASS
+             ,ReportingCategory
+             ,CohortStudents
+             ,Regular_HS_Diploma_Graduates_(Count)
+             ,Met_UC/CSU_Grad_Reqs_(Count)
+             ,Seal_of_Biliteracy_(Count)
         from
-            cohort1718-edited
+            cohort1819_edited
+        where
+            not(missing(CohortStudents))
         group by
-             County_Code
-            ,District_Code
-            ,School_Code
+             CharterSchool
         having
-            row_count_for_unique_id_value > 1
-    ;
+            CohortStudents >= 30
+
+    /* combining the reporting category together */
     create table cohort1718 as
         select
-            *
+            CharterSchool
+            ,ReportingCategory
+            ,sum(CohortStudents)
+            ,sum(Regular_HS_Diploma_Graduates_(Count))
+            ,sum(Met_UC/CSU_Grad_Reqs_(Count))
+            ,sum(Seal_of_Biliteracy_(Count))
         from
-            cohort1718-edited
-        where
-            /* remove rows with missing unique id value components */
-            not(missing(County_Code))
-            and
-            not(missing(District_Code))
-            and
-            not(missing(School_Code))
-            and
-            /* remove rows for District Offices and non-public schools */
-            School_Code not in ("0000000","0000001")
+            cohort1819_edited_dup1
+        group by 
+            CharterSchool, ReportingCategory
+        order by
+            ReportingCategory    
     ;
 quit;
 
 /* check dataset 3 */
 
 proc sql;
-    create table frpm1415_raw_dups as
+    create table fileselsch_dups as
         select
-             County_Code
-            ,District_Code
-            ,School_Code
-            ,count(*) as row_count_for_unique_id_value
+             *
         from
-            frpm1415_raw
+            fileselsch
         group by
-             County_Code
-            ,District_Code
-            ,School_Code
+             LANGUAGE
         having
-            row_count_for_unique_id_value > 1
+            TOTAL_EL >= 1
     ;
-    create table frpm1415 as
+    create table fileselsch_2 as
         select
             *
         from
-            frpm1415_raw
+            fileselsch
         where
             /* remove rows with missing unique id value components */
             not(missing(County_Code))
@@ -339,12 +334,13 @@ quit;
 
 /* end to be edited */
 
+
 /* The original data set will be uploaded later during week 3 to compare with
 the modified data. The filename will be xxxxxx-original.xlsx */
 
+
 /* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
-
 proc sql;
     select *
     from dictionary.tables
