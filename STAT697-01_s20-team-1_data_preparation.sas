@@ -446,6 +446,241 @@ quit;
 title;
 
 
+/* build analytic dataset from raw datasets imported above, including only the
+columns and minimal data-cleaning/transformation needed to address each
+research questions/objectives in data-analysis files */
+proc sql;
+    create table cde_analytic_file_raw as
+        select
+             coalesce(C.CDS,D.CDS_Code)
+             AS CDS_Code
+            ,coalesce(A.School,B.School,C.School,D.School) /*Only if we add back 
+            school for D1 and D2*/
+             AS School
+            ,coalesce(A.District,B.District,C.District,D.District) /*Only if we 
+            add back district for D1 and D2*/
+             AS District
+             /*Columns needed from C and D*/
+            ,C.KDGN
+             AS
+             Kindergarten
+            ,C.GR_1
+             AS 
+             Grade_1
+            ,C.GR_2
+             AS 
+             Grade_2
+            ,C.GR_3
+             AS 
+             Grade_3
+            ,C.GR_4
+             AS 
+             Grade_4
+            ,C.GR_5
+             AS 
+             Grade_5
+            ,C.GR_6
+             AS 
+             Grade_6
+            ,C.GR_7
+             AS 
+             Grade_7
+            ,C.GR_8
+             AS 
+             Grade_8
+            ,C.GR_9
+             AS 
+             Grade_9
+            ,C.GR_10
+             AS 
+             Grade_10
+            ,C.GR_11
+             AS 
+             Grade_11
+            ,C.GR_12
+             AS 
+             Grade_12
+            ,C.UNGR
+             AS 
+             Undergrad 
+            ,C.TOTAL_EL
+             AS 
+             Total_EL  
+            ,D.HISPANIC
+             AS 
+             Hispanic
+            ,D.AM_IND
+             AS 
+             American_Indian
+            ,D.ASIAN
+             AS 
+             Asian
+            ,D.PAC_ISLD
+             AS 
+             Pacific_Ilander
+            ,D.FILIPINO
+             AS 
+             Filipino
+            ,D.AFRICAN_AM
+             AS 
+             African_American
+            ,D.WHITE
+             AS 
+             White 
+            ,D.TOTAL
+             AS 
+             Total 
+            ,            
+        from
+            (
+                /*select
+                     cats(County_Code,District_Code,School_Code)
+                     AS CDS_Code
+                     length 14
+                    ,School_Name
+                     AS
+                     School
+                    ,District_Name
+                     AS
+                     District
+                    ,Percent_Eligible_FRPM_K12
+                     AS Percent_Eligible_FRPM_K12_1415
+                from
+                    cohort1819
+            ) as A
+            full join
+            (
+                select
+                     cats(County_Code,District_Code,School_Code)
+                     AS CDS_Code
+                     length 14
+                    ,School_Name
+                     AS
+                     School
+                    ,District_Name
+                     AS
+                     District
+                    ,Percent_Eligible_FRPM_K12
+                     AS Percent_Eligible_FRPM_K12_1516
+                from
+                    cohort1718
+            ) as B
+            on A.School = B.School*/
+            full join
+            (
+                select
+                     CDS
+                     AS CDS_Code
+                    ,SCHOOL
+                     AS School
+                    ,DISTRICT
+                     AS
+                     District
+                    ,LANGUAGE
+                     AS
+                     Language
+                    ,KDGN
+                     AS
+                     Kindergarten
+                    ,GR_1
+                     AS 
+                     Grade_1
+                    ,GR_2
+                     AS 
+                     Grade_2
+                    ,GR_3
+                     AS 
+                     Grade_3
+                    ,GR_4
+                     AS 
+                     Grade_4
+                    ,GR_5
+                     AS 
+                     Grade_5
+                    ,GR_6
+                     AS 
+                     Grade_6
+                    ,GR_7
+                     AS 
+                     Grade_7
+                    ,GR_8
+                     AS 
+                     Grade_8
+                    ,GR_9
+                     AS 
+                     Grade_9
+                    ,GR_10
+                     AS 
+                     Grade_10
+                    ,GR_11
+                     AS 
+                     Grade_11
+                    ,GR_12
+                     AS 
+                     Grade_12
+                    ,UNGR
+                     AS 
+                     Undergrad 
+                    ,TOTAL_EL
+                     AS 
+                     Total_EL                                     
+                from
+                    fileselch
+            ) as C
+            on A.School = C.School /*only school name in common for these data 
+            sets */
+            full join
+            (
+                select
+                     cds
+                     AS CDS_Code
+                    ,sname
+                     AS School
+                    ,dname
+                     AS
+                     District
+                    ,HISPANIC
+                     AS 
+                     Hispanic
+                    ,AM_IND
+                     AS 
+                     American_Indian
+                    ,ASIAN
+                     AS 
+                     Asian
+                    ,PAC_ISLD
+                     AS 
+                     Pacific_Ilander
+                    ,FILIPINO
+                     AS 
+                     Filipino
+                    ,AFRICAN_AM
+                     AS 
+                     African_American
+                    ,WHITE
+                     AS 
+                     White 
+                   ,TOTAL
+                    AS 
+                    Total                     
+                from
+                    filesgradaf
+            ) as D
+            on C.CDS_Code = D.CDS_Code
+        order by
+            CDS_Code /*will need to change this portion to fit our dataset*/ 
+    ;
+quit;
+
+
+
+/* check cde_analytic_file_raw for rows whose unique id values are repeated,
+missing, or correspond to non-schools, where the column CDS_Code is intended
+to be a primary key; after executing this data step, we see that the full joins
+used above introduced duplicates in cde_analytic_file_raw, which need to be
+mitigated before proceeding */
+
+
 /* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
 proc sql;
