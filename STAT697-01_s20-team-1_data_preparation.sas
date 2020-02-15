@@ -269,10 +269,9 @@ quit;
 
 /* check dataset 3 */
 
-/*data - integrity checks for fileselch */
+/*data - integrity checks for fileselch - checking for unique id values that are 
+repeated, missing, or correspond to non-schools */
 proc sql;
-    /* check for unique id values that are repeated, missing, or correspond to
-       non-schools */
 create table fileselch_bad_unique_ids as
     select
         A.*
@@ -290,52 +289,18 @@ create table fileselch_bad_unique_ids as
             ) as B
             on A.CDS=B.CDS
         having
-            /* capture rows corresponding to repeated primary key values */
             row_count_for_unique_id_value > 1
             or
-            /* capture rows corresponding to missing primary key values */
             missing(CDS)
             or
-            /* capture rows corresponding to non-school primary key values */
             substr(cat(CDS),8,7) in ("0000000","0000001")
     ;
-    /* remove rows with primary keys that do not correspond to */
     create table fileselch_new as
         select
             *
         from
             fileselch
         where
-            /* remove rows for District Offices and non-public schools */
-            substr(cat(CDS),8,7) not in ("0000000","0000001")
-    ;
-quit;
-
-proc sql;
-create table fileselch_final as
-    select
-        A.*
-    from 
-        fileselch as A
-        left join
-        (
-            select
-                CDS
-                ,count(*) as row_count_for_unique_id_value
-            from
-                    fileselch
-                group by
-                    CDS
-            ) as B
-            on A.CDS=B.CDS
-        having
-            /* capture rows corresponding to nonrepeated primary key values */
-            row_count_for_unique_id_value = 1
-            or
-            /* capture rows corresponding to nonmissing primary key values */
-            not missing(CDS)
-            or
-            /* capture rows tha don't correspond to non-school primary key values */
             substr(cat(CDS),8,7) not in ("0000000","0000001")
     ;
 quit;
@@ -349,235 +314,13 @@ run;
 title;
 
 
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - KDGN";
-PROC SQL;
-    select
-        min(KDGN) as min
-       ,max(KDGN) as max
-       ,mean(KDGN) as mean
-       ,median(KDGN) as median
-       ,nmiss(KDGN) as miss
-       ,sum(KDGN) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_1";
-PROC SQL;
-    select
-        min(GR_1) as min
-       ,max(GR_1) as max
-       ,mean(GR_1) as mean
-       ,median(GR_1) as median
-       ,nmiss(GR_1) as miss
-       ,sum(GR_1) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_2";
-PROC SQL;
-    select
-        min(GR_2) as min
-       ,max(GR_2) as max
-       ,mean(GR_2) as mean
-       ,median(GR_2) as median
-       ,nmiss(GR_2) as miss
-       ,sum(GR_2) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_3";
-PROC SQL;
-    select
-        min(GR_3) as min
-       ,max(GR_3) as max
-       ,mean(GR_3) as mean
-       ,median(GR_3) as median
-       ,nmiss(GR_3) as miss
-       ,sum(GR_3) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_4";
-PROC SQL;
-    select
-        min(GR_4) as min
-       ,max(GR_4) as max
-       ,mean(GR_4) as mean
-       ,median(GR_4) as median
-       ,nmiss(GR_4) as miss
-       ,sum(GR_4) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_5";
-PROC SQL;
-    select
-        min(GR_5) as min
-       ,max(GR_5) as max
-       ,mean(GR_5) as mean
-       ,median(GR_5) as median
-       ,nmiss(GR_5) as miss
-       ,sum(GR_5) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_6";
-PROC SQL;
-    select
-        min(GR_6) as min
-       ,max(GR_6) as max
-       ,mean(GR_6) as mean
-       ,median(GR_6) as median
-       ,nmiss(GR_6) as miss
-       ,sum(GR_6) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_7";
-PROC SQL;
-    select
-        min(GR_7) as min
-       ,max(GR_7) as max
-       ,mean(GR_7) as mean
-       ,median(GR_7) as median
-       ,nmiss(GR_7) as miss
-       ,sum(GR_7) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_8";
-PROC SQL;
-    select
-        min(GR_8) as min
-       ,max(GR_8) as max
-       ,mean(GR_8) as mean
-       ,median(GR_8) as median
-       ,nmiss(GR_8) as miss
-       ,sum(GR_8) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_9";
-PROC SQL;
-    select
-        min(GR_9) as min
-       ,max(GR_9) as max
-       ,mean(GR_9) as mean
-       ,median(GR_9) as median
-       ,nmiss(GR_9) as miss
-       ,sum(GR_9) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_10";
-PROC SQL;
-    select
-        min(GR_10) as min
-       ,max(GR_10) as max
-       ,mean(GR_10) as mean
-       ,median(GR_10) as median
-       ,nmiss(GR_10) as miss
-       ,sum(GR_10) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_11";
-PROC SQL;
-    select
-        min(GR_11) as min
-       ,max(GR_11) as max
-       ,mean(GR_11) as mean
-       ,median(GR_11) as median
-       ,nmiss(GR_11) as miss
-       ,sum(GR_11) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - GR_12";
-PROC SQL;
-    select
-        min(GR_12) as min
-       ,max(GR_12) as max
-       ,mean(GR_12) as mean
-       ,median(GR_12) as median
-       ,nmiss(GR_12) as miss
-       ,sum(GR_12) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
-
-title "Inspect number of ELS/LEP students at each grade level in fileselsch - UNGR";
-PROC SQL;
-    select
-        min(UNGR) as min
-       ,max(UNGR) as max
-       ,mean(UNGR) as mean
-       ,median(UNGR) as median
-       ,nmiss(UNGR) as miss
-       ,sum(UNGR) as total
-    from
-        fileselch_final
-    ;
-quit;
-title;
-
 /* check dataset 4 */
 
-/*data - integrity checks for filesgradaf */
+
+/*data - integrity checks for filesgradaf - checking for unique id values that are 
+repeated, missing, or correspond to non-schools and removing rows where TOTAL is 
+less than 30 to increase accuracy*/
 proc sql;
-    /* checking for unique id values that are repeated, missing, or correspond to
-       non-schools */
 create table filesgradaf_bad_unique_ids as
     select
         A.*
@@ -595,23 +338,18 @@ create table filesgradaf_bad_unique_ids as
             ) as B
             on A.CDS_CODE=B.CDS_CODE
         having
-            /* capture rows corresponding to repeated primary key values */
             row_count_for_unique_id_value > 1
             or
-            /* capture rows corresponding to missing primary key values */
             missing(CDS_CODE)
             or
-            /* capture rows corresponding to non-school primary key values */
             substr(cat(CDS_CODE),8,7) in ("0000000","0000001")
     ;
-    /* removing rows with primary keys that do not correspond to schools*/
     create table filesgradaf_new as
         select
             *
         from
             filesgradaf
         where
-            /* remove rows for District Offices and non-public schools */
             substr(cat(CDS_CODE),8,7) not in ("0000000","0000001")
     ;
     create table filesgradaf_new2 as
@@ -620,54 +358,14 @@ create table filesgradaf_bad_unique_ids as
         from
             filesgradaf
         where
-            /* remove rows for with sum of students is less than 30 */
             TOTAL < 30
             order by CDS_CODE
     ;
 quit;
 
 
-proc sql;
-create table filesgradaf_integ1 as
-    select
-        A.*
-    from 
-        filesgradaf as A
-        left join
-        (
-            select
-                CDS_CODE
-                ,count(*) as row_count_for_unique_id_value
-            from
-                    filesgradaf
-                group by
-                    CDS_CODE
-            ) as B
-            on A.CDS_CODE=B.CDS_CODE
-        having
-            /* capture rows corresponding to nonrepeated primary key values */
-            row_count_for_unique_id_value = 1
-            or
-            /* capture rows corresponding to nonmissing primary key values */
-            not missing(CDS_CODE)
-            or
-            /* capture rows tha don't correspond to non-school primary key values */
-            substr(cat(CDS_CODE),8,7) not in ("0000000","0000001")
-    ;
-    create table filesgradaf_final as
-        select
-            *
-        from
-            filesgradaf_integ1
-        where
-            /* remove rows for with sum of students is less than 30 */
-            TOTAL >= 30
-            order by CDS_CODE 
-    ;
-quit;
-
-
-/* data - inspection step for filesgradaf*/ 
+/* data - inspection step for filesgradaf - to look at qualities of 
+ethnicity variables*/ */ 
 title "Inspect TOTAL students in filesgradaf - TOTAL Var";
 PROC SQL;
     select
@@ -766,33 +464,6 @@ PROC SQL;
 quit;
 title;
 
-title "Inspect TOTAL students in filesgradaf - TWO_MORE_RACES";
-PROC SQL;
-    select
-        min(TWO_MORE_RACES) as min
-       ,max(TWO_MORE_RACES) as max
-       ,mean(TWO_MORE_RACES) as mean
-       ,median(TWO_MORE_RACES) as median
-       ,nmiss(TWO_MORE_RACES) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-title "Inspect TOTAL students in filesgradaf - NOT_REPORTED";
-PROC SQL;
-    select
-        min(NOT_REPORTED) as min
-       ,max(NOT_REPORTED) as max
-       ,mean(NOT_REPORTED) as mean
-       ,median(NOT_REPORTED) as median
-       ,nmiss(NOT_REPORTED) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
 
 /* end to be edited */
 
