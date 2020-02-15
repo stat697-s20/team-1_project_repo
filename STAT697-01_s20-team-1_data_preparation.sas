@@ -168,22 +168,6 @@ https://github.com/stat697/team-1_project_repo/blob/master/data/filesgradaf.xlsx
 %mend;
 %loadDatasets
 
-/* The original data set will be uploaded later during week 3 to compare with
-the modified data. The filename will be xxxxxx-original.xlsx */
-
-
-/* In PROC SQL, for dataset 1 - dataset 4, we remove the rows with number of
-students less than 30 because it affects the result of analyzing the effect
-of education. Also we will remove the rows with "*" as it indicates data less
-then 10. According to the cde.ca.gov, Data are suppressed (*) on the data file
-if the cell size within a selected student population (cohort students) is 10
-or less. Additionally, the "Not Reported" race/ethnicity is suppressed, 
-regardless of actual cell size, if the student population for one or more other
-race/ethnicity groups is suppressed. */
-
-
-/* check dataset1 */
-
 
 /* check cohort1819_edited to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
@@ -225,9 +209,6 @@ proc sql;
 quit;
 
 
-/* check dataset2 */
-
-
 /* check cohort1718_edited to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
 proc sql;
@@ -267,7 +248,6 @@ proc sql;
     ;
 quit;
 
-/* check dataset 3 */
 
 /*data - integrity checks for fileselch - checking for unique id values that are 
 repeated, missing, or correspond to non-schools */
@@ -312,9 +292,6 @@ PROC FREQ data = fileselch_final order=freq;
 tables LANGUAGE;
 run;
 title;
-
-
-/* check dataset 4 */
 
 
 /*data - integrity checks for filesgradaf - checking for unique id values that are 
@@ -465,17 +442,8 @@ quit;
 title;
 
 
-/* end to be edited */
-
-
-/* The original data set will be uploaded later during week 3 to compare with
-the modified data. The filename will be xxxxxx-original.xlsx */
-
-
 /* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
-
-
 proc sql;
     select *
     from dictionary.tables
