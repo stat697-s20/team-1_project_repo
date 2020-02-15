@@ -25,9 +25,15 @@ differences compared to the non-Charter one's. Will it affect the fairness of
 entering State-Funded Universities after graduating from Charter School and 
 non-Charter Schools?
 
-Note: This compares the column CharterSchool with Met UC/CSU Grad Req' (Rate). 
+Note: This compares the column CharterSchool with Met UC/CSU Grad Req' (Count). 
 We can use paired test to compare the differences between Charter School 
 and non-Charter School.
+
+Limitations: For data rows with an asterisk (indicating the number of entry is 
+less than 10 to protect the students) should be excluded since it doesn't show
+any true values. Also, we should compare the number of count instead of rate 
+since when we calculate the number of students from the rate, it will show 
+decimals which is impossible for number of counts.
 */
 
 
@@ -43,9 +49,15 @@ the awareness of the teachers and school to provide better support in English
 learning, or on the other hand they can get more peer support in the learning 
 environment?
 
-Note: This compares the column ReportingCategory, Seal of Biliteracy (Rate) with
-the Regular HS Diploma Graduates(Rate). We can use categorical data analysis 
-methods to determine this.
+Note: This compares the column ReportingCategory, Seal of Biliteracy (Count) 
+with the Regular HS Diploma Graduates (Count). We can use categorical data
+analysis methods to determine this.
+
+Limitations: For data rows with an asterisk (indicating the number of entry is 
+less than 10 to protect the students) should be excluded since it doesn't show
+any true values. Also, we should compare the number of count instead of rate 
+since when we calculate the number of students from the rate, it will show 
+decimals which is impossible for number of counts. 
 */
 
 
@@ -64,4 +76,10 @@ Note: In data set 3, elsch19 there is a column "LANGUAGE" which can be relate
 to the column "ReportingCategory" where the "ReportingCategory" in dataset 
 acgr19 & acgr18 are the reported race/ethnicity and gender. We can use 
 categorical data analysis methods to determine this.
+
+Limitations: For data with column "LANGUAGE" marked as Other non-English 
+languages (Column LC = 99) should be excluded since it doesn't show which type
+of languages they use and can not relate to the column "ReportingCategory". We
+also exclude the data with "Not Reported" in the column "ReportingCategory" as 
+it doesn't have any value for analysis.
 */
