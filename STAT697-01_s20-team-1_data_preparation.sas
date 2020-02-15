@@ -250,7 +250,8 @@ quit;
 
 
 /*data - integrity checks for fileselch - checking for unique id values that are 
-repeated, missing, or correspond to non-schools */
+repeated, missing, or correspond to non-schools to remove any conflicting or 
+incomplete entries*/
 proc sql;
 create table fileselch_bad_unique_ids as
     select
@@ -269,6 +270,7 @@ create table fileselch_bad_unique_ids as
             ) as B
             on A.CDS=B.CDS
         having
+        /*Removing repeated, missing, or non-school cooresponing values*/
             row_count_for_unique_id_value > 1
             or
             missing(CDS)
@@ -315,6 +317,7 @@ create table filesgradaf_bad_unique_ids as
             ) as B
             on A.CDS_CODE=B.CDS_CODE
         having
+        /*Removing repeated, missing, or non-school cooresponing values*/
             row_count_for_unique_id_value > 1
             or
             missing(CDS_CODE)
@@ -335,6 +338,7 @@ create table filesgradaf_bad_unique_ids as
         from
             filesgradaf
         where
+        /*Removing rows where the student count TOTAL is less than 30*/
             TOTAL < 30
             order by CDS_CODE
     ;
