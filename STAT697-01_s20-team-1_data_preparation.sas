@@ -276,7 +276,7 @@ create table fileselch_bad_unique_ids as
             or
             substr(cat(CDS),8,7) in ("0000000","0000001")
     ;
-    /* Comment Needed */
+    /* Removing rows corresponding to District Offices and non-public schools */
     create table fileselch_new as
         select
             *
@@ -288,10 +288,12 @@ create table fileselch_bad_unique_ids as
 quit;
 
 
-/* data - inspection of fileselch*/
-title "Inspect LANGUAGE in fileselsch - Most frequently spoken by ELS/LEP students";
+/* data - inspection of fileselch - checking for frequency of languages spoken 
+by ELS/LEP students (descending) */
+title "Inspect LANGUAGE in fileselsch - languages most frequently spoken by 
+ELS/LEP students";
 PROC FREQ data = fileselch_final order=freq;
-tables LANGUAGE;
+    tables LANGUAGE;
 run;
 title;
 
@@ -317,14 +319,14 @@ create table filesgradaf_bad_unique_ids as
             ) as B
             on A.CDS_CODE=B.CDS_CODE
         having
-        /*Removing repeated, missing, or non-school cooresponing values*/
+        /* Removing repeated, missing, or non-school cooresponing values */
             row_count_for_unique_id_value > 1
             or
             missing(CDS_CODE)
             or
             substr(cat(CDS_CODE),8,7) in ("0000000","0000001")
     ;
-    /* ~~~~comment needed~~~~ */
+    /* Removing rows corresponding to District Offices and non-public schools */
     create table filesgradaf_new as
         select
             *
@@ -333,14 +335,13 @@ create table filesgradaf_bad_unique_ids as
         where
             substr(cat(CDS_CODE),8,7) not in ("0000000","0000001")
     ;
-    /* ~~~~comment needed~~~~ */
+    /* Removing rows where the student count TOTAL is less than 30 */
     create table filesgradaf_new2 as
         select
             *
         from
             filesgradaf
         where
-        /*Removing rows where the student count TOTAL is less than 30*/
             TOTAL < 30
             order by CDS_CODE
     ;
