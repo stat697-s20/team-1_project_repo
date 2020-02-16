@@ -229,7 +229,6 @@ proc sql;
              CharterSchool
         having
             CohortStudents >= 30
-
     /* combining the reporting category together */
     create table cohort1718 as
         select
@@ -277,6 +276,7 @@ create table fileselch_bad_unique_ids as
             or
             substr(cat(CDS),8,7) in ("0000000","0000001")
     ;
+    /* Comment Needed */
     create table fileselch_new as
         select
             *
@@ -324,6 +324,7 @@ create table filesgradaf_bad_unique_ids as
             or
             substr(cat(CDS_CODE),8,7) in ("0000000","0000001")
     ;
+    /* ~~~~comment needed~~~~ */
     create table filesgradaf_new as
         select
             *
@@ -332,6 +333,7 @@ create table filesgradaf_bad_unique_ids as
         where
             substr(cat(CDS_CODE),8,7) not in ("0000000","0000001")
     ;
+    /* ~~~~comment needed~~~~ */
     create table filesgradaf_new2 as
         select
             *
