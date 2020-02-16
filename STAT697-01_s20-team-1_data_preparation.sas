@@ -458,11 +458,35 @@ proc sql;
              coalesce(C.CDS,D.CDS_Code)
              AS CDS_Code
             ,coalesce(A.School,B.School,C.School,D.School) /*Only if we add back 
-            school for D1 and D2*/
+            school for D1 and D2 otherwise only reference C and D*/
              AS School
             ,coalesce(A.District,B.District,C.District,D.District) /*Only if we 
-            add back district for D1 and D2*/
+            add back district for D1 and D2 otherwise only reference C and D*/
              AS District
+            ,coalesce(A.CharterSchool, B.CharterShcool) 
+             AS
+             CharterSchool
+            ,coalesce(A.ReportingCategory, B.ReportingCategory)
+             AS
+             ReportingCategory
+            ,coalesce(A.CohortStudents, B.CohortStudents)
+             AS
+             CohortStudents
+            ,coalesce(A.Regular_HS_Diploma_Graduates__RA, B.Regular_HS_Diploma_Graduates__RA)
+             AS
+             HS_Graduates
+            ,coalesce(A.VAR5, B.VAR5)
+             AS
+             VAR5 
+            ,coalesce(A.Seal_of_Biliteracy__Rate_, B.Seal_of_Biliteracy__Rate_)
+             AS
+             Biliteracy_Rate 
+            ,coalesce(A.GED_Completer__Count_, B.GED_Completer__Count_)
+             AS
+             GED_Count 
+            ,coalesce(A.VAR14, B.VAR14)
+             AS
+             Met_UC_CSU_Grad_Req 
              /*Columns needed from C and D*/
             ,C.KDGN
              AS
@@ -536,37 +560,81 @@ proc sql;
             ,            
         from
             (
-                /*select
+                  select /*
                      cats(County_Code,District_Code,School_Code)
                      AS CDS_Code
-                     length 14
+                     length 14 */
                     ,School_Name
                      AS
                      School
                     ,District_Name
                      AS
                      District
-                    ,Percent_Eligible_FRPM_K12
-                     AS Percent_Eligible_FRPM_K12_1415
+                    ,CharterShcool 
+                     AS
+                     CharterSchool
+                    ,ReportingCategory
+                     AS
+                     ReportingCategory
+                    ,CohortStudents
+                     AS
+                     CohortStudents
+                    ,Regular_HS_Diploma_Graduates__RA
+                     AS
+                     HS_Graduates
+                    ,VAR5
+                     AS
+                     VAR5 /* You may want to rename this */ 
+                    ,Seal_of_Biliteracy__Rate_
+                     AS
+                     Biliteracy_Rate 
+                    ,GED_Completer__Count_
+                     AS
+                     GED_Count 
+                    ,VAR14
+                     AS
+                     Met_UC_CSU_Grad_Req                                        
                 from
-                    cohort1819
+                  */cohort1819 /*Need to reference original dataset 1 here*/
             ) as A
             full join
             (
-                select
+                select/*
                      cats(County_Code,District_Code,School_Code)
                      AS CDS_Code
-                     length 14
+                     length 14 */
                     ,School_Name
                      AS
                      School
                     ,District_Name
                      AS
                      District
-                    ,Percent_Eligible_FRPM_K12
-                     AS Percent_Eligible_FRPM_K12_1516
+                    ,CharterShcool 
+                     AS
+                     CharterSchool
+                    ,ReportingCategory
+                     AS
+                     ReportingCategory
+                    ,CohortStudents
+                     AS
+                     CohortStudents
+                    ,Regular_HS_Diploma_Graduates__RA
+                     AS
+                     HS_Graduates
+                    ,VAR5
+                     AS
+                     VAR5 /* You may want to rename this */ 
+                    ,Seal_of_Biliteracy__Rate_
+                     AS
+                     Biliteracy_Rate 
+                    ,GED_Completer__Count_
+                     AS
+                     GED_Count 
+                    ,VAR14
+                     AS
+                     Met_UC_CSU_Grad_Req                                        
                 from
-                    cohort1718
+                 */ cohort1718 /*Need to reference original dataset 2 here*/
             ) as B
             on A.School = B.School*/
             full join
@@ -676,13 +744,26 @@ proc sql;
 quit;
 
 
+/* Checking for rows with repeating, missing, or cooresponding to 
+non-schools CDS_Codes values and removing rows where Total is less
+than 30 students to increase accuracy*/
+data cde_analytic_file_raw_bad_ids;
+    set cde_analytic_file_raw;
+    by CDS_Code Total;
 
-/* check cde_analytic_file_raw for rows whose unique id values are repeated,
-missing, or correspond to non-schools, where the column CDS_Code is intended
-to be a primary key; after executing this data step, we see that the full joins
-used above introduced duplicates in cde_analytic_file_raw, which need to be
-mitigated before proceeding */
-
+    if
+        first.CDS_Code*last.CDS_Code = 0
+        or
+        missing(CDS_Code)
+        or
+        substr(cat(CDS),8,7) not in ("0000000","0000001")
+        or
+        Total < 30
+    then
+        do;
+            output;
+        end;
+run;
 
 /* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
