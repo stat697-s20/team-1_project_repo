@@ -458,10 +458,10 @@ proc sql;
              coalesce(C.CDS,D.CDS_Code)
              AS CDS_Code
             ,coalesce(A.School,B.School,C.School,D.School) /*Only if we add back 
-            school for D1 and D2*/
+            school for D1 and D2 otherwise only reference C and D*/
              AS School
             ,coalesce(A.District,B.District,C.District,D.District) /*Only if we 
-            add back district for D1 and D2*/
+            add back district for D1 and D2 otherwise only reference C and D*/
              AS District
             ,coalesce(A.CharterSchool, B.CharterShcool) 
              AS
@@ -560,35 +560,79 @@ proc sql;
             ,            
         from
             (
-                /*select
+                  select /*
                      cats(County_Code,District_Code,School_Code)
                      AS CDS_Code
-                     length 14
+                     length 14 */
                     ,School_Name
                      AS
                      School
                     ,District_Name
                      AS
                      District
-                    ,Percent_Eligible_FRPM_K12
-                     AS Percent_Eligible_FRPM_K12_1415
+                    ,CharterShcool 
+                     AS
+                     CharterSchool
+                    ,ReportingCategory
+                     AS
+                     ReportingCategory
+                    ,CohortStudents
+                     AS
+                     CohortStudents
+                    ,Regular_HS_Diploma_Graduates__RA
+                     AS
+                     HS_Graduates
+                    ,VAR5
+                     AS
+                     VAR5 /* You may want to rename this */ 
+                    ,Seal_of_Biliteracy__Rate_
+                     AS
+                     Biliteracy_Rate 
+                    ,GED_Completer__Count_
+                     AS
+                     GED_Count 
+                    ,VAR14
+                     AS
+                     Met_UC_CSU_Grad_Req                                        
                 from
                   */cohort1819 /*Need to reference original dataset 1 here*/
             ) as A
             full join
             (
-              /*select
+                select/*
                      cats(County_Code,District_Code,School_Code)
                      AS CDS_Code
-                     length 14
+                     length 14 */
                     ,School_Name
                      AS
                      School
                     ,District_Name
                      AS
                      District
-                    ,Percent_Eligible_FRPM_K12
-                     AS Percent_Eligible_FRPM_K12_1516
+                    ,CharterShcool 
+                     AS
+                     CharterSchool
+                    ,ReportingCategory
+                     AS
+                     ReportingCategory
+                    ,CohortStudents
+                     AS
+                     CohortStudents
+                    ,Regular_HS_Diploma_Graduates__RA
+                     AS
+                     HS_Graduates
+                    ,VAR5
+                     AS
+                     VAR5 /* You may want to rename this */ 
+                    ,Seal_of_Biliteracy__Rate_
+                     AS
+                     Biliteracy_Rate 
+                    ,GED_Completer__Count_
+                     AS
+                     GED_Count 
+                    ,VAR14
+                     AS
+                     Met_UC_CSU_Grad_Req                                        
                 from
                  */ cohort1718 /*Need to reference original dataset 2 here*/
             ) as B
