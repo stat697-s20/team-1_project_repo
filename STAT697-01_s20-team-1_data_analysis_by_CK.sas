@@ -37,6 +37,21 @@ decimals which is impossible for number of counts.
 */
 
 
+proc sql
+    select
+        CharterSchool
+        , Met_UC/CSU_Grad_Reqs_(Count)
+        , CohortStudents
+    from
+        cde_analytic_file_raw
+    where
+        CharterSchool = YES
+        CohortStudents > 30
+    order by
+        Met_UC/CSU_Grad_Reqs_(Count) desc
+quit;
+
+
 *******************************************************************************;
 * Research Question 2 Analysis Starting Point;
 *******************************************************************************;
@@ -61,6 +76,23 @@ decimals which is impossible for number of counts.
 */
 
 
+proc sql
+        select
+            ReportingCategory
+            , CohortStudents
+            , Seal_of_Biliteracy_(Count)
+            , Regular_HS_Diploma_Graduates_(Count)
+        from
+            cde_analytic_file_raw
+        where
+            CohortStudents > 30
+            ReportingCategory ^= Not_Reported
+        having
+            Seal_of_Biliteracy_(Count) > 30
+
+quit;
+        
+
 *******************************************************************************;
 * Research Question 3 Analysis Starting Point;
 *******************************************************************************;
@@ -83,3 +115,35 @@ of languages they use and can not relate to the column "ReportingCategory". We
 also exclude the data with "Not Reported" in the column "ReportingCategory" as 
 it doesn't have any value for analysis.
 */
+
+
+proc sql
+    create table language_table as
+        (
+            select  
+            LC
+            , LANGUAGE
+            , KDGN
+            , GR_1
+            , GR_2
+            , GR_3
+            , GR_4
+            , GR_5
+            , GR_6
+            , GR_7
+            , GR_8
+            , GR_9
+            , GR_10
+            , GR_11
+            , GR_12
+            , UNGR
+            , TOTAL_EL
+            from
+                cde_analytic_file_raw
+            where
+                LC ^= 99
+                CohortStudets > 30
+                ReportingCategory ^= Not_Reported
+            having
+                TOTAL_EL > 10
+quit;
