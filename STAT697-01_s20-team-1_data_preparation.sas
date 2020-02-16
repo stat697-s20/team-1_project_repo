@@ -463,6 +463,30 @@ proc sql;
             ,coalesce(A.District,B.District,C.District,D.District) /*Only if we 
             add back district for D1 and D2*/
              AS District
+            ,coalesce(A.CharterSchool, B.CharterShcool) 
+             AS
+             CharterSchool
+            ,coalesce(A.ReportingCategory, B.ReportingCategory)
+             AS
+             ReportingCategory
+            ,coalesce(A.CohortStudents, B.CohortStudents)
+             AS
+             CohortStudents
+            ,coalesce(A.Regular_HS_Diploma_Graduates__RA, B.Regular_HS_Diploma_Graduates__RA)
+             AS
+             HS_Graduates
+            ,coalesce(A.VAR5, B.VAR5)
+             AS
+             VAR5 
+            ,coalesce(A.Seal_of_Biliteracy__Rate_, B.Seal_of_Biliteracy__Rate_)
+             AS
+             Biliteracy_Rate 
+            ,coalesce(A.GED_Completer__Count_, B.GED_Completer__Count_)
+             AS
+             GED_Count 
+            ,coalesce(A.VAR14, B.VAR14)
+             AS
+             Met_UC_CSU_Grad_Req 
              /*Columns needed from C and D*/
             ,C.KDGN
              AS
@@ -549,11 +573,11 @@ proc sql;
                     ,Percent_Eligible_FRPM_K12
                      AS Percent_Eligible_FRPM_K12_1415
                 from
-                    cohort1819
+                  */cohort1819 /*Need to reference original dataset 1 here*/
             ) as A
             full join
             (
-                select
+              /*select
                      cats(County_Code,District_Code,School_Code)
                      AS CDS_Code
                      length 14
@@ -566,7 +590,7 @@ proc sql;
                     ,Percent_Eligible_FRPM_K12
                      AS Percent_Eligible_FRPM_K12_1516
                 from
-                    cohort1718
+                 */ cohort1718 /*Need to reference original dataset 2 here*/
             ) as B
             on A.School = B.School*/
             full join
