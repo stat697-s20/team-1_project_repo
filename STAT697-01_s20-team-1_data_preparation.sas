@@ -457,11 +457,9 @@ proc sql;
         select
              coalesce(C.CDS,D.CDS_Code)
              AS CDS_Code
-            ,coalesce(A.School,B.School,C.School,D.School) /*Only if we add back 
-            school for D1 and D2 otherwise only reference C and D*/
+            ,coalesce(A.School,B.School,C.School,D.School)
              AS School
-            ,coalesce(A.District,B.District,C.District,D.District) /*Only if we 
-            add back district for D1 and D2 otherwise only reference C and D*/
+            ,coalesce(A.District,B.District,C.District,D.District)
              AS District
             ,coalesce(A.CharterSchool, B.CharterShcool) 
              AS
@@ -477,7 +475,7 @@ proc sql;
              HS_Graduates
             ,coalesce(A.VAR5, B.VAR5)
              AS
-             VAR5 
+             CountyName 
             ,coalesce(A.Seal_of_Biliteracy__Rate_, B.Seal_of_Biliteracy__Rate_)
              AS
              Biliteracy_Rate 
@@ -489,248 +487,241 @@ proc sql;
              Met_UC_CSU_Grad_Req 
              /*Columns needed from C and D*/
             ,C.KDGN
-             AS
-             Kindergarten
+            AS
+            Kindergarten
             ,C.GR_1
-             AS 
-             Grade_1
+            AS 
+            Grade_1
             ,C.GR_2
-             AS 
-             Grade_2
+            AS 
+            Grade_2
             ,C.GR_3
-             AS 
-             Grade_3
+            AS 
+            Grade_3
             ,C.GR_4
-             AS 
-             Grade_4
+            AS 
+            Grade_4
             ,C.GR_5
-             AS 
-             Grade_5
+            AS 
+            Grade_5
             ,C.GR_6
-             AS 
-             Grade_6
+            AS 
+            Grade_6
             ,C.GR_7
-             AS 
-             Grade_7
+            AS 
+            Grade_7
             ,C.GR_8
-             AS 
-             Grade_8
+            AS 
+            Grade_8
             ,C.GR_9
-             AS 
-             Grade_9
+            AS 
+            Grade_9
             ,C.GR_10
-             AS 
-             Grade_10
+            AS 
+            Grade_10
             ,C.GR_11
-             AS 
-             Grade_11
+            AS 
+            Grade_11
             ,C.GR_12
-             AS 
-             Grade_12
+            AS 
+            Grade_12
             ,C.UNGR
-             AS 
-             Undergrad 
+            AS 
+            Undergrad 
             ,C.TOTAL_EL
-             AS 
-             Total_EL  
+            AS 
+            Total_EL  
             ,D.HISPANIC
-             AS 
-             Hispanic
+            AS 
+            Hispanic
             ,D.AM_IND
-             AS 
-             American_Indian
+            AS 
+            American_Indian
             ,D.ASIAN
-             AS 
-             Asian
+            AS 
+            Asian
             ,D.PAC_ISLD
-             AS 
-             Pacific_Ilander
+            AS 
+            Pacific_Ilander
             ,D.FILIPINO
-             AS 
-             Filipino
+            AS 
+            Filipino
             ,D.AFRICAN_AM
-             AS 
-             African_American
+            AS 
+            African_American
             ,D.WHITE
-             AS 
-             White 
+            AS 
+            White 
             ,D.TOTAL
-             AS 
-             Total 
+            AS 
+            Total 
             ,            
         from
             (
-                  select /*
-                     cats(County_Code,District_Code,School_Code)
-                     AS CDS_Code
-                     length 14 */
+                select 
                     ,School_Name
-                     AS
-                     School
+                    AS
+                    School
                     ,District_Name
-                     AS
-                     District
+                    AS
+                    District
                     ,CharterShcool 
-                     AS
-                     CharterSchool
+                    AS
+                    CharterSchool
                     ,ReportingCategory
-                     AS
-                     ReportingCategory
+                    AS
+                    ReportingCategory
                     ,CohortStudents
-                     AS
-                     CohortStudents
+                    AS
+                    CohortStudents
                     ,Regular_HS_Diploma_Graduates__RA
-                     AS
-                     HS_Graduates
+                    AS
+                    HS_Graduates
                     ,VAR5
-                     AS
-                     VAR5 /* You may want to rename this */ 
+                    AS
+                    CountyName 
                     ,Seal_of_Biliteracy__Rate_
-                     AS
-                     Biliteracy_Rate 
+                    AS
+                    Biliteracy_Rate 
                     ,GED_Completer__Count_
-                     AS
-                     GED_Count 
+                    AS
+                    GED_Count 
                     ,VAR14
-                     AS
-                     Met_UC_CSU_Grad_Req                                        
+                    AS
+                    Met_UC_CSU_Grad_Req                                        
                 from
-                  */cohort1819 /*Need to reference original dataset 1 here*/
+                  cohort1819 /* Reference Data Set 2 */
             ) as A
             full join
             (
-                select/*
-                     cats(County_Code,District_Code,School_Code)
-                     AS CDS_Code
-                     length 14 */
+                select
                     ,School_Name
-                     AS
-                     School
+                    AS
+                    School
                     ,District_Name
-                     AS
-                     District
+                    AS
+                    District
                     ,CharterShcool 
-                     AS
-                     CharterSchool
+                    AS
+                    CharterSchool
                     ,ReportingCategory
-                     AS
-                     ReportingCategory
+                    AS
+                    ReportingCategory
                     ,CohortStudents
-                     AS
-                     CohortStudents
+                    AS
+                    CohortStudents
                     ,Regular_HS_Diploma_Graduates__RA
-                     AS
-                     HS_Graduates
+                    AS
+                    HS_Graduates
                     ,VAR5
-                     AS
-                     VAR5 /* You may want to rename this */ 
+                    AS
+                    CountyName
                     ,Seal_of_Biliteracy__Rate_
-                     AS
-                     Biliteracy_Rate 
+                    AS
+                    Biliteracy_Rate 
                     ,GED_Completer__Count_
-                     AS
-                     GED_Count 
+                    AS
+                    GED_Count 
                     ,VAR14
                      AS
                      Met_UC_CSU_Grad_Req                                        
                 from
-                 */ cohort1718 /*Need to reference original dataset 2 here*/
+                    cohort1718 /*Reference Data Set 2*/
             ) as B
             on A.School = B.School*/
             full join
             (
                 select
-                     CDS
-                     AS CDS_Code
+                    CDS
+                    AS CDS_Code
                     ,SCHOOL
-                     AS School
+                    AS School
                     ,DISTRICT
-                     AS
-                     District
+                    AS
+                    District
                     ,LANGUAGE
-                     AS
-                     Language
+                    AS
+                    Language
                     ,KDGN
-                     AS
-                     Kindergarten
+                    AS
+                    Kindergarten
                     ,GR_1
-                     AS 
-                     Grade_1
+                    AS 
+                    Grade_1
                     ,GR_2
-                     AS 
-                     Grade_2
+                    AS 
+                    Grade_2
                     ,GR_3
-                     AS 
-                     Grade_3
+                    AS 
+                    Grade_3
                     ,GR_4
-                     AS 
-                     Grade_4
+                    AS 
+                    Grade_4
                     ,GR_5
-                     AS 
-                     Grade_5
+                    AS 
+                    Grade_5
                     ,GR_6
-                     AS 
-                     Grade_6
+                    AS 
+                    Grade_6
                     ,GR_7
-                     AS 
-                     Grade_7
+                    AS 
+                    Grade_7
                     ,GR_8
-                     AS 
-                     Grade_8
+                    AS 
+                    Grade_8
                     ,GR_9
-                     AS 
-                     Grade_9
+                    AS 
+                    Grade_9
                     ,GR_10
-                     AS 
-                     Grade_10
+                    AS 
+                    Grade_10
                     ,GR_11
-                     AS 
-                     Grade_11
+                    AS 
+                    Grade_11
                     ,GR_12
-                     AS 
-                     Grade_12
+                    AS 
+                    Grade_12
                     ,UNGR
-                     AS 
-                     Undergrad 
+                    AS 
+                    Undergrad 
                     ,TOTAL_EL
-                     AS 
-                     Total_EL                                     
+                    AS 
+                    Total_EL                                     
                 from
                     fileselch
             ) as C
-            on A.School = C.School /*only school name in common for these data 
-            sets */
+            on A.School = C.School 
             full join
             (
                 select
-                     cds
-                     AS CDS_Code
+                    cds
+                    AS CDS_Code
                     ,sname
-                     AS School
+                    AS School
                     ,dname
-                     AS
-                     District
+                    AS
+                    District
                     ,HISPANIC
-                     AS 
-                     Hispanic
+                    AS 
+                    Hispanic
                     ,AM_IND
-                     AS 
-                     American_Indian
+                    AS 
+                    American_Indian
                     ,ASIAN
-                     AS 
-                     Asian
+                    AS 
+                    Asian
                     ,PAC_ISLD
-                     AS 
-                     Pacific_Ilander
+                    AS 
+                    Pacific_Ilander
                     ,FILIPINO
-                     AS 
-                     Filipino
+                    AS 
+                    Filipino
                     ,AFRICAN_AM
-                     AS 
-                     African_American
+                    AS 
+                    African_American
                     ,WHITE
-                     AS 
-                     White 
+                    AS 
+                    White 
                    ,TOTAL
                     AS 
                     Total                     
@@ -739,7 +730,7 @@ proc sql;
             ) as D
             on C.CDS_Code = D.CDS_Code
         order by
-            CDS_Code /*will need to change this portion to fit our dataset*/ 
+            CDS_Code
     ;
 quit;
 
@@ -764,6 +755,7 @@ data cde_analytic_file_raw_bad_ids;
             output;
         end;
 run;
+
 
 /* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
