@@ -744,13 +744,26 @@ proc sql;
 quit;
 
 
+/* Checking for rows with repeating, missing, or cooresponding to 
+non-schools CDS_Codes values and removing rows where Total is less
+than 30 students to increase accuracy*/
+data cde_analytic_file_raw_bad_ids;
+    set cde_analytic_file_raw;
+    by CDS_Code Total;
 
-/* check cde_analytic_file_raw for rows whose unique id values are repeated,
-missing, or correspond to non-schools, where the column CDS_Code is intended
-to be a primary key; after executing this data step, we see that the full joins
-used above introduced duplicates in cde_analytic_file_raw, which need to be
-mitigated before proceeding */
-
+    if
+        first.CDS_Code*last.CDS_Code = 0
+        or
+        missing(CDS_Code)
+        or
+        substr(cat(CDS),8,7) not in ("0000000","0000001")
+        or
+        Total < 30
+    then
+        do;
+            output;
+        end;
+run;
 
 /* Print the names of all datasets/tables created above by querying the
 "dictionary tables" the SAS kernel maintains for the default "Work" library */
