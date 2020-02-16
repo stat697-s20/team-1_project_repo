@@ -38,7 +38,7 @@ decimals which is impossible for number of counts.
 
 
 *******************************************************************************;
-* Research Question Analysis Starting Point;
+* Research Question 2 Analysis Starting Point;
 *******************************************************************************;
 /*
 Question 2 of 3: Will schools with more students with bilaterally helps the 
@@ -62,7 +62,7 @@ decimals which is impossible for number of counts.
 
 
 *******************************************************************************;
-* Research Question Analysis Starting Point;
+* Research Question 3 Analysis Starting Point;
 *******************************************************************************;
 /*
 Question 3 of 3: Will students with first language other than English affect 
