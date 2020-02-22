@@ -174,19 +174,19 @@ Cohort Students less than 30 to improve accuracy*/
 proc sql;
     create table cohort1819_edited_dup1 as
         select
-             CharterSchool
-             ,DASS
-             ,ReportingCategory
-             ,CohortStudents
-             ,Regular_HS_Diploma_Graduates_(Count)
-             ,Met_UC/CSU_Grad_Reqs_(Count)
-             ,Seal_of_Biliteracy_(Count)
+            CharterSchool
+            ,DASS
+            ,ReportingCategory
+            ,CohortStudents
+            ,Regular_HS_Diploma_Graduates_(Count)
+            ,Met_UC/CSU_Grad_Reqs_(Count)
+            ,Seal_of_Biliteracy_(Count)
         from
             cohort1819_edited
         where
             not(missing(CohortStudents))
         group by
-             CharterSchool
+            CharterSchool
         having
             CohortStudents >= 30
     ;
@@ -214,19 +214,19 @@ Cohort Students less than 30 to improve accuracy*/
 proc sql;
     create table cohort1718_edited_dup1 as
         select
-             CharterSchool
-             ,DASS
-             ,ReportingCategory
-             ,CohortStudents
-             ,Regular_HS_Diploma_Graduates_(Count)
-             ,Met_UC/CSU_Grad_Reqs_(Count)
-             ,Seal_of_Biliteracy_(Count)
+            CharterSchool
+            ,DASS
+            ,ReportingCategory
+            ,CohortStudents
+            ,Regular_HS_Diploma_Graduates_(Count)
+            ,Met_UC/CSU_Grad_Reqs_(Count)
+            ,Seal_of_Biliteracy_(Count)
         from
             cohort1819_edited
         where
             not(missing(CohortStudents))
         group by
-             CharterSchool
+            CharterSchool
         having
             CohortStudents >= 30
     /* combining the reporting category together */
@@ -263,9 +263,9 @@ create table fileselch_bad_unique_ids as
                 CDS
                 ,count(*) as row_count_for_unique_id_value
             from
-                    fileselch
+                fileselch
                 group by
-                    CDS
+                CDS
             ) as B
             on A.CDS=B.CDS
         having
@@ -313,9 +313,9 @@ create table filesgradaf_bad_unique_ids as
                 CDS_CODE
                 ,count(*) as row_count_for_unique_id_value
             from
-                    filesgradaf
+                filesgradaf
                 group by
-                    CDS_CODE
+                CDS_CODE
             ) as B
             on A.CDS_CODE=B.CDS_CODE
         having
@@ -354,10 +354,10 @@ title "Inspect TOTAL students in filesgradaf - TOTAL Var";
 PROC SQL;
     select
         min(TOTAL) as min
-       ,max(TOTAL) as max
-       ,mean(TOTAL) as mean
-       ,median(TOTAL) as median
-       ,nmiss(TOTAL) as miss
+        ,max(TOTAL) as max
+        ,mean(TOTAL) as mean
+        ,median(TOTAL) as median
+        ,nmiss(TOTAL) as miss
     from
         filesgradaf_final
     ;
@@ -368,10 +368,10 @@ title "Inspect TOTAL students in filesgradaf - HISPANIC";
 PROC SQL;
     select
         min(HISPANIC) as min
-       ,max(HISPANIC) as max
-       ,mean(HISPANIC) as mean
-       ,median(HISPANIC) as median
-       ,nmiss(HISPANIC) as miss
+        ,max(HISPANIC) as max
+        ,mean(HISPANIC) as mean
+        ,median(HISPANIC) as median
+        ,nmiss(HISPANIC) as miss
     from
         filesgradaf_final
     ;
@@ -382,10 +382,10 @@ title "Inspect TOTAL students in filesgradaf - AM_IND";
 PROC SQL;
     select
         min(AM_IND) as min
-       ,max(AM_IND) as max
-       ,mean(AM_IND) as mean
-       ,median(AM_IND) as median
-       ,nmiss(AM_IND) as miss
+        ,max(AM_IND) as max
+        ,mean(AM_IND) as mean
+        ,median(AM_IND) as median
+        ,nmiss(AM_IND) as miss
     from
         filesgradaf_final
     ;
@@ -396,10 +396,10 @@ title "Inspect TOTAL students in filesgradaf - ASIAN";
 PROC SQL;
     select
         min(ASIAN) as min
-       ,max(ASIAN) as max
-       ,mean(ASIAN) as mean
-       ,median(ASIAN) as median
-       ,nmiss(ASIAN) as miss
+        ,max(ASIAN) as max
+        ,mean(ASIAN) as mean
+        ,median(ASIAN) as median
+        ,nmiss(ASIAN) as miss
     from
         filesgradaf_final
     ;
@@ -410,10 +410,10 @@ title "Inspect TOTAL students in filesgradaf - PAC_ISLD";
 PROC SQL;
     select
         min(PAC_ISLD) as min
-       ,max(PAC_ISLD) as max
-       ,mean(PAC_ISLD) as mean
-       ,median(PAC_ISLD) as median
-       ,nmiss(PAC_ISLD) as miss
+        ,max(PAC_ISLD) as max
+        ,mean(PAC_ISLD) as mean
+        ,median(PAC_ISLD) as median
+        ,nmiss(PAC_ISLD) as miss
     from
         filesgradaf_final
     ;
@@ -424,10 +424,10 @@ title "Inspect TOTAL students in filesgradaf - AFRICAN_AM";
 PROC SQL;
     select
         min(AFRICAN_AM) as min
-       ,max(AFRICAN_AM) as max
-       ,mean(AFRICAN_AM) as mean
-       ,median(AFRICAN_AM) as median
-       ,nmiss(AFRICAN_AM) as miss
+        ,max(AFRICAN_AM) as max
+        ,mean(AFRICAN_AM) as mean
+        ,median(AFRICAN_AM) as median
+        ,nmiss(AFRICAN_AM) as miss
     from
         filesgradaf_final
     ;
@@ -438,10 +438,10 @@ title "Inspect TOTAL students in filesgradaf - WHITE";
 PROC SQL;
     select
         min(WHITE) as min
-       ,max(WHITE) as max
-       ,mean(WHITE) as mean
-       ,median(WHITE) as median
-       ,nmiss(WHITE) as miss
+        ,max(WHITE) as max
+        ,mean(WHITE) as mean
+        ,median(WHITE) as median
+        ,nmiss(WHITE) as miss
     from
         filesgradaf_final
     ;
@@ -455,36 +455,36 @@ research questions/objectives in data-analysis files */
 proc sql;
     create table cde_analytic_file_raw as
         select
-             coalesce(C.CDS,D.CDS_Code)
-             AS CDS_Code
+            coalesce(C.CDS,D.CDS_Code)
+            AS CDS_Code
             ,coalesce(A.School,B.School,C.School,D.School)
-             AS School
+            AS School
             ,coalesce(A.District,B.District,C.District,D.District)
-             AS District
+            AS District
             ,coalesce(A.CharterSchool, B.CharterShcool) 
-             AS
-             CharterSchool
+            AS
+            CharterSchool
             ,coalesce(A.ReportingCategory, B.ReportingCategory)
-             AS
-             ReportingCategory
+            AS
+            ReportingCategory
             ,coalesce(A.CohortStudents, B.CohortStudents)
-             AS
-             CohortStudents
+            AS
+            CohortStudents
             ,coalesce(A.Regular_HS_Diploma_Graduates__RA, B.Regular_HS_Diploma_Graduates__RA)
-             AS
-             HS_Graduates
+            AS
+            HS_Graduates
             ,coalesce(A.VAR5, B.VAR5)
-             AS
-             CountyName 
+            AS
+            CountyName 
             ,coalesce(A.Seal_of_Biliteracy__Rate_, B.Seal_of_Biliteracy__Rate_)
-             AS
-             Biliteracy_Rate 
+            AS
+            Biliteracy_Rate 
             ,coalesce(A.GED_Completer__Count_, B.GED_Completer__Count_)
-             AS
-             GED_Count 
+            AS
+            GED_Count 
             ,coalesce(A.VAR14, B.VAR14)
-             AS
-             Met_UC_CSU_Grad_Req 
+            AS
+            Met_UC_CSU_Grad_Req 
              /*Columns needed from C and D*/
             ,C.KDGN
             AS
