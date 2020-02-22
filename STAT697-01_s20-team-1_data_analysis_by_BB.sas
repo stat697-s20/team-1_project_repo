@@ -23,12 +23,26 @@ School.
 */
 
 
+proc sql
+    select 
+        CharterSchool
+       ,Met_UC_CSU_Grad_Req
+       ,Total_EL
+    from
+        cde_analytic_file_raw
+    where
+        CohortStudents > 30
+    order by
+        Met_UC_CSU_Grad_Req
+quit;
+
+
 *******************************************************************************;
 * Research Question Analysis Starting Point;
 *******************************************************************************;
 /*
-Question 2 of 4: What factors effect ELs and LEP students meeting admission 
-requirements for UC/CSU?
+Question 2 of 4: What are the odds of a male student meeting the admissions
+requirements for a UC/CSU compared to a female student.
 
 Rationale: Having an understadnign of how the various factors effect ELs and
 LEP Students could help schools and parents determine which type of learning
@@ -40,22 +54,61 @@ School (district, county, etc).
 */
 
 
+proc sql
+    select 
+        CharterSchool
+       ,ReportingCategory
+       ,Met_UC_CSU_Grad_Req       
+    from
+        cde_analytic_file_raw
+    where
+        CohortStudents > 30
+        ReportingCategory = (GM,GF)
+    order by
+        Met_UC_CSU_Grad_Req
+quit;
+
+
 *******************************************************************************;
 * Research Question Analysis Starting Point;
 *******************************************************************************;
 /*
-Question 3 of 4: What are the odds that a specified student ethnicity will meet 
-admission requirements compared to a 'White, not Hispanic' student?
+Question 3 of 4: What are the odds that a Hispanic Student will meet 
+admission requirements attending a charter school compared to a 'White, not 
+Hispanic' student?
 
 Rationale: From the odds we can gain a better perspective on the success rates
-of underserved/ underrepresented student populations compared to their 'White, 
-not Hispanic' peers, and learn which student population need the most additional
-support.
+of an underserved/ underrepresented student populations compared to their 
+'White, not Hispanic' peers.
 
 Note: This compares the odds ratio of Met UC/CSU Grad Req' (Rate) of 'White, not 
-Hispanic' with the odds ratio of students of the other ethnic origins through
-categorical analysis methods.
+Hispanic' with the odds ratio of Hispanic students through categorical analysis 
+methods.
 */
+
+
+proc sql
+    select 
+        CharterSchool
+       ,ReportingCategory
+       ,CohortStudents
+       ,Met_UC_CSU_Grad_Req       
+    from
+        cde_analytic_file_raw
+    where
+        CohortStudents > 30
+        ReportingCategory = (RW,RH)
+    order by
+        Met_UC_CSU_Grad_Req
+quit;
+
+
+proc logistic data=cde_analytic_file_raw;
+    class CharterSchool (ref='YES') / param=reference;
+    freq count;
+    model type(ref='RW')=ReportingCategory / link=glogit;
+    output out=type_pred PREDPROBS=YES;
+run;
 
 
 *******************************************************************************;
@@ -72,3 +125,19 @@ descrpencies in support impacts this student population.
 Note: This compares the odds ratio of ELs/LEP students with the odds ratio of 
 students of who are not ELs/LEP students through categorical analysis methods.
 */
+
+
+proc sql
+    select 
+        CharterSchool
+       ,Met_UC_CSU_Grad_Req
+       ,LC
+       ,Total_EL
+    from
+        cde_analytic_file_raw
+    where
+        CohortStudents > 30
+        LC > 0
+    order by
+        Met_UC_CSU_Grad_Req
+quit;
