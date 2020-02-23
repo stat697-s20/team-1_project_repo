@@ -175,12 +175,12 @@ proc sql;
     create table cohort1819_edited_dup1 as
         select
             CharterSchool
-            ,DASS
-            ,ReportingCategory
-            ,CohortStudents
-            ,Regular_HS_Diploma_Graduates_(Count)
-            ,Met_UC/CSU_Grad_Reqs_(Count)
-            ,Seal_of_Biliteracy_(Count)
+           ,DASS
+           ,ReportingCategory
+           ,CohortStudents
+           ,Regular_HS_Diploma_Graduates_(Count)
+           ,Met_UC/CSU_Grad_Reqs_(Count)
+           ,Seal_of_Biliteracy_(Count)
         from
             cohort1819_edited
         where
@@ -194,11 +194,11 @@ proc sql;
     create table cohort1819 as
         select
             CharterSchool
-            ,ReportingCategory
-            ,sum(CohortStudents)
-            ,sum(Regular_HS_Diploma_Graduates_(Count))
-            ,sum(Met_UC/CSU_Grad_Reqs_(Count))
-            ,sum(Seal_of_Biliteracy_(Count))
+           ,ReportingCategory
+           ,sum(CohortStudents)
+           ,sum(Regular_HS_Diploma_Graduates_(Count))
+           ,sum(Met_UC/CSU_Grad_Reqs_(Count))
+           ,sum(Seal_of_Biliteracy_(Count))
         from
             cohort1819_edited_dup1
         group by 
@@ -215,12 +215,12 @@ proc sql;
     create table cohort1718_edited_dup1 as
         select
             CharterSchool
-            ,DASS
-            ,ReportingCategory
-            ,CohortStudents
-            ,Regular_HS_Diploma_Graduates_(Count)
-            ,Met_UC/CSU_Grad_Reqs_(Count)
-            ,Seal_of_Biliteracy_(Count)
+           ,DASS
+           ,ReportingCategory
+           ,CohortStudents
+           ,Regular_HS_Diploma_Graduates_(Count)
+           ,Met_UC/CSU_Grad_Reqs_(Count)
+           ,Seal_of_Biliteracy_(Count)
         from
             cohort1819_edited
         where
@@ -233,11 +233,11 @@ proc sql;
     create table cohort1718 as
         select
             CharterSchool
-            ,ReportingCategory
-            ,sum(CohortStudents)
-            ,sum(Regular_HS_Diploma_Graduates_(Count))
-            ,sum(Met_UC/CSU_Grad_Reqs_(Count))
-            ,sum(Seal_of_Biliteracy_(Count))
+           ,ReportingCategory
+           ,sum(CohortStudents)
+           ,sum(Regular_HS_Diploma_Graduates_(Count))
+           ,sum(Met_UC/CSU_Grad_Reqs_(Count))
+           ,sum(Seal_of_Biliteracy_(Count))
         from
             cohort1819_edited_dup1
         group by 
@@ -261,7 +261,7 @@ create table fileselch_bad_unique_ids as
         (
             select
                 CDS
-                ,count(*) as row_count_for_unique_id_value
+               ,count(*) as row_count_for_unique_id_value
             from
                 fileselch
                 group by
@@ -288,16 +288,6 @@ create table fileselch_bad_unique_ids as
 quit;
 
 
-/* data - inspection of fileselch - checking for frequency of languages spoken 
-by ELS/LEP students (descending) */
-title "Inspect LANGUAGE in fileselsch - languages most frequently spoken by 
-ELS/LEP students";
-PROC FREQ data = fileselch_final order=freq;
-    tables LANGUAGE;
-run;
-title;
-
-
 /*data - integrity checks for filesgradaf - checking for unique id values that are 
 repeated, missing, or correspond to non-schools and removing rows where TOTAL is 
 less than 30 to increase accuracy*/
@@ -311,7 +301,7 @@ create table filesgradaf_bad_unique_ids as
         (
             select
                 CDS_CODE
-                ,count(*) as row_count_for_unique_id_value
+               ,count(*) as row_count_for_unique_id_value
             from
                 filesgradaf
                 group by
@@ -348,107 +338,6 @@ create table filesgradaf_bad_unique_ids as
 quit;
 
 
-/* data - inspection step for filesgradaf - to look at qualities of 
-ethnicity variables*/ */ 
-title "Inspect TOTAL students in filesgradaf - TOTAL Var";
-PROC SQL;
-    select
-        min(TOTAL) as min
-        ,max(TOTAL) as max
-        ,mean(TOTAL) as mean
-        ,median(TOTAL) as median
-        ,nmiss(TOTAL) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-title "Inspect TOTAL students in filesgradaf - HISPANIC";
-PROC SQL;
-    select
-        min(HISPANIC) as min
-        ,max(HISPANIC) as max
-        ,mean(HISPANIC) as mean
-        ,median(HISPANIC) as median
-        ,nmiss(HISPANIC) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-title "Inspect TOTAL students in filesgradaf - AM_IND";
-PROC SQL;
-    select
-        min(AM_IND) as min
-        ,max(AM_IND) as max
-        ,mean(AM_IND) as mean
-        ,median(AM_IND) as median
-        ,nmiss(AM_IND) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-title "Inspect TOTAL students in filesgradaf - ASIAN";
-PROC SQL;
-    select
-        min(ASIAN) as min
-        ,max(ASIAN) as max
-        ,mean(ASIAN) as mean
-        ,median(ASIAN) as median
-        ,nmiss(ASIAN) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-title "Inspect TOTAL students in filesgradaf - PAC_ISLD";
-PROC SQL;
-    select
-        min(PAC_ISLD) as min
-        ,max(PAC_ISLD) as max
-        ,mean(PAC_ISLD) as mean
-        ,median(PAC_ISLD) as median
-        ,nmiss(PAC_ISLD) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-title "Inspect TOTAL students in filesgradaf - AFRICAN_AM";
-PROC SQL;
-    select
-        min(AFRICAN_AM) as min
-        ,max(AFRICAN_AM) as max
-        ,mean(AFRICAN_AM) as mean
-        ,median(AFRICAN_AM) as median
-        ,nmiss(AFRICAN_AM) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-title "Inspect TOTAL students in filesgradaf - WHITE";
-PROC SQL;
-    select
-        min(WHITE) as min
-        ,max(WHITE) as max
-        ,mean(WHITE) as mean
-        ,median(WHITE) as median
-        ,nmiss(WHITE) as miss
-    from
-        filesgradaf_final
-    ;
-quit;
-title;
-
-
 /* build analytic dataset from raw datasets imported above, including only the
 columns and minimal data-cleaning/transformation needed to address each
 research questions/objectives in data-analysis files */
@@ -457,176 +346,180 @@ proc sql;
         select
             coalesce(C.CDS,D.CDS_Code)
             AS CDS_Code
-            ,coalesce(A.School,B.School,C.School,D.School)
+           ,coalesce(A.School,B.School,C.School,D.School)
             AS School
-            ,coalesce(A.District,B.District,C.District,D.District)
+           ,coalesce(A.District,B.District,C.District,D.District)
             AS District
-            ,coalesce(A.CharterSchool, B.CharterShcool) 
+           ,coalesce(A.CharterSchool, B.CharterShcool) 
             AS
             CharterSchool
-            ,coalesce(A.ReportingCategory, B.ReportingCategory)
+           ,coalesce(A.ReportingCategory, B.ReportingCategory)
             AS
             ReportingCategory
-            ,coalesce(A.CohortStudents, B.CohortStudents)
+           ,coalesce(A.CohortStudents, B.CohortStudents)
             AS
             CohortStudents
-            ,coalesce(A.Regular_HS_Diploma_Graduates__RA, B.Regular_HS_Diploma_Graduates__RA)
+           ,coalesce(A.Regular_HS_Diploma_Graduates__RA, B.Regular_HS_Diploma_Graduates__RA)
             AS
             HS_Graduates
-            ,coalesce(A.VAR5, B.VAR5)
+           ,coalesce(A.VAR5, B.VAR5)
             AS
             CountyName 
-            ,coalesce(A.Seal_of_Biliteracy__Rate_, B.Seal_of_Biliteracy__Rate_)
+           ,coalesce(A.Seal_of_Biliteracy__Rate_, B.Seal_of_Biliteracy__Rate_)
             AS
             Biliteracy_Rate 
-            ,coalesce(A.GED_Completer__Count_, B.GED_Completer__Count_)
+           ,coalesce(A.GED_Completer__Count_, B.GED_Completer__Count_)
             AS
             GED_Count 
-            ,coalesce(A.VAR14, B.VAR14)
+           ,coalesce(A.VAR14, B.VAR14)
             AS
-            Met_UC_CSU_Grad_Req 
-             /*Columns needed from C and D*/
-            ,C.KDGN
+            Met_UC_CSU_Grad_Req            
+           ,C.LC
+            AS
+            LanguageCode
+           ,LANGUAGE
+            AS
+            Language
+           ,C.KDGN
             AS
             Kindergarten
-            ,C.GR_1
+           ,C.GR_1
             AS 
             Grade_1
-            ,C.GR_2
+           ,C.GR_2
             AS 
             Grade_2
-            ,C.GR_3
+           ,C.GR_3
             AS 
             Grade_3
-            ,C.GR_4
+           ,C.GR_4
             AS 
             Grade_4
-            ,C.GR_5
+           ,C.GR_5
             AS 
             Grade_5
-            ,C.GR_6
+           ,C.GR_6
             AS 
             Grade_6
-            ,C.GR_7
+           ,C.GR_7
             AS 
             Grade_7
-            ,C.GR_8
+           ,C.GR_8
             AS 
             Grade_8
-            ,C.GR_9
+           ,C.GR_9
             AS 
             Grade_9
-            ,C.GR_10
+           ,C.GR_10
             AS 
             Grade_10
-            ,C.GR_11
+           ,C.GR_11
             AS 
             Grade_11
-            ,C.GR_12
+           ,C.GR_12
             AS 
             Grade_12
-            ,C.UNGR
+           ,C.UNGR
             AS 
             Undergrad 
-            ,C.TOTAL_EL
+           ,C.TOTAL_EL
             AS 
             Total_EL  
-            ,D.HISPANIC
+           ,D.HISPANIC
             AS 
             Hispanic
-            ,D.AM_IND
+           ,D.AM_IND
             AS 
             American_Indian
-            ,D.ASIAN
+           ,D.ASIAN
             AS 
             Asian
-            ,D.PAC_ISLD
+           ,D.PAC_ISLD
             AS 
             Pacific_Ilander
-            ,D.FILIPINO
+           ,D.FILIPINO
             AS 
             Filipino
-            ,D.AFRICAN_AM
+           ,D.AFRICAN_AM
             AS 
             African_American
-            ,D.WHITE
+           ,D.WHITE
             AS 
             White 
-            ,D.TOTAL
+           ,D.TOTAL
             AS 
-            Total 
-            ,            
+            Total            
         from
             (
                 select 
-                    ,School_Name
+                    School_Name
                     AS
                     School
-                    ,District_Name
+                   ,District_Name
                     AS
                     District
-                    ,CharterShcool 
+                   ,CharterShcool 
                     AS
                     CharterSchool
-                    ,ReportingCategory
+                   ,ReportingCategory
                     AS
                     ReportingCategory
-                    ,CohortStudents
+                   ,CohortStudents
                     AS
                     CohortStudents
-                    ,Regular_HS_Diploma_Graduates__RA
+                   ,Regular_HS_Diploma_Graduates__RA
                     AS
                     HS_Graduates
-                    ,VAR5
+                   ,VAR5
                     AS
                     CountyName 
-                    ,Seal_of_Biliteracy__Rate_
+                   ,Seal_of_Biliteracy__Rate_
                     AS
                     Biliteracy_Rate 
-                    ,GED_Completer__Count_
+                   ,GED_Completer__Count_
                     AS
                     GED_Count 
-                    ,VAR14
+                   ,VAR14
                     AS
                     Met_UC_CSU_Grad_Req                                        
                 from
-                  cohort1819 /* Reference Data Set 2 */
+                  cohort1819 
             ) as A
             full join
             (
                 select
-                    ,School_Name
+                    School_Name
                     AS
                     School
-                    ,District_Name
+                   ,District_Name
                     AS
                     District
-                    ,CharterShcool 
+                   ,CharterShcool 
                     AS
                     CharterSchool
-                    ,ReportingCategory
+                   ,ReportingCategory
                     AS
                     ReportingCategory
-                    ,CohortStudents
+                   ,CohortStudents
                     AS
                     CohortStudents
-                    ,Regular_HS_Diploma_Graduates__RA
+                   ,Regular_HS_Diploma_Graduates__RA
                     AS
                     HS_Graduates
-                    ,VAR5
+                   ,VAR5
                     AS
                     CountyName
-                    ,Seal_of_Biliteracy__Rate_
+                   ,Seal_of_Biliteracy__Rate_
                     AS
                     Biliteracy_Rate 
-                    ,GED_Completer__Count_
+                   ,GED_Completer__Count_
                     AS
                     GED_Count 
-                    ,VAR14
-                     AS
-                     Met_UC_CSU_Grad_Req                                        
+                   ,VAR14
+                    AS
+                    Met_UC_CSU_Grad_Req                                        
                 from
-                    cohort1718 /*Reference Data Set 2*/
+                    cohort1718 
             ) as B
             on A.School = B.School*/
             full join
@@ -634,57 +527,60 @@ proc sql;
                 select
                     CDS
                     AS CDS_Code
-                    ,SCHOOL
+                   ,SCHOOL
                     AS School
-                    ,DISTRICT
+                   ,DISTRICT
                     AS
                     District
-                    ,LANGUAGE
+                   ,LC
+                    AS
+                    LanguageCode
+                   ,LANGUAGE
                     AS
                     Language
-                    ,KDGN
+                   ,KDGN
                     AS
                     Kindergarten
-                    ,GR_1
+                   ,GR_1
                     AS 
                     Grade_1
-                    ,GR_2
+                   ,GR_2
                     AS 
                     Grade_2
-                    ,GR_3
+                   ,GR_3
                     AS 
                     Grade_3
-                    ,GR_4
+                   ,GR_4
                     AS 
                     Grade_4
-                    ,GR_5
+                   ,GR_5
                     AS 
                     Grade_5
-                    ,GR_6
+                   ,GR_6
                     AS 
                     Grade_6
-                    ,GR_7
+                   ,GR_7
                     AS 
                     Grade_7
-                    ,GR_8
+                   ,GR_8
                     AS 
                     Grade_8
-                    ,GR_9
+                   ,GR_9
                     AS 
                     Grade_9
-                    ,GR_10
+                   ,GR_10
                     AS 
                     Grade_10
-                    ,GR_11
+                   ,GR_11
                     AS 
                     Grade_11
-                    ,GR_12
+                   ,GR_12
                     AS 
                     Grade_12
-                    ,UNGR
+                   ,UNGR
                     AS 
                     Undergrad 
-                    ,TOTAL_EL
+                   ,TOTAL_EL
                     AS 
                     Total_EL                                     
                 from
@@ -696,30 +592,30 @@ proc sql;
                 select
                     cds
                     AS CDS_Code
-                    ,sname
+                   ,sname
                     AS School
-                    ,dname
+                   ,dname
                     AS
                     District
-                    ,HISPANIC
+                   ,HISPANIC
                     AS 
                     Hispanic
-                    ,AM_IND
+                   ,AM_IND
                     AS 
                     American_Indian
-                    ,ASIAN
+                   ,ASIAN
                     AS 
                     Asian
-                    ,PAC_ISLD
+                   ,PAC_ISLD
                     AS 
                     Pacific_Ilander
-                    ,FILIPINO
+                   ,FILIPINO
                     AS 
                     Filipino
-                    ,AFRICAN_AM
+                   ,AFRICAN_AM
                     AS 
                     African_American
-                    ,WHITE
+                   ,WHITE
                     AS 
                     White 
                    ,TOTAL
@@ -765,3 +661,16 @@ proc sql;
     where libname = 'WORK'
     order by memname;
 quit;
+
+
+/* remove duplicates from cde_analytic_file_raw using CDS_Code as the 
+reference variable */
+proc sort
+        nodupkey
+        data=cde_analytic_file_raw
+        out=cde_analytic_file
+    ;
+    by
+        CDS_Code
+    ;
+run;
