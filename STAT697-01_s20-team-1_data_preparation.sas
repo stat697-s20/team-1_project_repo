@@ -653,16 +653,6 @@ data cde_analytic_file_raw_bad_ids;
 run;
 
 
-/* Print the names of all datasets/tables created above by querying the
-"dictionary tables" the SAS kernel maintains for the default "Work" library */
-proc sql;
-    select *
-    from dictionary.tables
-    where libname = 'WORK'
-    order by memname;
-quit;
-
-
 /* remove duplicates from cde_analytic_file_raw using CDS_Code as the 
 reference variable */
 proc sort

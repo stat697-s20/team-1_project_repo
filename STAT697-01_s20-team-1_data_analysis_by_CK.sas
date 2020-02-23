@@ -18,7 +18,7 @@ title2 justify=left
 ;
 
 footnote1 justify=left
-"According to the Education Commission of the States, Charter schools are semi-autonomous public schools that receive public funds. They operate under a written contract with a state, district or other entity (referred to as an  authorizer or sponsor). This contract – or charter, details how the school will be organized and managed, what students will be expected to achieve, and how success will be measured."
+"According to the Education Commission of the States, Charter schools are semi-autonomous public schools that receive public funds. They operate under a written contract with a state, district or other entity (referred to as an authorizer or sponsor). This contract – or charter, details how the school will be organized and managed, what students will be expected to achieve, and how success will be measured."
 ;
 
 /*
@@ -32,6 +32,7 @@ showany true values. Also, we should compare the number of count instead of
 rate since when we calculate the number of students from the rate, it will show 
 decimals which is impossible for number of counts.
 */
+
 
 proc sql
     select
@@ -71,22 +72,37 @@ since when we calculate the number of students from the rate, it will show
 decimals which is impossible for number of counts.
 */
 
-proc sql
-        select
-            ReportingCategory
-            , CohortStudents
-            , Seal_of_Biliteracy_(Count)
-            , Regular_HS_Diploma_Graduates_(Count)
-        from
-            cde_analytic_file_raw
-        where
-            CohortStudents > 30
-            ReportingCategory ^= Not_Reported
-        having
-            Seal_of_Biliteracy_(Count) > 30
 
-quit;
-        
+proc corr
+    data=cde_analytic_file
+    out=cde_analytic_file_ranked1
+    nosimple
+;
+    var
+        Regular_HS_Diploma_Grad_(Count)
+        ReportingCategory
+    ;
+    where
+        not(missing(Regular_HS_Diploma_Grad_(Count)))
+        and
+        not(missing(ReportingCategory))
+run;
+
+proc corr
+    data=cde_analytic_file
+    out=cde_analytic_file_ranked2
+    nosimple
+;
+    var
+        Seal_of_Biliteracy_(Count)
+        ReportingCategory
+    ;
+    where
+        not(missing(Seal_of_Biliteracy_(Count)))
+        and
+        not(missing(ReportingCategory))
+run;
+
 
 *******************************************************************************;
 * Research Question 3 Analysis Starting Point;
@@ -112,33 +128,9 @@ also exclude the data with Not Reported in the column ReportingCategory as it
 doesn't have any value for analysis.
 */
 
-proc sql
-    create table language_table as
-        (
-            select  
-            LC
-            , LANGUAGE
-            , KDGN
-            , GR_1
-            , GR_2
-            , GR_3
-            , GR_4
-            , GR_5
-            , GR_6
-            , GR_7
-            , GR_8
-            , GR_9
-            , GR_10
-            , GR_11
-            , GR_12
-            , UNGR
-            , TOTAL_EL
-            from
-                cde_analytic_file_raw
-            where
-                LC ^= 99
-                CohortStudets > 30
-                ReportingCategory ^= Not_Reported
-            having
-                TOTAL_EL > 10
-quit;
+
+proc sgplot data=cde_analytic_file
+    title "Histogram of number of students in different first language"
+    histogram 
+    xaxis values = (0 to 100 by 10)
+run; title;
