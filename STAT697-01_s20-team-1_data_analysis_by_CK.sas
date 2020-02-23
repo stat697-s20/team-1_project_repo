@@ -130,7 +130,6 @@ doesn't have any value for analysis.
 
 
 proc sgplot data=cde_analytic_file
-    title "Histogram of number of students in different first language"
-    histogram 
+    histogram TOTAL_EL LANGUAGE
     xaxis values = (0 to 100 by 10)
 run; title;
