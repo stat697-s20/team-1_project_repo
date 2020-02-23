@@ -37,15 +37,15 @@ decimals which is impossible for number of counts.
 proc sql
     select
         CharterSchool
-        , Met_UC/CSU_Grad_Reqs_(Count)
-        , CohortStudents
+        ,Met_UC_CSU_Grad_Req
+        ,CohortStudents
     from
         cde_analytic_file_raw
     where
         CharterSchool = YES
         CohortStudents > 30
     order by
-        Met_UC/CSU_Grad_Reqs_(Count) desc
+        Met_UC_CSU_Grad_Req desc
 quit;
 
 
@@ -79,11 +79,11 @@ proc corr
     nosimple
 ;
     var
-        Regular_HS_Diploma_Grad_(Count)
+        HS_Graduates
         ReportingCategory
     ;
     where
-        not(missing(Regular_HS_Diploma_Grad_(Count)))
+        not(missing(HS_Graduates))
         and
         not(missing(ReportingCategory))
 run;
@@ -94,11 +94,11 @@ proc corr
     nosimple
 ;
     var
-        Seal_of_Biliteracy_(Count)
+        Biliteracy_Rate
         ReportingCategory
     ;
     where
-        not(missing(Seal_of_Biliteracy_(Count)))
+        not(missing(Biliteracy_Rate))
         and
         not(missing(ReportingCategory))
 run;
