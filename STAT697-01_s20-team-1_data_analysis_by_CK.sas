@@ -130,6 +130,5 @@ doesn't have any value for analysis.
 
 
 proc sgplot data=cde_analytic_file
-    histogram TOTAL_EL LANGUAGE
-    xaxis values = (0 to 100 by 10)
-run; title;
+    histogram Total_EL Language
+run;
