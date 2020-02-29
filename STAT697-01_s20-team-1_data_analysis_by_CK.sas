@@ -38,6 +38,11 @@ less than 10 to protect the students) should be excluded since it doesn't
 showany true values. Also, we should compare the number of count instead of 
 rate since when we calculate the number of students from the rate, it will show 
 decimals which is impossible for number of counts.
+
+Methodology: 
+
+Followup Steps:
+
 */
 
 
@@ -54,6 +59,10 @@ proc sql
     order by
         Met_UC_CSU_Grad_Req desc
 quit;
+
+/* clear titles and footnotes */
+title;
+footnote;
 
 
 *******************************************************************************;
@@ -81,6 +90,11 @@ less than 10 to protect the students) should be excluded since it doesn't show
 any true values. Also, we should compare the number of count instead of rate 
 since when we calculate the number of students from the rate, it will show 
 decimals which is impossible for number of counts.
+
+Methodology: 
+
+Followup Steps:
+
 */
 
 
@@ -114,6 +128,10 @@ proc corr
         not(missing(ReportingCategory))
 run;
 
+/* clear titles and footnotes */
+title;
+footnote;
+
 
 *******************************************************************************;
 * Research Question 3 Analysis Starting Point;
@@ -141,9 +159,18 @@ languages (Column LC = 99) should be excluded since it doesn't show which type
 of languages they use and can not relate to the column ReportingCategory. We 
 also exclude the data with Not Reported in the column ReportingCategory as it 
 doesn't have any value for analysis.
+
+Methodology: 
+
+Followup Steps:
+
 */
 
 
 proc sgplot data=cde_analytic_file
     histogram Total_EL Language
 run;
+
+/* clear titles and footnotes */
+title;
+footnote;
