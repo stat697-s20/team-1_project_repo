@@ -14,11 +14,18 @@ title1 justify=left
 ;
 
 title2 justify=left
-'Rationale: Many charters are exempt from variety of laws and regulations affecting other public schools if they continue to meet the terms of their charters.". Meaning that the course content Charter School may have differences compared to the non-Charter ones. Will it affect the fairness of entering State-Funded Universities after graduating from Charter School and non-Charter Schools?'
+'Rationale: Many charters are exempt from variety of laws and regulations affecting other public schools if they continue to meet the terms of their charters.".'
+;
+title3 justify=left
+'Meaning that the course content Charter School may have differences compared to the non-Charter ones. Will it affect the fairness of entering State-Funded Universities after graduating from Charter School and non-Charter Schools?'
 ;
 
 footnote1 justify=left
-"According to the Education Commission of the States, Charter schools are semi-autonomous public schools that receive public funds. They operate under a written contract with a state, district or other entity (referred to as an authorizer or sponsor). This contract – or charter, details how the school will be organized and managed, what students will be expected to achieve, and how success will be measured."
+"According to the Education Commission of the States, Charter schools are semi-autonomous public schools that receive public funds. They operate under a written contract with a state, district or other entity (referred to as an authorizer or sponsor)."
+;
+
+footnote2 justify=left
+"This contract – or charter, details how the school will be organized and managed, what students will be expected to achieve, and how success will be measured."
 ;
 
 /*
@@ -52,12 +59,16 @@ quit;
 *******************************************************************************;
 * Research Question 2 Analysis Starting Point;
 *******************************************************************************;
-title3 justify=left
+title1 justify=left
 'Question 2 of 3: Will schools with more students with bilaterally helps the graduation rate in high school?'
 ;
 
-title4 justify=left
+title2 justify=left
 'Rationale: More students speaking language in addition to English might raise the awareness of the teachers and school to provide better support in English learning, or on the other hand they can get more peer support in the learning environment?'
+;
+
+footnote1 justify=left
+"In here we are making a hypothesis if schools having more students that English is not their first language will be able to provide more support to student. But that is not necessary the case of some school in some counties."
 ;
 
 /*
@@ -107,12 +118,16 @@ run;
 *******************************************************************************;
 * Research Question 3 Analysis Starting Point;
 *******************************************************************************;
-title5 justify=left
+title1 justify=left
 'Question 3 of 3: Will students with first language other than English affect the graduation rate in high school?'
 ;
 
-title6 justify=left
+title2 justify=left
 'Rationale: This would help identify if further need on English language preparation for younger students is required. As they may need extra resources to absorb knowledge that are taught by English.'
+;
+
+footnote1 justify=left
+"In here we are just consider the learning ability of the student based the use of language only"
 ;
 
 /*
