@@ -39,10 +39,9 @@ showany true values. Also, we should compare the number of count instead of
 rate since when we calculate the number of students from the rate, it will show 
 decimals which is impossible for number of counts.
 
-Methodology: 
-
-Followup Steps:
-
+Methodology: We sort the ranking of Meeting UC/CSU Grad requirement to see the 
+trend of number of students met the requirement to enter colleges with respect 
+to Charter School or not.
 */
 
 
@@ -106,7 +105,6 @@ rate.
 Followup Steps: We should see the entries that without a numerical value as it 
 doesn't contains a figure of the reporting category. We should filter it for 
 more accurate result.
-
 */
 
 
@@ -155,10 +153,13 @@ of languages they use and can not relate to the column ReportingCategory. We
 also exclude the data with Not Reported in the column ReportingCategory as it 
 doesn't have any value for analysis.
 
-Methodology: 
+Methodology: Using proc sgplot to plot the distribution of total number of 
+english learner according to their "reporting category". 
 
-Followup Steps:
-
+Followup Steps: There is a possible way to see if there are differences in
+comparing difference language users, their graduation rate and those kids
+with first language in English by setting up the ANOVA between average rate
+of different first language students in different counties.
 */
 
 
