@@ -46,19 +46,27 @@ Followup Steps:
 */
 
 
-proc sql
-    select
-        CharterSchool
-        ,Met_UC_CSU_Grad_Req
-        ,CohortStudents
-    from
-        cde_analytic_file_raw
+proc sort
+    data=cde_analytic_file
+    out=cde_analytic_file_by_UC_CSU_grad
+    ;
+    by
+        descending Met_UC_CSU_Grad_Req
+    ;
     where
         CharterSchool = YES
+        and
         CohortStudents > 30
-    order by
-        Met_UC_CSU_Grad_Req desc
-quit;
+    ;
+run;
+
+proc report data=cde_analytic_file_by_UC_CSU_grad
+    columns
+        CharterSchool
+        CohortStudents
+        Met_UC_CSU_Grad_Req
+    ;
+run;
 
 /* clear titles and footnotes */
 title;
@@ -91,41 +99,28 @@ any true values. Also, we should compare the number of count instead of rate
 since when we calculate the number of students from the rate, it will show 
 decimals which is impossible for number of counts.
 
-Methodology: 
+Methodology: We can use porc sort to find which ethnicity has the most number
+of Biliteracy Rate to see how the ethnicity and language affects the graduate
+rate.
 
-Followup Steps:
+Followup Steps: We should see the entries that without a numerical value as it 
+doesn't contains a figure of the reporting category. We should filter it for 
+more accurate result.
 
 */
 
 
-proc corr
+proc sort
     data=cde_analytic_file
-    out=cde_analytic_file_ranked1
-    nosimple
-;
-    var
-        HS_Graduates
-        ReportingCategory
+    out=cde_analytic_file_by_Biliteracy
     ;
-    where
-        not(missing(HS_Graduates))
-        and
-        not(missing(ReportingCategory))
-run;
-
-proc corr
-    data=cde_analytic_file
-    out=cde_analytic_file_ranked2
-    nosimple
-;
-    var
-        Biliteracy_Rate
+    by
+        descending Biliteracy_Rate
         ReportingCategory
-    ;
     where
-        not(missing(Biliteracy_Rate))
-        and
-        not(missing(ReportingCategory))
+        Biliteracy_Rate > 10
+        HS_Graduates > 10
+    ;
 run;
 
 /* clear titles and footnotes */
