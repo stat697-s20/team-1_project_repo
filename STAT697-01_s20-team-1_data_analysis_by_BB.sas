@@ -38,20 +38,86 @@ title3 justify=left
 UC/CSU entrance requirements'
 ;
 
-proc sql
+proc sql;
+    create table q2_gender as
     select 
         CharterSchool
        ,CohortStudents
-       ,Met_UC_CSU_Grad_Req
+       ,ReportingCategory
+       ,input(Met_UC_CSU_Grad_Req, best.) as Met_UC_CSU_Grad_Req 
        ,Total_EL
     from
         cde_analytic_file_raw
     where
-        CohortStudents > 30
+        CohortStudents >= 30
+        and
+        not missing(Met_UC_CSU_Grad_Req)       
     order by
         Met_UC_CSU_Grad_Req
     ;
 quit;
+
+proc sql;
+	create table q1El
+		like q1_El
+	;
+quit;
+
+proc sql;
+	select * from q1El;
+quit;
+
+proc sql;
+	insert into q1El
+		select * from q1_El
+	;
+quit;
+
+proc sql;
+	delete from q1El
+		where CharterSchool='All';
+quit;
+
+/* Removing all Reporting Categories except for 
+except those associated with student race */
+proc sql;
+	delete from 
+		q1El
+	where 
+		ReportingCategory = 'GM'
+		OR
+		ReportingCategory = 'GF'
+		OR
+		ReportingCategory = 'SD'
+		OR
+		ReportingCategory = 'SE'
+		OR
+		ReportingCategory = 'SF'
+		OR
+		ReportingCategory = 'SH'
+		OR
+		ReportingCategory = 'SM'
+		OR
+		ReportingCategory = 'SS'
+		OR
+		ReportingCategory = 'TA'
+		OR
+		ReportingCategory = 'GX'
+	;
+quit;
+
+proc report data = q1El;
+    columns
+        Met_UC_CSU_Grad_Req
+        ReportingCategory
+        LC
+        Total_EL
+        ;
+        define Met_UC_CSU_Grad_Req / group;
+        define ReportingCategory / group;
+        define LC / group;
+        ;
+run; 
 
 footnote1 justify=left
 'This proc sql will generate a table that will only contain information about
@@ -197,7 +263,7 @@ quit;
 /* Bar plot of MetReq for Gender Male vs Gender Female  */
 proc sgplot data=q2gender;
 	yaxis label="MetReqRate" ;
-    vbar ReportingCategory / response=MetReq
+    vbar ReportingCategory / response=Met_UC_CSU_Grad_Req
         group=CharterSchool
         groupdisplay=Cluster
     	barwidth=0.5
@@ -390,21 +456,16 @@ would not be included to improve the accuracy of the analysis.
 */
 
 
-proc sql
-    select 
-        CharterSchool
-       ,Met_UC_CSU_Grad_Req
-       ,LC
-       ,Total_EL
-    from
-        cde_analytic_file_raw
-    where
-        CohortStudents >= 30
-        LC > 0
-    order by
+proc report data = cde_analytic_file_raw;
+    columns
         Met_UC_CSU_Grad_Req
-    ;
-quit;
+        LC
+        Total_EL
+        ;
+        define Met_UC_CSU_Grad_Req / group;
+        define LC / group;
+        ;
+run;        
 
 footnote1 justify;
 'From this output further analysis can be to determine which student population
