@@ -38,22 +38,38 @@ less than 10 to protect the students) should be excluded since it doesn't
 showany true values. Also, we should compare the number of count instead of 
 rate since when we calculate the number of students from the rate, it will show 
 decimals which is impossible for number of counts.
+
+Methodology: We sort the ranking of Meeting UC/CSU Grad requirement to see the 
+trend of number of students met the requirement to enter colleges with respect 
+to Charter School or not.
 */
 
 
-proc sql
-    select
-        CharterSchool
-        ,Met_UC_CSU_Grad_Req
-        ,CohortStudents
-    from
-        cde_analytic_file_raw
+proc sort
+    data=cde_analytic_file
+    out=cde_analytic_file_by_UC_CSU_grad
+    ;
+    by
+        descending Met_UC_CSU_Grad_Req
+    ;
     where
         CharterSchool = YES
+        and
         CohortStudents > 30
-    order by
-        Met_UC_CSU_Grad_Req desc
-quit;
+    ;
+run;
+
+proc report data=cde_analytic_file_by_UC_CSU_grad
+    columns
+        CharterSchool
+        CohortStudents
+        Met_UC_CSU_Grad_Req
+    ;
+run;
+
+/* clear titles and footnotes */
+title;
+footnote;
 
 
 *******************************************************************************;
@@ -81,38 +97,33 @@ less than 10 to protect the students) should be excluded since it doesn't show
 any true values. Also, we should compare the number of count instead of rate 
 since when we calculate the number of students from the rate, it will show 
 decimals which is impossible for number of counts.
+
+Methodology: We can use porc sort to find which ethnicity has the most number
+of Biliteracy Rate to see how the ethnicity and language affects the graduate
+rate.
+
+Followup Steps: We should see the entries that without a numerical value as it 
+doesn't contains a figure of the reporting category. We should filter it for 
+more accurate result.
 */
 
 
-proc corr
+proc sort
     data=cde_analytic_file
-    out=cde_analytic_file_ranked1
-    nosimple
-;
-    var
-        HS_Graduates
-        ReportingCategory
+    out=cde_analytic_file_by_Biliteracy
     ;
+    by
+        descending Biliteracy_Rate
+        ReportingCategory
     where
-        not(missing(HS_Graduates))
-        and
-        not(missing(ReportingCategory))
+        Biliteracy_Rate > 10
+        HS_Graduates > 10
+    ;
 run;
 
-proc corr
-    data=cde_analytic_file
-    out=cde_analytic_file_ranked2
-    nosimple
-;
-    var
-        Biliteracy_Rate
-        ReportingCategory
-    ;
-    where
-        not(missing(Biliteracy_Rate))
-        and
-        not(missing(ReportingCategory))
-run;
+/* clear titles and footnotes */
+title;
+footnote;
 
 
 *******************************************************************************;
@@ -141,9 +152,21 @@ languages (Column LC = 99) should be excluded since it doesn't show which type
 of languages they use and can not relate to the column ReportingCategory. We 
 also exclude the data with Not Reported in the column ReportingCategory as it 
 doesn't have any value for analysis.
+
+Methodology: Using proc sgplot to plot the distribution of total number of 
+english learner according to their "reporting category". 
+
+Followup Steps: There is a possible way to see if there are differences in
+comparing difference language users, their graduation rate and those kids
+with first language in English by setting up the ANOVA between average rate
+of different first language students in different counties.
 */
 
 
 proc sgplot data=cde_analytic_file
     histogram Total_EL Language
 run;
+
+/* clear titles and footnotes */
+title;
+footnote;
