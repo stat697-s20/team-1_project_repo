@@ -127,7 +127,7 @@ title2 justify=left
 ;
 
 footnote1 justify=left
-"In here we are just consider the learning ability of the student based the use of language only"
+"In here we are just consider the learning ability of students based the first language of the student only"
 ;
 
 /*
