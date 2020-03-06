@@ -664,3 +664,355 @@ proc sort
         CDS_Code
     ;
 run;
+
+
+/* Updated sql code */
+
+/* only use proc import statements if need to pull from local file and be sure to chage file location */
+/*Dataset 1 */
+proc import datafile = '/folders/myfolders/Team_1_STAT_697_wk_4/team-1_project_repo/data/cohort1819_original.xlsx'
+ out = cohort1819_orig
+ dbms = xlsx
+ ;
+run;
+
+
+/*Dataset 2 */ 
+proc import datafile = '/folders/myfolders/Team_1_STAT_697_wk_4/team-1_project_repo/data/cohort1718_original.xlsx'
+ out = cohort1718_orig
+ dbms = xlsx
+ ;
+run;
+
+
+/*Dataset 3 */
+proc import datafile = '/folders/myfolders/Team_1_STAT_697_wk_3/team-1_project_repo/data/fileselsch.xlsx'
+ out = fileselch
+ dbms = xlsx
+ ;
+run;
+
+
+/*Dataset 4 */
+proc import datafile = '/folders/myfolders/Team_1_STAT_697_wk_3/team-1_project_repo/data/filesgradaf.xlsx'
+ out = filesgradaf
+ dbms = xlsx
+ ;
+run;
+
+
+/*Wk 4 Step 3 - create a single sql query to combine datasets*/
+
+proc sql;
+    create table cde_analytic_file_raw as
+        select
+             coalesce(A.CDS_Code, B.CDS_Code,C.CDS_Code,D.CDS_Code)
+             AS CDS_Code /*
+            ,coalesce(A.CountyCode,B.CountyCode)
+             AS 
+             CountyCode */
+            ,coalesce(A.School,B.School,C.School,D.School) 
+             AS School
+            ,coalesce(A.District,B.District,C.District,D.District) 
+             AS District
+            ,coalesce(A.CharterSchool, B.CharterSchool) 
+             AS
+             CharterSchool
+            ,coalesce(A.ReportingCategory, B.ReportingCategory)
+             AS
+             ReportingCategory
+            ,coalesce(A.CohortStudents, B.CohortStudents)
+             AS
+             CohortStudents
+            ,coalesce(A.HS_Graduates, B.HS_Graduates)
+             AS
+             HS_Graduates /*
+            ,coalesce(A.SchoolCode, B.SchoolCode)
+             AS
+             SchoolCode */
+            ,coalesce(A.Biliteracy_Rate, B.Biliteracy_Rate)
+             AS
+             Biliteracy_Rate 
+            ,coalesce(A.GED_Count, B.GED_Count)
+             AS
+             GED_Count 
+            ,coalesce(A.Met_UC_CSU_Grad_Req, B.Met_UC_CSU_Grad_Req)
+             AS
+             Met_UC_CSU_Grad_Req            
+            ,C.Kindergarten
+             AS 
+             Kindergarten
+            ,C.Grade_1
+             AS 
+             Grade_1
+            ,C.Grade_2
+             AS 
+             Grade_2
+            ,C.Grade_3
+             AS 
+             Grade_3
+            ,C.Grade_4
+             AS 
+             Grade_4
+            ,C.Grade_5
+             AS 
+             Grade_5
+            ,C.Grade_6
+             AS 
+             Grade_6
+            ,C.Grade_7
+             AS 
+             Grade_7
+            ,C.Grade_8
+             AS 
+             Grade_8
+            ,C.Grade_9
+             AS 
+             Grade_9
+            ,C.Grade_10
+             AS 
+             Grade_10
+            ,C.Grade_11
+             AS 
+             Grade_11
+            ,C.Grade_12
+             AS 
+             Grade_12
+            ,C.Undergrad
+             AS 
+             Undergrad 
+            ,C.TOTAL_EL
+             AS 
+             Total_EL            
+            ,D.Hispanic
+             AS 
+             Hispanic
+            ,D.American_Indian
+             AS 
+             American_Indian
+            ,D.Asian
+             AS 
+             Asian
+            ,D.Pacific_Islander
+             AS 
+             Pacific_Islander
+            ,D.Filipino
+             AS 
+             Filipino
+            ,D.African_American
+             AS 
+             African_American
+            ,D.White
+             AS 
+             White 
+            ,D.Total
+             AS 
+             Total 
+                        
+        from
+            (
+                  select 
+                     input(cats(CountyCode, DistrictCode, SchoolCode), best.14)
+                     AS CDS_Code
+                     /*length 14 */
+                    ,SchoolName 
+                     AS School 
+                    ,DistrictName
+                     AS
+                     District
+                    ,CharterSchool 
+                     AS
+                     CharterSchool
+                    ,ReportingCategory
+                     AS
+                     ReportingCategory
+                    ,CohortStudents
+                     AS
+                     CohortStudents
+                    ,Regular_HS_Diploma_Graduates__RA
+                     AS
+                     HS_Graduates /*
+                    ,VAR5
+                     AS
+                     VAR5  You may want to rename this */ 
+                    ,Seal_of_Biliteracy__Rate_
+                     AS
+                     Biliteracy_Rate 
+                    ,GED_Completer__Count_
+                     AS
+                     GED_Count 
+                    ,VAR14
+                     AS
+                     Met_UC_CSU_Grad_Req                    
+                from
+                   cohort1819_orig /*Need to reference original dataset 1 here*/
+            ) as A
+            full join
+            (
+                select 
+                     input(cats(CountyCode, DistrictCode, SchoolCode), best.14)
+                     AS CDS_Code
+                     /*length 14*/
+                    ,SchoolName
+                     AS
+                     School
+                    ,DistrictName
+                     AS
+                     District
+                    ,CharterSchool 
+                     AS
+                     CharterSchool
+                    ,ReportingCategory
+                     AS
+                     ReportingCategory
+                    ,CohortStudents
+                     AS
+                     CohortStudents
+                    ,Regular_HS_Diploma_Graduates__RA
+                     AS
+                     HS_Graduates /*
+                    ,VAR5
+                     AS
+                     VAR5  You may want to rename this */ 
+                    ,Seal_of_Biliteracy__Rate_
+                     AS
+                     Biliteracy_Rate 
+                    ,GED_Completer__Count_
+                     AS
+                     GED_Count 
+                    ,VAR14
+                     AS
+                     Met_UC_CSU_Grad_Req                                        
+                from
+                    cohort1718_orig 
+            ) as B
+            on A.CDS_Code = B.CDS_Code /* A.School = B.School */
+            full join
+            (
+                select
+                     CDS
+                     AS CDS_Code
+                    ,SCHOOL
+                     AS School
+                    ,DISTRICT
+                     AS
+                     District
+                    ,LANGUAGE
+                     AS
+                     Language
+                    ,KDGN
+                     AS
+                     Kindergarten
+                    ,GR_1
+                     AS 
+                     Grade_1
+                    ,GR_2
+                     AS 
+                     Grade_2
+                    ,GR_3
+                     AS 
+                     Grade_3
+                    ,GR_4
+                     AS 
+                     Grade_4
+                    ,GR_5
+                     AS 
+                     Grade_5
+                    ,GR_6
+                     AS 
+                     Grade_6
+                    ,GR_7
+                     AS 
+                     Grade_7
+                    ,GR_8
+                     AS 
+                     Grade_8
+                    ,GR_9
+                     AS 
+                     Grade_9
+                    ,GR_10
+                     AS 
+                     Grade_10
+                    ,GR_11
+                     AS 
+                     Grade_11
+                    ,GR_12
+                     AS 
+                     Grade_12
+                    ,UNGR
+                     AS 
+                     Undergrad 
+                    ,TOTAL_EL
+                     AS 
+                     Total_EL
+                    
+                from
+                     fileselch
+            ) as C
+            on A.CDS_Code = C.CDS_Code /*A.SchoolName = C.SCHOOL /*only school name in common for these data sets */
+            full join
+            (
+                select
+                     CDS_Code
+                     AS CDS_Code
+                    ,SCHOOL
+                     AS School
+                    ,DISTRICT
+                     AS
+                     District
+                    ,HISPANIC
+                     AS 
+                     Hispanic
+                    ,AM_IND
+                     AS 
+                     American_Indian
+                    ,ASIAN
+                     AS 
+                     Asian
+                    ,PAC_ISLD
+                     AS 
+                     Pacific_Islander
+                    ,FILIPINO
+                     AS 
+                     Filipino
+                    ,AFRICAN_AM
+                     AS 
+                     African_American
+                    ,WHITE
+                     AS 
+                     White 
+                   ,TOTAL
+                    AS 
+                    Total                     
+                from
+                     filesgradaf
+            ) as D
+            on C.CDS_Code = D.CDS_Code
+        order by
+            CDS_Code  
+    ;
+quit;
+
+
+/* Checking for rows with repeating, missing, or cooresponding to 
+non-schools CDS_Codes values and removing rows where Total is less
+than 30 students to increase accuracy*/
+data cde_analytic_file_raw_bad_ids;
+    set cde_analytic_file_raw;
+    by CDS_Code Total;
+
+    if
+        first.CDS_Code*last.CDS_Code = 0
+        or
+        missing(CDS_Code)
+        or
+        substr(cat(CDS),8,7) not in ("0000000","0000001")
+        or
+        Total < 30
+    then
+        do;
+            output;
+        end;
+run;
+
+
