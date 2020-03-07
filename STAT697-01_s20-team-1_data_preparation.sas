@@ -196,10 +196,10 @@ proc sql;
         select
             CharterSchool
            ,ReportingCategory
-           ,sum(CohortStudents)
-           ,sum(Regular_HS_Graduates)
-           ,sum(Met_UCCSUReq)
-           ,sum(Seal_of_Biliteracy)
+           ,sum(CohortStudents) as CohortStudents
+           ,sum(Regular_HS_Graduates) as Regular_HS_Graduates
+           ,sum(Met_UCCSUReq) as Met_UCCSUReq
+           ,sum(Seal_of_Biliteracy) as Seal_of_Biliteracy
            ,SchoolName
            ,DistrictName
            ,GED_Completer__Count_
@@ -241,10 +241,10 @@ proc sql;
         select
             CharterSchool
            ,ReportingCategory
-           ,sum(CohortStudents)
-           ,sum(Regular_HS_Graduates)
-           ,sum(Met_UCCSUReq)
-           ,sum(Seal_of_Biliteracy)
+           ,sum(CohortStudents) as CohortStudents
+           ,sum(Regular_HS_Graduates) as Regular_HS_Graduates
+           ,sum(Met_UCCSUReq) as Met_UCCSUReq
+           ,sum(Seal_of_Biliteracy) as Seal_of_Biliteracy
            ,SchoolName
            ,DistrictName
            ,GED_Completer__Count_
@@ -355,13 +355,13 @@ research questions/objectives in data-analysis files */
 proc sql;
     create table cde_analytic_file_raw as
         select
-            coalesce(C.CDS,D.CDS_Code)
+            coalesce(C.CDS_Code,D.CDS_Code)
             AS CDS_Code
            ,coalesce(A.School,B.School,C.School,D.School)
             AS School
            ,coalesce(A.District,B.District,C.District,D.District)
             AS District
-           ,coalesce(A.CharterSchool, B.CharterShcool) 
+           ,coalesce(A.CharterSchool, B.CharterSchool) 
             AS
             CharterSchool
            ,coalesce(A.ReportingCategory, B.ReportingCategory)
@@ -370,94 +370,94 @@ proc sql;
            ,coalesce(A.CohortStudents, B.CohortStudents)
             AS
             CohortStudents
-           ,coalesce(A.Regular_HS_Diploma_Graduates__Co, B.Regular_HS_Diploma_Graduates__Co)
+           ,coalesce(A.HS_Graduates, B.HS_Graduates)
             AS
             HS_Graduates
-           ,coalesce(A.VAR5, B.VAR5)
+           ,coalesce(A.CountyName, B.CountyName)
             AS
             CountyName 
-           ,coalesce(A.Seal_of_Biliteracy__Count_, B.Seal_of_Biliteracy__Count_)
+           ,coalesce(A.Biliteracy_Rate, B.Biliteracy_Rate)
             AS
             Biliteracy_Rate 
-           ,coalesce(A.GED_Completer__Count_, B.GED_Completer__Count_)
+           ,coalesce(A.GED_Count, B.GED_Count)
             AS
             GED_Count 
-           ,coalesce(A.VAR14, B.VAR14)
+           ,coalesce(A.Met_UC_CSU_Grad_Req, B.Met_UC_CSU_Grad_Req)
             AS
             Met_UC_CSU_Grad_Req            
-           ,C.LC
+           ,C.LanguageCode
             AS
             LanguageCode
            ,LANGUAGE
             AS
             Language
-           ,C.KDGN
+           ,C.Kindergarten
             AS
             Kindergarten
-           ,C.GR_1
+           ,C.Grade_1
             AS 
             Grade_1
-           ,C.GR_2
+           ,C.Grade_2
             AS 
             Grade_2
-           ,C.GR_3
+           ,C.Grade_3
             AS 
             Grade_3
-           ,C.GR_4
+           ,C.Grade_4
             AS 
             Grade_4
-           ,C.GR_5
+           ,C.Grade_5
             AS 
             Grade_5
-           ,C.GR_6
+           ,C.Grade_6
             AS 
             Grade_6
-           ,C.GR_7
+           ,C.Grade_7
             AS 
             Grade_7
-           ,C.GR_8
+           ,C.Grade_8
             AS 
             Grade_8
-           ,C.GR_9
+           ,C.Grade_2
             AS 
             Grade_9
-           ,C.GR_10
+           ,C.Grade_10
             AS 
             Grade_10
-           ,C.GR_11
+           ,C.Grade_11
             AS 
             Grade_11
-           ,C.GR_12
+           ,C.Grade_12
             AS 
             Grade_12
-           ,C.UNGR
+           ,C.Undergrad
             AS 
             Undergrad 
            ,C.TOTAL_EL
             AS 
             Total_EL  
-           ,D.HISPANIC
+           ,D.Hispanic
             AS 
             Hispanic
-           ,D.AM_IND
+           ,D.American_Indian
             AS 
             American_Indian
-           ,D.ASIAN
+           ,D.Asian
             AS 
             Asian
-           ,D.PAC_ISLD
+           ,D.Pacific_Ilander
             AS 
             Pacific_Ilander
-           ,D.FILIPINO
+           ,D.Filipino
             AS 
             Filipino
-           ,D.AFRICAN_AM
+           ,D.African_American
             AS 
             African_American
-           ,D.WHITE
+           ,D.White
             AS 
             White 
-           ,D.TOTAL
+           ,D.Total
             AS 
             Total            
         from
@@ -469,7 +469,7 @@ proc sql;
                    ,DistrictName
                     AS
                     District
-                   ,CharterShcool 
+                   ,CharterSchool 
                     AS
                     CharterSchool
                    ,ReportingCategory
@@ -505,7 +505,7 @@ proc sql;
                    ,DistrictName
                     AS
                     District
-                   ,CharterShcool 
+                   ,CharterSchool 
                     AS
                     CharterSchool
                    ,ReportingCategory
@@ -532,7 +532,7 @@ proc sql;
                 from
                     cohort1718
             ) as B
-            on A.School = B.School*/
+            on A.School = B.School
             full join
             (
                 select
@@ -595,17 +595,17 @@ proc sql;
                     AS 
                     Total_EL                                     
                 from
-                    fileselch
+                    fileselsch
             ) as C
             on A.School = C.School 
             full join
             (
                 select
-                    cds
+                    CDS_CODE
                     AS CDS_Code
-                   ,sname
+                   ,SCHOOL
                     AS School
-                   ,dname
+                   ,DISTRICT
                     AS
                     District
                    ,HISPANIC
