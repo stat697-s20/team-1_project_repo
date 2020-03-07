@@ -50,30 +50,36 @@ also is a factor affecting the percentage of meeting UC/CSU Grad requirement.
 
 proc sort
     data=cde_analytic_file
-    out=cde_analytic_file_by_UC_CSU_grad
+    out=cde_analytic_file_by_Biliteracy
     ;
     by
-        descending Met_UC_CSU_Grad_Req
-    ;
+        descending Regular_HS_Diploma_Graduates__Co
+        ;
     where
-        CharterSchool = 'YES'
+        not(missing(Regular_HS_Diploma_Graduates__Co))
         and
-        CohortStudents > 30
-    ;
+        not(missing(Seal_of_Biliteracy__Count_))
+		;
 run;
 
-proc report data=cde_analytic_file_by_UC_CSU_grad
-    columns
-        CharterSchool
-        CohortStudents
-        Met_UC_CSU_Grad_Req
+proc corr
+    data=cde_analytic_file
+    out=cde_analytic_file_HS_Grad
     ;
+    var 
+        Regular_HS_Diploma_Graduates__Co
+        Seal_of_Biliteracy__Count_;
+    where
+        not(missing(Regular_HS_Diploma_Graduates__Co))
+        and
+        not(missing(Seal_of_Biliteracy__Count_))
+        ;
 run;
+
 
 /* clear titles and footnotes */
 title;
 footnote;
-
 
 *******************************************************************************;
 * Research Question 2 Analysis Starting Point;
@@ -107,22 +113,30 @@ rate.
 
 Followup Steps: We should see the entries that without a numerical value as it 
 doesn't contains a figure of the reporting category. We should filter it for 
-more accurate result. Also, we can try to see if there are correlation between
-the number of high school graduates and the biliteracy rate.
+more accurate result. Also, we can try to see if there are correlation between the number of high school graduates and the biliteracy rate.
 */
 
 
 proc sort
     data=cde_analytic_file
-    out=cde_analytic_file_by_Biliteracy
+    out=cde_analytic_file_by_Biliteracy 
     ;
     by
-        descending Biliteracy_Rate
-        ReportingCategory
+        descending Seal_of_Biliteracy__Count_
+        ;
     where
-        Biliteracy_Rate > 10
-        HS_Graduates > 10
+		not(missing(Seal_of_Biliteracy__Count_))
+        and
+        not(missing(ReportingCategory))
     ;
+run;
+
+data Biliteracy_out;
+	set cde_analytic_file_by_Biliteracy (obs=30);
+run;
+
+proc sgplot data=Biliteracy_out;
+	histogram Seal_of_Biliteracy__Count_;
 run;
 
 proc corr
@@ -131,11 +145,13 @@ proc corr
     ;
     var 
         HS_Graduates
-        Biliteracy_Rate;
+        Biliteracy_Rate
+        ;
     where
         not(missing(HS_Graduates))
         and
         not(missing(Biliteracy_Rate))
+        ;
 run;
 
 
@@ -181,8 +197,8 @@ of different first language students in different counties.
 */
 
 
-proc sgplot data=cde_analytic_file
-    histogram Total_EL Language
+proc sgplot data=cde_analytic_file;
+    histogram Total_EL;
 run;
 
 /* clear titles and footnotes */
