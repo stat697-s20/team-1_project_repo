@@ -42,6 +42,9 @@ decimals which is impossible for number of counts.
 Methodology: We sort the ranking of Meeting UC/CSU Grad requirement to see the 
 trend of number of students met the requirement to enter colleges with respect 
 to Charter School or not.
+
+Followup Steps: Afterwards we can try to see if if the "Reporting Category"
+also is a factor affecting the percentage of meeting UC/CSU Grad requirement.
 */
 
 
@@ -53,7 +56,7 @@ proc sort
         descending Met_UC_CSU_Grad_Req
     ;
     where
-        CharterSchool = YES
+        CharterSchool = 'YES'
         and
         CohortStudents > 30
     ;
@@ -104,7 +107,8 @@ rate.
 
 Followup Steps: We should see the entries that without a numerical value as it 
 doesn't contains a figure of the reporting category. We should filter it for 
-more accurate result.
+more accurate result. Also, we can try to see if there are correlation between
+the number of high school graduates and the biliteracy rate.
 */
 
 
@@ -120,6 +124,20 @@ proc sort
         HS_Graduates > 10
     ;
 run;
+
+proc corr
+    data=cde_analytic_file
+    out=cde_analytic_file_HS_Grad
+    ;
+    var 
+        HS_Graduates
+        Biliteracy_Rate;
+    where
+        not(missing(HS_Graduates))
+        and
+        not(missing(Biliteracy_Rate))
+run;
+
 
 /* clear titles and footnotes */
 title;
