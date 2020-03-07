@@ -11,20 +11,29 @@
 *******************************************************************************;
 
 title1 justify=left
-'Question 1 of 4: How does the type of school effect an ELs/LEP student in 
-meeting UC/CSU entrance requirements? Also how does this varry between 
-ethnicities?'
+'Question 1 of 4: What are the odds of a male student graduating from high school compared to a female student.'
 ;
 
 title2 justify=left
-'Rationale: This could help schools better understand the type of learing 
-environment that is best for students who are ELs and LEP students?'
+'Rationale: Having an understading of how the various factors effect each gender could help schools determine which type of learning environment best serves students in meeting the requirements to graduate from high school. This could also help understand any descrepencies in meeting admissions requirements for a UC or CSU.'
 ;
 
 /*
-'Note: This utilizes the Met UC/CSU Grad Req as the response and uses with the 
-ELs/LEP indicator along with the indicator for Charter school or non Charter
-School.'
+'Note: This utilizes the Regular_HS_Diploma_Graduates__Ra as the response and 
+uses with the ReportingCategory indicator along with the indicator for 
+Charter school or non Charter School.'
+
+Methodology: Use proc sql steps to create a new table from the master dataset
+and deleting all inputs that are not useful for the focus of the analysis.
+Finally, use a proc logistic and proc sgplot to generate a contingency table
+displaying the odds of graduating from high school for each gender given that
+they attend either a charter school or a public school as well as a 
+visualizations to display the proportion of odds.
+
+Followup Steps: More carefully clean data and or ensure that it isn't overly
+filtered so that both genders are accounted for equally. Additionally, 
+examining the data to determine a trend fluxuation among these populations
+over a larger period of time.
 
 Limitations: Columns with a Cohort value of less than 30 were eliminated from
 the dataset so that only regular public high schools and charter schools would
@@ -34,47 +43,46 @@ would not be included to improve the accuracy of the analysis.
 
 
 title3 justify=left
-'Selecting variables of interest that may impact an ELs/LEP student in meeting
-UC/CSU entrance requirements'
+'Selecting variables of interest that may impact a student in meeting high school graduation requirements'
 ;
 
 proc sql;
-    create table q2_gender as
+    create table q1_gender as
     select 
         CharterSchool
        ,CohortStudents
        ,ReportingCategory
-       ,input(Met_UC_CSU_Grad_Req, best.) as Met_UC_CSU_Grad_Req 
+       ,input(Regular_HS_Diploma_Graduates__Co, best.) as MetReq 
        ,Total_EL
     from
         cde_analytic_file_raw
     where
         CohortStudents >= 30
         and
-        not missing(Met_UC_CSU_Grad_Req)       
+        not missing(Regular_HS_Diploma_Graduates__Co)       
     order by
-        Met_UC_CSU_Grad_Req
+        Regular_HS_Diploma_Graduates__Co
     ;
 quit;
 
 proc sql;
-	create table q1El
-		like q1_El
+	create table q1gender
+		like q1_gender
 	;
 quit;
 
 proc sql;
-	select * from q1El;
+	select * from q1gender;
 quit;
 
 proc sql;
-	insert into q1El
-		select * from q1_El
+	insert into q1gender
+		select * from q1_gender
 	;
 quit;
 
 proc sql;
-	delete from q1El
+	delete from q1gender
 		where CharterSchool='All';
 quit;
 
@@ -82,11 +90,25 @@ quit;
 except those associated with student race */
 proc sql;
 	delete from 
-		q1El
+		q1gender
 	where 
-		ReportingCategory = 'GM'
+		ReportingCategory = 'RA'
 		OR
-		ReportingCategory = 'GF'
+		ReportingCategory = 'RB'
+		OR
+		ReportingCategory = 'RD'
+		OR
+		ReportingCategory = 'RF'
+		OR
+		ReportingCategory = 'RH'
+		OR
+		ReportingCategory = 'RI'
+		OR
+		ReportingCategory = 'RP'
+		OR
+		ReportingCategory = 'RT'
+		OR
+		ReportingCategory = 'RW'
 		OR
 		ReportingCategory = 'SD'
 		OR
@@ -106,28 +128,53 @@ proc sql;
 	;
 quit;
 
-proc report data = q1El;
+/* I was unable to get this proc report that would
+replace the above proc sql to work */
+proc report data = cde_analytic_file_raw;
     columns
-        Met_UC_CSU_Grad_Req
-        ReportingCategory
-        LC
-        Total_EL
-        ;
-        define Met_UC_CSU_Grad_Req / group;
-        define ReportingCategory / group;
-        define LC / group;
-        ;
+        CharterSchool       
+       ,ReportingCategory
+       ,CohortStudents
+       ,Regular_HS_Diploma_Graduates__Co
+       ;
+        define CharterSchool / group;
+        define ReportingCategory / group;          
+       ;
 run; 
+/* Generating the contigency table */
+proc logistic data=q1gender; 
+class CharterSchool (ref="Yes") / param=reference ;
+freq MetReq;
+model ReportingCategory(ref="GF") = CharterSchool / link=glogit;
+output out= type_pred PREDPROBS=I;
+run;
+
+proc freq data=q1gender ;
+weight MetReq;
+tables CharterSchool*ReportingCategory /plots=freqplot ; *cmh chisq all measures riskdiff;
+run;
+
+/* Generating graph*/
+proc sgplot data=q1gender;
+	yaxis label="Odds of HS Graduation" ;
+    vbar ReportingCategory / response=MetReq 
+    	group=CharterSchool
+    	groupdisplay=Cluster
+    	barwidth=.5
+    	transparency=0.2;
+run;
+title;
 
 footnote1 justify=left
-'This proc sql will generate a table that will only contain information about
-students who are classified as ELs/LEP as well as the rate ate which they are
-able to meet UC/CSU admissions requirments.'
+'This proc sql will generate a table that will only contain information about students who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate ate which they are able to meet high school graduation requirments.'
 ;
 
 footnote2 justify=left
-'From this output further analysis can be to determine which type of learning
-envirnonment best serves ELs/LEP Students.'
+'In the above plot it appears that female students are meeting high school graduation requirments at a higher rate than their male peers in both the charter school and public school learing environment.'
+;
+
+footnote3 justify=left
+'From this output further analysis can be used to determine which type of learning envirnonment best serves male and female students in meeting high school graduation requirements.'
 ;
 
 /* clear titles/footnotes */
@@ -140,14 +187,11 @@ footnote;
 *******************************************************************************;
 
 title1 justify=left
-'Question 2 of 4: What are the odds of a male student meeting the admissions
-requirements for a UC/CSU compared to a female student.'
+'Question 2 of 4: What are the odds of a male student meeting the admissions requirements for a UC/CSU compared to a female student.'
 ;
 
 title2 justify=left
-'Rationale: Having an understading of how the various factors effect each gender
-could help schools determine which type of learning environment best serves 
-students.'
+'Rationale: Having an understading of how the various factors effect each gender could help schools determine which type of learning environment best serves students.'
 ;
 
 /*
@@ -155,29 +199,33 @@ Note: This utilizes the Met UC/CSU Grad Req' as the response and uses with the
 Reporting Category along with the factors for Charter school or non Charter
 School (district, county, etc).
 
+Methodology: Use proc sql steps to create a new table from the master dataset
+and deleting all inputs that are not useful for the focus of the analysis.
+Finally, use a proc logistic and proc sgplot to generate a contingency table
+displaying the odds of meeting the admissions requirements for a UC/CSU for 
+each gender given that they attend either a charter school or a public school
+as well as a visualizations to display the proportion of odds.
+
+Followup Steps: More carefully clean data and or ensure that it isn't overly
+filtered so that both genders are accounted for equally. Additionally, 
+examining the data to determine a trend fluxuation among these populations
+over a larger period of time.
+
 Limitations: This dataset does not include any information about the demographics
 in the teacher populations that may effect the odds of a female student or male 
 student meeting UC/CSU admissions requirements.
 */
 
 title3 justify=left
-'Plot showing the proportion of Reporting Categories meeting UC/CSU admissions
-requirements, with the primary focus being the differences between male and
-female students'
+'Plot showing the proportion of Reporting Categories meeting UC/CSU admissions requirements, with the primary focus being the differences between male and female students'
 ;
 
 footnote1 justify=left
-'From this histogram, we can see that the odds of a male or a female student 
-meeting the UC/CSU requirements is roughly equivalent at either a Charter 
-School or Public School, with male students having a slightly higher odds of
-meeting the requirements at a charter school and female students having a 
-slightly higher odds of meeting the requirements at a public school'
+'From this histogram, we can see that the odds of a male or a female student meeting the UC/CSU requirements is roughly equivalent at either a Charter School or Public School, with male students having a slightly higher odds of meeting the requirements at a charter school and female students having a slightly higher odds of meeting the requirements at a public school'
 ;
 
 footnote2 justify=left
-'From this, we can say that the learning environment of a charter school vs
-a public school has minimal effect on a students ability to meet UC/CSU
-admissions requirements.'
+'From this, we can say that the learning environment of a charter school vs a public school has minimal effect on a students ability to meet UC/CSU admissions requirements.'
 ;
 
 proc sql;
@@ -262,7 +310,7 @@ quit;
 
 /* Bar plot of MetReq for Gender Male vs Gender Female  */
 proc sgplot data=q2gender;
-	yaxis label="MetReqRate" ;
+	yaxis label="Met UC/CSU Req" ;
     vbar ReportingCategory / response=Met_UC_CSU_Grad_Req
         group=CharterSchool
         groupdisplay=Cluster
@@ -271,9 +319,7 @@ proc sgplot data=q2gender;
 run;
 
 footnote3 justify=left
-'In the above plot it appears that female students are meeting the UC/CSU 
-admissions requirements at a higher rate than their male peers in both 
-the charter school and public school learing environment.'
+'In the above plot it appears that female students are meeting the UC/CSU admissions requirements at a higher rate than their male peers in both the charter school and public school learing environment. This was an expected trend since it followed the odds for this same population meeting high school graduation requirements.'
 ;
 
 /* clear titles/footnotes */
@@ -286,21 +332,29 @@ footnote;
 *******************************************************************************;
 
 title1 justify=left
-'Question 3 of 4: What are the odds that a Hispanic Student will meet 
-admission requirements attending a charter school compared to a "White, not 
-Hispanic" student?'
+'Question 3 of 4: What are the odds that a Hispanic Student will meet admission requirements attending a charter school compared to a "White, not Hispanic" student?'
 ;
 
 title2 justify=left
-'Rationale: From the odds we can gain a better perspective on the success rates
-of an underserved/ underrepresented student populations compared to their 
-"White, not Hispanic" peers.'
+'Rationale: From the odds we can gain a better perspective on the success rates of an underserved/ underrepresented student populations compared to their "White, not Hispanic" peers.'
 ;
 
 /*
 Note: This compares the odds ratio of Met UC/CSU Grad Req' (Rate) of 'White, not 
 Hispanic' with the odds ratio of Hispanic students through categorical analysis 
 methods.
+
+Methodology: Use proc sql steps to create a new table from the master dataset
+and deleting all inputs that are not useful for the focus of the analysis.
+Finally, use a proc logistic and proc sgplot to generate a contingency table
+displaying the odds of meeting the admissions requirements for a UC/CSU for 
+each ethnicity given that they attend either a charter school or a public school
+as well as a visualizations to display the proportion of odds.
+
+Followup Steps: More carefully clean data and or ensure that it isn't overly
+filtered so that both ethnicities are accounted for equally. Additionally, 
+examining the data to determine a trend fluxuation among these populations
+over a larger period of time.
 
 Limitations: This dataset does not include any information about the demographics
 of this cities in which these schools are located as well or the differences in 
@@ -310,14 +364,11 @@ non Hispanic' student meeting UC/CSU admissions requirements.
 
 
 title2 justify=left
-'Proc freq analysis to determine the odd that a Hispanic Student will meet 
-admission requirements attending a charter school compared to a "White, not 
-Hispanic" student.'
+'Proc freq analysis to determine the odd that a Hispanic Student will meet admission requirements attending a charter school compared to a "White, not Hispanic" student.'
 ;
 
 footnote1 justify=left
-'Spanish ELs/LEP students make up the largest portion of this student
-population as they represent 15% of ELs/LEP students'
+'Spanish ELs/LEP students make up the largest portion of this student population as they represent 15% of ELs/LEP students'
 ;
 
 proc sql;
@@ -413,12 +464,17 @@ proc logistic data=q3race;
     output out=type_pred PREDPROBS=YES;
 run;
 
+/* Bar plot of MetReq for Race Hispanic vs Race White */
+proc sgplot data=q3race;
+	yaxis label="Met UC/CSU Req" ;
+    vbar ReportingCategory / response=Met_UC_CSU_Grad_Req
+        group=CharterSchool
+        groupdisplay=Cluster
+    	barwidth=0.5
+    	transparency=0.2;
+
 footnote2 justify=left
-'In the above table and plot it appears that Hispanic students are meeting the UC/CSU 
-admissions requirements at a higher rate than their White peers in both the charter 
-school and public school learing environment. We can also see that the odds of a White
-student meeting the admissions requirments is lower at a charter school vs a public
-school.'
+'In the above table and plot it appears that Hispanic students have at least a slightly higher odds of meeting the UC/CSU admissions requirements than their White peers in both the charter school and public school learing environment, with their greates odd of meeting the requirements in a charter school. We can also see that the odds of a White student meeting the admissions requirments is lower at a charter school vs a public school.'
 ;
 
 /* clear titles/footnotes */
@@ -430,24 +486,32 @@ footnote;
 * Research Question 4 Analysis Starting Point;
 *******************************************************************************;
 title1 justify=left
-'Question 4 of 4: What are the odds that a ELs/LEP student will meet admission 
-requirements compared to non ELs/LEP student?'
+'Question 4 of 4: What are the odds that a Hispanic Student will meet high school graduation requirements attending a charter school compared to a "White, not Hispanic" student?'
 ;
 
 title2 justify=left
-'Rationale: From the odds we can gain a better perspective on the success rates
-of ELs/LEP students compared to non ELs/LEP strudents to see just how much any
-descrpencies in support impacts this student population.'
+'Rationale: Rationale: From the odds we can gain a better perspective on the success rates of an underserved/ underrepresented student populations compared to their "White, not Hispanic" peers.'
 ;
 
-footnote1 justify;
-'This assumes that communities with a higher proportion of ELs/LEP students have 
-the same access to educational (financial) resources as communities with fewer.' 
+footnote1 justify=left;
+'This assumes that communities with a higher proportion of ELs/LEP students have the same access to educational (financial) resources as communities with fewer.' 
 ;
 
 /*
 Note: This compares the odds ratio of ELs/LEP students with the odds ratio of 
 students of who are not ELs/LEP students through categorical analysis methods.
+
+Methodology: Use proc sql steps to create a new table from the master dataset
+and deleting all inputs that are not useful for the focus of the analysis.
+Finally, use a proc logistic and proc sgplot to generate a contingency table
+displaying the odds of high school graduation requirements for each ethnicity 
+given that they attend either a charter school or a public school as well as 
+a visualizations to display the proportion of odds.
+
+Followup Steps: More carefully clean data and or ensure that it isn't overly
+filtered so that both ethnicities are accounted for equally. Additionally, 
+checking to see if proper sorting occured and try to further explain the
+unexpected shift.
 
 Limitations: Columns with a Cohort value of less than 30 were eliminated from
 the dataset so that only regular public high schools and charter schools would
@@ -455,22 +519,113 @@ be counted and non schools, continuation schools, and independent study schools
 would not be included to improve the accuracy of the analysis.
 */
 
+proc sql;
+	create table q4_race as
+		select 
+        	CharterSchool 
+       	   ,ReportingCategory
+       	   ,input(CohortStudents, best.)
+       	   ,input(Regular_HS_Diploma_Graduates__Co, best.) as MetReq 
+           
+		from
+        	cde_analytic_file_raw;
+        where
+        	CohortStudents >= 30
+        	and 
+        	is not null(Regular_HS_Diploma_Graduates__Co) 
+    ;
+quit;
 
-proc report data = cde_analytic_file_raw;
-    columns
-        Met_UC_CSU_Grad_Req
-        LC
-        Total_EL
-        ;
-        define Met_UC_CSU_Grad_Req / group;
-        define LC / group;
-        ;
-run;        
+proc sql;
+	create table q4race
+		like q4_race
+	;
+quit;
 
-footnote1 justify;
-'From this output further analysis can be to determine which student population
-has the not only higher odds of meeting UC/CSU admission requirements, but also
-by what magnitude does it deffer.' 
+proc sql;
+	select * from q4race;
+quit;
+
+proc sql;
+	insert into q4race
+		select * from q4_race
+	;
+quit;
+
+proc sql;
+	delete from q4race
+		where CharterSchool='All';
+quit;
+
+proc sql;
+	delete from q4race
+		where 
+			missing(School);
+quit;
+
+proc sql;
+	delete from 
+		q4race
+	where 
+		ReportingCategory = 'RA'
+		OR
+		ReportingCategory = 'RB'
+		OR
+		ReportingCategory = 'RD'
+		OR
+		ReportingCategory = 'RF'
+		OR
+		ReportingCategory = 'GM'
+		OR
+		ReportingCategory = 'RI'
+		OR
+		ReportingCategory = 'RP'
+		OR
+		ReportingCategory = 'RT'
+		OR
+		ReportingCategory = 'GF'
+		OR
+		ReportingCategory = 'SD'
+		OR
+		ReportingCategory = 'SE'
+		OR
+		ReportingCategory = 'SF'
+		OR
+		ReportingCategory = 'SH'
+		OR
+		ReportingCategory = 'SM'
+		OR
+		ReportingCategory = 'SS'
+		OR
+		ReportingCategory = 'TA'
+		OR
+		ReportingCategory = 'GX'
+	;
+quit;
+
+proc logistic data=q4race; 
+class CharterSchool (ref="Yes") / param=reference ;
+freq MetReq;
+model ReportingCategory(ref="RH") = CharterSchool / link=glogit;
+output out= type_pred PREDPROBS=I;
+run;
+
+proc freq data=q4race ;
+weight MetReq;
+tables CharterSchool*ReportingCategory /plots=freqplot ; *cmh chisq all measures riskdiff;
+run;
+
+proc sgplot data=q4Rrace;
+	yaxis label=" Odds of HS Graduation" ;
+    vbar ReportingCategory / response=MetReq 
+    	group=CharterSchool
+    	groupdisplay=Cluster
+    	barwidth=.5
+    	transparency=0.2;
+run;
+
+footnote2 justify=left;
+'In the above table and plot it appears that the odds of either student population meeting high school graduation requirments has shifted lower from the odds of them meeting admissions requirements for UC/CSU admissions, which was unexpected.'
 ;
 
 /* clear titles/footnotes */
