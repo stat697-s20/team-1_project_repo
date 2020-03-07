@@ -19,8 +19,8 @@ AY2018-19
 downloaded and edited to produce file cohort1819_edited.xlsx by opening in
 Excel. Certain columns has been deleted to reduce file size. We only kept the
 columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
-Diploma Graduates (Rate), Met UC/CSU Grad Req's (Rate) and Seal of 
-Biliteracy (Rate).
+Diploma Graduates (Count), Met UC/CSU Grad Req's (Count) and Seal of 
+Biliteracy (Count).
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
 
@@ -30,7 +30,7 @@ column "Language" in data set "fileselsch.xlsx".
 */
 %let inputDataset1DSN = cohort1819_edited;
 %let inputDataset1URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1819_edited.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1819_edited.xlsx
 ;
 %let inputDataset1Type = XLSX;
 
@@ -52,8 +52,8 @@ downloaded and edited to produce file cohort1718_edited.xls by opening in Excel
 and setting all cell values to "Text" format.
 Certain columns has been deleted to reduce file size. We only kept the
 columns: CharterSchool, ReportingCategory, CohortStudents, Regular HS
-Diploma Graduates (Rate), Met UC/CSU Grad Req's (Rate) and Seal of 
-Biliteracy (Rate).
+Diploma Graduates (Count), Met UC/CSU Grad Req's (Count) and Seal of 
+Biliteracy (Count).
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsacgr.asp
 
@@ -63,7 +63,7 @@ column "Language" in data set "fileselsch.xlsx".
 */
 %let inputDataset2DSN = cohort1718_edited;
 %let inputDataset2URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/cohort1718_edited.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1718_edited.xlsx
 ;
 %let inputDataset2Type = XLSX;
 
@@ -92,7 +92,7 @@ and setting all cell values to "Text" format.
 */
 %let inputDataset3DSN = fileselsch;
 %let inputDataset3URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/fileselsch.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/fileselsch.xlsx
 ;
 %let inputDataset3Type = XLSX;
 
@@ -120,7 +120,7 @@ for this dataset as each entry has its own unique identification number.
 */
 %let inputDataset4DSN = filesgradaf;
 %let inputDataset4URL =
-https://github.com/stat697/team-1_project_repo/blob/master/data/filesgradaf.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/filesgradaf.xlsx
 ;
 %let inputDataset4Type = XLSX;
 
@@ -175,20 +175,21 @@ proc sql;
     create table cohort1819_edited_dup1 as
         select
             CharterSchool
-           ,DASS
            ,ReportingCategory
-           ,CohortStudents
-           ,Regular_HS_Diploma_Graduates_(Count)
-           ,Met_UC/CSU_Grad_Reqs_(Count)
-           ,Seal_of_Biliteracy_(Count)
+           ,input(CohortStudents, 8.) as CohortStudents
+           ,input(Regular_HS_Diploma_Graduates__Co,8.) as Regular_HS_Graduates
+           ,input(VAR8, 8.) as Met_UCCSUReq
+           ,input(Seal_of_Biliteracy__Count_, 8.) as Seal_of_Biliteracy
+           ,SchoolName
+           ,DistrictName
+           ,GED_Completer__Count_
+           ,CountyName
         from
             cohort1819_edited
         where
             not(missing(CohortStudents))
         group by
             CharterSchool
-        having
-            CohortStudents >= 30
     ;
     /* combining the reporting category together */
     create table cohort1819 as
@@ -196,9 +197,13 @@ proc sql;
             CharterSchool
            ,ReportingCategory
            ,sum(CohortStudents)
-           ,sum(Regular_HS_Diploma_Graduates_(Count))
-           ,sum(Met_UC/CSU_Grad_Reqs_(Count))
-           ,sum(Seal_of_Biliteracy_(Count))
+           ,sum(Regular_HS_Graduates)
+           ,sum(Met_UCCSUReq)
+           ,sum(Seal_of_Biliteracy)
+           ,SchoolName
+           ,DistrictName
+           ,GED_Completer__Count_
+           ,CountyName
         from
             cohort1819_edited_dup1
         group by 
@@ -215,31 +220,37 @@ proc sql;
     create table cohort1718_edited_dup1 as
         select
             CharterSchool
-           ,DASS
            ,ReportingCategory
-           ,CohortStudents
-           ,Regular_HS_Diploma_Graduates_(Count)
-           ,Met_UC/CSU_Grad_Reqs_(Count)
-           ,Seal_of_Biliteracy_(Count)
+		   ,input(CohortStudents, 8.) as CohortStudents
+           ,input(Regular_HS_Diploma_Graduates__Co,8.) as Regular_HS_Graduates
+           ,input(VAR8, 8.) as Met_UCCSUReq
+           ,input(Seal_of_Biliteracy__Count_, 8.) as Seal_of_Biliteracy
+           ,SchoolName
+           ,DistrictName
+           ,GED_Completer__Count_
+           ,CountyName
         from
-            cohort1819_edited
+            cohort1718_edited
         where
             not(missing(CohortStudents))
         group by
-            CharterSchool
-        having
-            CohortStudents >= 30
+            CharterSchool         
+    ;
     /* combining the reporting category together */
     create table cohort1718 as
         select
             CharterSchool
            ,ReportingCategory
            ,sum(CohortStudents)
-           ,sum(Regular_HS_Diploma_Graduates_(Count))
-           ,sum(Met_UC/CSU_Grad_Reqs_(Count))
-           ,sum(Seal_of_Biliteracy_(Count))
+           ,sum(Regular_HS_Graduates)
+           ,sum(Met_UCCSUReq)
+           ,sum(Seal_of_Biliteracy)
+           ,SchoolName
+           ,DistrictName
+           ,GED_Completer__Count_
+           ,CountyName
         from
-            cohort1819_edited_dup1
+            cohort1718_edited_dup1
         group by 
             CharterSchool, ReportingCategory
         order by
@@ -252,19 +263,19 @@ quit;
 repeated, missing, or correspond to non-schools to remove any conflicting or 
 incomplete entries*/
 proc sql;
-create table fileselch_bad_unique_ids as
+create table fileselsch_bad_unique_ids as
     select
         A.*
     from 
-        fileselch as A
+        fileselsch as A
         left join
         (
             select
                 CDS
                ,count(*) as row_count_for_unique_id_value
             from
-                fileselch
-                group by
+                fileselsch
+            group by
                 CDS
             ) as B
             on A.CDS=B.CDS
@@ -277,11 +288,11 @@ create table fileselch_bad_unique_ids as
             substr(cat(CDS),8,7) in ("0000000","0000001")
     ;
     /* Removing rows corresponding to District Offices and non-public schools */
-    create table fileselch_new as
+    create table fileselsch_new as
         select
             *
         from
-            fileselch
+            fileselsch
         where
             substr(cat(CDS),8,7) not in ("0000000","0000001")
     ;
@@ -359,13 +370,13 @@ proc sql;
            ,coalesce(A.CohortStudents, B.CohortStudents)
             AS
             CohortStudents
-           ,coalesce(A.Regular_HS_Diploma_Graduates__RA, B.Regular_HS_Diploma_Graduates__RA)
+           ,coalesce(A.Regular_HS_Diploma_Graduates__Co, B.Regular_HS_Diploma_Graduates__Co)
             AS
             HS_Graduates
            ,coalesce(A.VAR5, B.VAR5)
             AS
             CountyName 
-           ,coalesce(A.Seal_of_Biliteracy__Rate_, B.Seal_of_Biliteracy__Rate_)
+           ,coalesce(A.Seal_of_Biliteracy__Count_, B.Seal_of_Biliteracy__Count_)
             AS
             Biliteracy_Rate 
            ,coalesce(A.GED_Completer__Count_, B.GED_Completer__Count_)
@@ -452,10 +463,10 @@ proc sql;
         from
             (
                 select 
-                    School_Name
+                    SchoolName
                     AS
                     School
-                   ,District_Name
+                   ,DistrictName
                     AS
                     District
                    ,CharterShcool 
@@ -467,19 +478,19 @@ proc sql;
                    ,CohortStudents
                     AS
                     CohortStudents
-                   ,Regular_HS_Diploma_Graduates__RA
+                   ,Regular_HS_Graduates
                     AS
                     HS_Graduates
-                   ,VAR5
+                   ,CountyName
                     AS
                     CountyName 
-                   ,Seal_of_Biliteracy__Rate_
+                   ,Seal_of_Biliteracy
                     AS
                     Biliteracy_Rate 
                    ,GED_Completer__Count_
                     AS
                     GED_Count 
-                   ,VAR14
+                   ,Met_UCCSUReq
                     AS
                     Met_UC_CSU_Grad_Req                                        
                 from
@@ -488,10 +499,10 @@ proc sql;
             full join
             (
                 select
-                    School_Name
+                    SchoolName
                     AS
                     School
-                   ,District_Name
+                   ,DistrictName
                     AS
                     District
                    ,CharterShcool 
@@ -503,23 +514,23 @@ proc sql;
                    ,CohortStudents
                     AS
                     CohortStudents
-                   ,Regular_HS_Diploma_Graduates__RA
+                   ,Regular_HS_Graduates
                     AS
                     HS_Graduates
-                   ,VAR5
+                   ,CountyName
                     AS
                     CountyName
-                   ,Seal_of_Biliteracy__Rate_
+                   ,Seal_of_Biliteracy
                     AS
                     Biliteracy_Rate 
                    ,GED_Completer__Count_
                     AS
                     GED_Count 
-                   ,VAR14
+                   ,Met_UCCSUReq
                     AS
                     Met_UC_CSU_Grad_Req                                        
                 from
-                    cohort1718 
+                    cohort1718
             ) as B
             on A.School = B.School*/
             full join
@@ -845,7 +856,7 @@ proc sql;
                      AS
                      Met_UC_CSU_Grad_Req                    
                 from
-                   cohort1819_orig /*Need to reference original dataset 1 here*/
+                   cohort1819_original /*Need to reference original dataset 1 here*/
             ) as A
             full join
             (
@@ -884,7 +895,7 @@ proc sql;
                      AS
                      Met_UC_CSU_Grad_Req                                        
                 from
-                    cohort1718_orig 
+                    cohort1718_original 
             ) as B
             on A.CDS_Code = B.CDS_Code /* A.School = B.School */
             full join
