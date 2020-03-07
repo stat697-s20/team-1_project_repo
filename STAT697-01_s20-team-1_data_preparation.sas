@@ -176,10 +176,10 @@ proc sql;
         select
             CharterSchool
            ,ReportingCategory
-           ,input(CohortStudents, 8.) as CohortStudents
-           ,input(Regular_HS_Diploma_Graduates__Co,8.) as Regular_HS_Graduates
-           ,input(VAR8, 8.) as Met_UCCSUReq
-           ,input(Seal_of_Biliteracy__Count_, 8.) as Seal_of_Biliteracy
+           ,input(CohortStudents, 5.) as CohortStudents
+           ,input(Regular_HS_Diploma_Graduates__Co,5.) as Regular_HS_Graduates
+           ,input(VAR8, 5.) as Met_UCCSUReq
+           ,input(Seal_of_Biliteracy__Count_, 5.) as Seal_of_Biliteracy
            ,SchoolName
            ,DistrictName
            ,GED_Completer__Count_
@@ -221,10 +221,10 @@ proc sql;
         select
             CharterSchool
            ,ReportingCategory
-	   ,input(CohortStudents, 8.) as CohortStudents
-           ,input(Regular_HS_Diploma_Graduates__Co,8.) as Regular_HS_Graduates
-           ,input(VAR8, 8.) as Met_UCCSUReq
-           ,input(Seal_of_Biliteracy__Count_, 8.) as Seal_of_Biliteracy
+	   	   ,input(CohortStudents, 6.) as CohortStudents
+           ,input(Regular_HS_Diploma_Graduates__Co,6.) as Regular_HS_Graduates
+           ,input(VAR8, 6.) as Met_UCCSUReq
+           ,input(Seal_of_Biliteracy__Count_, 5.) as Seal_of_Biliteracy
            ,SchoolName
            ,DistrictName
            ,GED_Completer__Count_
