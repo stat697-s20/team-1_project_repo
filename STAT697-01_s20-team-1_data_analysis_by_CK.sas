@@ -16,6 +16,7 @@ title1 justify=left
 title2 justify=left
 'Rationale: Many charters are exempt from variety of laws and regulations affecting other public schools if they continue to meet the terms of their charters.".'
 ;
+
 title3 justify=left
 'Meaning that the course content Charter School may have differences compared to the non-Charter ones. Will it affect the fairness of entering State-Funded Universities after graduating from Charter School and non-Charter Schools?'
 ;
@@ -59,7 +60,7 @@ proc sort
         not(missing(Regular_HS_Diploma_Graduates__Co))
         and
         not(missing(Seal_of_Biliteracy__Count_))
-		;
+	;
 run;
 
 proc corr
@@ -125,7 +126,7 @@ proc sort
         descending Seal_of_Biliteracy__Count_
         ;
     where
-		not(missing(Seal_of_Biliteracy__Count_))
+	not(missing(Seal_of_Biliteracy__Count_))
         and
         not(missing(ReportingCategory))
     ;

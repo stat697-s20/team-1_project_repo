@@ -172,13 +172,13 @@ https://github.com/stat697/team-1_project_repo/raw/master/data/filesgradaf.xlsx
 /* check cohort1819_edited to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
 proc sql;
-    create table cohort1819_edited_dup1 as
+    create table cohort1819 as
         select
             CharterSchool
            ,ReportingCategory
-           ,input(CohortStudents, 5.) as CohortStudents
-           ,input(Regular_HS_Diploma_Graduates__Co,5.) as Regular_HS_Graduates
-           ,input(VAR8, 5.) as Met_UCCSUReq
+           ,input(CohortStudents, 6.) as CohortStudents
+           ,input(Regular_HS_Diploma_Graduates__Co,6.) as Regular_HS_Graduates
+           ,input(VAR8, 6.) as Met_UCCSUReq
            ,input(Seal_of_Biliteracy__Count_, 5.) as Seal_of_Biliteracy
            ,SchoolName
            ,DistrictName
@@ -192,7 +192,7 @@ proc sql;
             CharterSchool
     ;
     /* combining the reporting category together */
-    create table cohort1819 as
+    /*create table cohort1819 as
         select
             CharterSchool
            ,ReportingCategory
@@ -210,14 +210,14 @@ proc sql;
             CharterSchool, ReportingCategory
         order by
             ReportingCategory    
-    ;
+    ;*/
 quit;
 
 
 /* check cohort1718_edited to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
 proc sql;
-    create table cohort1718_edited_dup1 as
+    create table cohort1718 as
         select
             CharterSchool
            ,ReportingCategory
@@ -237,7 +237,7 @@ proc sql;
             CharterSchool         
     ;
     /* combining the reporting category together */
-    create table cohort1718 as
+    /*create table cohort1718 as
         select
             CharterSchool
            ,ReportingCategory
@@ -255,7 +255,7 @@ proc sql;
             CharterSchool, ReportingCategory
         order by
             ReportingCategory    
-    ;
+    ;*/
 quit;
 
 
@@ -352,40 +352,203 @@ quit;
 /* build analytic dataset from raw datasets imported above, including only the
 columns and minimal data-cleaning/transformation needed to address each
 research questions/objectives in data-analysis files */
+
+/*First Creating smaller table*/
 proc sql;
-    create table cde_analytic_file_raw as
+    create table A as
+        select 
+                    SchoolName
+                    AS
+                    School
+                   ,DistrictName
+                    AS
+                    District
+                   ,CharterSchool 
+                    AS
+                    CharterSchool
+                   ,ReportingCategory
+                    AS
+                    ReportingCategory
+                   ,CohortStudents
+                    AS
+                    CohortStudents
+                   ,Regular_HS_Graduates
+                    AS
+                    HS_Graduates
+                   ,CountyName
+                    AS
+                    CountyName 
+                   ,Seal_of_Biliteracy
+                    AS
+                    Biliteracy_Rate 
+                   ,GED_Completer__Count_
+                    AS
+                    GED_Count 
+                   ,Met_UCCSUReq
+                    AS
+                    Met_UC_CSU_Grad_Req                                  
+                from
+                  	cohort1819  
+;
+quit;          
+
+proc sql;
+    create table B as
         select
-            coalesce(C.CDS_Code,D.CDS_Code)
+                    SchoolName
+                    AS
+                    School
+                   ,DistrictName
+                    AS
+                    District
+                   ,CharterSchool 
+                    AS
+                    CharterSchool
+                   ,ReportingCategory
+                    AS
+                    ReportingCategory
+                   ,CohortStudents
+                    AS
+                    CohortStudents
+                   ,Regular_HS_Graduates
+                    AS
+                    HS_Graduates
+                   ,CountyName
+                    AS
+                    CountyName
+                   ,Seal_of_Biliteracy
+                    AS
+                    Biliteracy_Rate 
+                   ,GED_Completer__Count_
+                    AS
+                    GED_Count 
+                   ,Met_UCCSUReq
+                    AS
+                    Met_UC_CSU_Grad_Req                                   
+                from
+                    cohort1718
+                    ;
+quit;
+
+proc sql;
+    create table C as
+        select
+                    CDS
+                    AS CDS_Code
+                   ,SCHOOL
+                    AS School
+                   ,DISTRICT
+                    AS
+                    District
+                   ,LC
+                    AS
+                    LanguageCode
+                   ,LANGUAGE
+                    AS
+                    Language
+                   ,KDGN
+                    AS
+                    Kindergarten
+                   ,GR_1
+                    AS 
+                    Grade_1
+                   ,GR_2
+                    AS 
+                    Grade_2
+                   ,GR_3
+                    AS 
+                    Grade_3
+                   ,GR_4
+                    AS 
+                    Grade_4
+                   ,GR_5
+                    AS 
+                    Grade_5
+                   ,GR_6
+                    AS 
+                    Grade_6
+                   ,GR_7
+                    AS 
+                    Grade_7
+                   ,GR_8
+                    AS 
+                    Grade_8
+                   ,GR_9
+                    AS 
+                    Grade_9
+                   ,GR_10
+                    AS 
+                    Grade_10
+                   ,GR_11
+                    AS 
+                    Grade_11
+                   ,GR_12
+                    AS 
+                    Grade_12
+                   ,UNGR
+                    AS 
+                    Undergrad 
+                   ,TOTAL_EL
+                    AS 
+                    Total_EL                                     
+                from
+                    fileselsch;
+quit;
+
+proc sql;
+    create table D as
+        select
+        	CDS_CODE
             AS CDS_Code
-           ,coalesce(A.School,B.School,C.School,D.School)
+            ,SCHOOL
             AS School
-           ,coalesce(A.District,B.District,C.District,D.District)
+            ,DISTRICT
+            AS
+            District
+            ,HISPANIC
+            AS 
+            Hispanic
+            ,AM_IND
+            AS 
+            American_Indian
+            ,ASIAN
+            AS 
+            Asian
+            ,PAC_ISLD
+            AS 
+            Pacific_Ilander
+            ,FILIPINO
+            AS 
+            Filipino
+            ,AFRICAN_AM
+            AS 
+            African_American
+            ,WHITE
+            AS 
+            White 
+            ,TOTAL
+            AS 
+            Total                     
+            from
+            filesgradaf
+            ;
+quit;
+
+/*Clear the unnecessary tables*/
+proc sql;
+	drop table work.cohort1718, work.cohort1718_edited, work.cohort1819, work.cohort1819_edited;
+run;
+
+proc sql;
+	create table cde_part1 as
+		select
+			coalesce(C.CDS_Code,D.CDS_Code)
+            AS CDS_Code
+           ,coalesce(C.School,D.School)
+            AS School
+           ,coalesce(C.District,D.District)
             AS District
-           ,coalesce(A.CharterSchool, B.CharterSchool) 
-            AS
-            CharterSchool
-           ,coalesce(A.ReportingCategory, B.ReportingCategory)
-            AS
-            ReportingCategory
-           ,coalesce(A.CohortStudents, B.CohortStudents)
-            AS
-            CohortStudents
-           ,coalesce(A.HS_Graduates, B.HS_Graduates)
-            AS
-            HS_Graduates
-           ,coalesce(A.CountyName, B.CountyName)
-            AS
-            CountyName 
-           ,coalesce(A.Biliteracy_Rate, B.Biliteracy_Rate)
-            AS
-            Biliteracy_Rate 
-           ,coalesce(A.GED_Count, B.GED_Count)
-            AS
-            GED_Count 
-           ,coalesce(A.Met_UC_CSU_Grad_Req, B.Met_UC_CSU_Grad_Req)
-            AS
-            Met_UC_CSU_Grad_Req            
-           ,C.LanguageCode
+		   ,C.LanguageCode
             AS
             LanguageCode
            ,LANGUAGE
@@ -461,183 +624,62 @@ proc sql;
             AS 
             Total            
         from
-            (
-                select 
-                    SchoolName
-                    AS
-                    School
-                   ,DistrictName
-                    AS
-                    District
-                   ,CharterSchool 
-                    AS
-                    CharterSchool
-                   ,ReportingCategory
-                    AS
-                    ReportingCategory
-                   ,CohortStudents
-                    AS
-                    CohortStudents
-                   ,Regular_HS_Graduates
-                    AS
-                    HS_Graduates
-                   ,CountyName
-                    AS
-                    CountyName 
-                   ,Seal_of_Biliteracy
-                    AS
-                    Biliteracy_Rate 
-                   ,GED_Completer__Count_
-                    AS
-                    GED_Count 
-                   ,Met_UCCSUReq
-                    AS
-                    Met_UC_CSU_Grad_Req                                        
-                from
-                  cohort1819 
-            ) as A
+            C
             full join
-            (
-                select
-                    SchoolName
-                    AS
-                    School
-                   ,DistrictName
-                    AS
-                    District
-                   ,CharterSchool 
-                    AS
-                    CharterSchool
-                   ,ReportingCategory
-                    AS
-                    ReportingCategory
-                   ,CohortStudents
-                    AS
-                    CohortStudents
-                   ,Regular_HS_Graduates
-                    AS
-                    HS_Graduates
-                   ,CountyName
-                    AS
-                    CountyName
-                   ,Seal_of_Biliteracy
-                    AS
-                    Biliteracy_Rate 
-                   ,GED_Completer__Count_
-                    AS
-                    GED_Count 
-                   ,Met_UCCSUReq
-                    AS
-                    Met_UC_CSU_Grad_Req                                        
-                from
-                    cohort1718
-            ) as B
-            on A.School = B.School
-            full join
-            (
-                select
-                    CDS
-                    AS CDS_Code
-                   ,SCHOOL
-                    AS School
-                   ,DISTRICT
-                    AS
-                    District
-                   ,LC
-                    AS
-                    LanguageCode
-                   ,LANGUAGE
-                    AS
-                    Language
-                   ,KDGN
-                    AS
-                    Kindergarten
-                   ,GR_1
-                    AS 
-                    Grade_1
-                   ,GR_2
-                    AS 
-                    Grade_2
-                   ,GR_3
-                    AS 
-                    Grade_3
-                   ,GR_4
-                    AS 
-                    Grade_4
-                   ,GR_5
-                    AS 
-                    Grade_5
-                   ,GR_6
-                    AS 
-                    Grade_6
-                   ,GR_7
-                    AS 
-                    Grade_7
-                   ,GR_8
-                    AS 
-                    Grade_8
-                   ,GR_9
-                    AS 
-                    Grade_9
-                   ,GR_10
-                    AS 
-                    Grade_10
-                   ,GR_11
-                    AS 
-                    Grade_11
-                   ,GR_12
-                    AS 
-                    Grade_12
-                   ,UNGR
-                    AS 
-                    Undergrad 
-                   ,TOTAL_EL
-                    AS 
-                    Total_EL                                     
-                from
-                    fileselsch
-            ) as C
-            on A.School = C.School 
-            full join
-            (
-                select
-                    CDS_CODE
-                    AS CDS_Code
-                   ,SCHOOL
-                    AS School
-                   ,DISTRICT
-                    AS
-                    District
-                   ,HISPANIC
-                    AS 
-                    Hispanic
-                   ,AM_IND
-                    AS 
-                    American_Indian
-                   ,ASIAN
-                    AS 
-                    Asian
-                   ,PAC_ISLD
-                    AS 
-                    Pacific_Ilander
-                   ,FILIPINO
-                    AS 
-                    Filipino
-                   ,AFRICAN_AM
-                    AS 
-                    African_American
-                   ,WHITE
-                    AS 
-                    White 
-                   ,TOTAL
-                    AS 
-                    Total                     
-                from
-                    filesgradaf
-            ) as D
+            D
             on C.CDS_Code = D.CDS_Code
-        order by
-            CDS_Code
+        	order by
+            	CDS_Code
+    ;
+quit;
+
+proc sql;
+    create table cde_analytic_file_raw as
+        select
+            coalesce(A.School,cde_part1.School)
+            AS School
+           ,coalesce(A.District,cde_part1.District)
+            AS District
+           ,CharterSchool
+           ,ReportingCategory
+           ,CohortStudents
+           ,HS_Graduates
+           ,CountyName 
+           ,Biliteracy_Rate 
+           ,GED_Count 
+           ,Met_UC_CSU_Grad_Req
+           ,cde_part1.LanguageCode
+           ,cde_part1.Language
+           ,cde_part1.Kindergarten
+           ,cde_part1.Grade_1
+           ,cde_part1.Grade_2
+           ,cde_part1.Grade_3
+           ,cde_part1.Grade_4
+           ,cde_part1.Grade_5
+           ,cde_part1.Grade_6
+           ,cde_part1.Grade_7
+           ,cde_part1.Grade_8
+           ,cde_part1.Grade_9
+           ,cde_part1.Grade_10
+           ,cde_part1.Grade_11
+           ,cde_part1.Grade_12
+           ,cde_part1.Undergrad 
+           ,cde_part1.Total_EL  
+           ,cde_part1.Hispanic
+           ,cde_part1.American_Indian
+           ,cde_part1.Asian
+           ,cde_part1.Pacific_Ilander
+           ,cde_part1.Filipino
+           ,cde_part1.African_American
+           ,cde_part1.White 
+           ,cde_part1.Total
+        from
+            A
+           	full join
+            cde_part1
+            on A.School = cde_part1.School
+        	/*order by
+            	CDS_Code*/
     ;
 quit;
 
