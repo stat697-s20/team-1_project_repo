@@ -91,7 +91,7 @@ proc report data = cde_analytic_file_raw;
         CharterSchool       
        ,ReportingCategory
        ,CohortStudents
-       ,Regular_HS_Diploma_Graduates__Co
+       ,HS_Grad_Co
        ;
         define CharterSchool / group;
         define ReportingCategory / group;          
