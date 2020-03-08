@@ -67,28 +67,12 @@ quit;
 
 proc sql;
 	create table q1gender
-		like q1_gender
-	;
-quit;
-
-proc sql;
+		like q1_gender;
 	select * from q1gender;
-quit;
-
-proc sql;
 	insert into q1gender
-		select * from q1_gender
-	;
-quit;
-
-proc sql;
+		select * from q1_gender;
 	delete from q1gender
 		where CharterSchool='All';
-quit;
-
-/* Removing all Reporting Categories except for 
-except those associated with student race */
-proc sql;
 	delete from 
 		q1gender
 	where 
@@ -247,28 +231,12 @@ quit;
 
 proc sql;
 	create table q2gender
-		like q2_gender
-	;
-quit;
-
-proc sql;
+		like q2_gender;
 	select * from q2gender;
-quit;
-
-proc sql;
 	insert into q2gender
-		select * from q2_gender
-	;
-quit;
-
-proc sql;
+		select * from q2_gender;
 	delete from q2gender
 		where CharterSchool='All';
-quit;
-
-/* Removing all Reporting Categories except for 
-GM=Gender Male and GF=Gender Female */
-proc sql;
 	delete from 
 		q2gender
 	where 
@@ -389,34 +357,15 @@ quit;
 
 proc sql;
 	create table q3race
-		like q3_race
-	;
-quit;
-
-proc sql;
+		like q3_race;
 	select * from q3race;
-quit;
-
-proc sql;
 	insert into q3race
-		select * from q3_race
-	;
-quit;
-
-proc sql;
+		select * from q3_race;
 	delete from q3race
 		where CharterSchool='All';
-quit;
-
-proc sql;
 	delete from q3race
 		where 
 			missing(School);
-quit;
-
-/* Removing all Reporting Categories except for 
-RH=Race Hispanic and RW=Race White */
-proc sql;
 	delete from 
 		q3race
 	where 
@@ -538,32 +487,15 @@ quit;
 
 proc sql;
 	create table q4race
-		like q4_race
-	;
-quit;
-
-proc sql;
+		like q4_race;
 	select * from q4race;
-quit;
-
-proc sql;
 	insert into q4race
-		select * from q4_race
-	;
-quit;
-
-proc sql;
+		select * from q4_race;
 	delete from q4race
 		where CharterSchool='All';
-quit;
-
-proc sql;
 	delete from q4race
 		where 
 			missing(School);
-quit;
-
-proc sql;
 	delete from 
 		q4race
 	where 
