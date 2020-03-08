@@ -52,16 +52,16 @@ proc sql;
         CharterSchool
        ,CohortStudents
        ,ReportingCategory
-       ,input(Regular_HS_Diploma_Graduates__Co, best.) as MetReq 
+       ,input(HS_Grad_Co, best.) as MetReq 
        ,Total_EL
     from
         cde_analytic_file
     where
         CohortStudents >= 30
         and
-        not missing(Regular_HS_Diploma_Graduates__Co)       
+        not missing(HS_Grad_Co)       
     order by
-        Regular_HS_Diploma_Graduates__Co
+        HS_Grad_Co
     ;
 quit;
 
@@ -78,37 +78,9 @@ proc sql;
 	where 
 		ReportingCategory = 'RA'
 		OR
-		ReportingCategory = 'RB'
-		OR
-		ReportingCategory = 'RD'
-		OR
-		ReportingCategory = 'RF'
-		OR
 		ReportingCategory = 'RH'
 		OR
-		ReportingCategory = 'RI'
-		OR
-		ReportingCategory = 'RP'
-		OR
-		ReportingCategory = 'RT'
-		OR
-		ReportingCategory = 'RW'
-		OR
-		ReportingCategory = 'SD'
-		OR
-		ReportingCategory = 'SE'
-		OR
-		ReportingCategory = 'SF'
-		OR
-		ReportingCategory = 'SH'
-		OR
-		ReportingCategory = 'SM'
-		OR
-		ReportingCategory = 'SS'
-		OR
-		ReportingCategory = 'TA'
-		OR
-		ReportingCategory = 'GX'
+		ReportingCategory = 'RW'		
 	;
 quit;
 
@@ -217,15 +189,15 @@ proc sql;
     select 
         CharterSchool
        ,ReportingCategory
-       ,input(Met_UC_CSU_Grad_Req, best.) as Met_UC_CSU_Grad_Req       
+       ,input(Met_UC_CSU_Req_Co, best.) as Met_UC_CSU_Req_Co       
     from
         cde_analytic_file
     where
         CohortStudents >= 30
         and
-        not missing(Met_UC_CSU_Grad_Req)       
+        not missing(Met_UC_CSU_Req_Co)       
     order by
-        Met_UC_CSU_Grad_Req
+        Met_UC_CSU_Req_Co
     ;
 quit;
 
@@ -242,37 +214,9 @@ proc sql;
 	where 
 		ReportingCategory = 'RA'
 		OR
-		ReportingCategory = 'RB'
+		ReportingCategory = 'RH'		
 		OR
-		ReportingCategory = 'RD'
-		OR
-		ReportingCategory = 'RF'
-		OR
-		ReportingCategory = 'RH'
-		OR
-		ReportingCategory = 'RI'
-		OR
-		ReportingCategory = 'RP'
-		OR
-		ReportingCategory = 'RT'
-		OR
-		ReportingCategory = 'RW'
-		OR
-		ReportingCategory = 'SD'
-		OR
-		ReportingCategory = 'SE'
-		OR
-		ReportingCategory = 'SF'
-		OR
-		ReportingCategory = 'SH'
-		OR
-		ReportingCategory = 'SM'
-		OR
-		ReportingCategory = 'SS'
-		OR
-		ReportingCategory = 'TA'
-		OR
-		ReportingCategory = 'GX'
+		ReportingCategory = 'RW'		
 	;
 quit;
 
@@ -345,13 +289,13 @@ proc sql;
         CharterSchool
        ,ReportingCategory
        ,CohortStudents
-       ,Met_UC_CSU_Grad_Req       
+       ,Met_UC_CSU_Req_Co       
     from
         cde_analytic_file
     where
         CohortStudents >= 30        
     order by
-        Met_UC_CSU_Grad_Req
+        Met_UC_CSU_Req_Co
     ;
 quit;
 
@@ -369,40 +313,11 @@ proc sql;
 	delete from 
 		q3race
 	where 
-		ReportingCategory = 'RA'
+		ReportingCategory = 'RA'		
 		OR
-		ReportingCategory = 'RB'
-		OR
-		ReportingCategory = 'RD'
-		OR
-		ReportingCategory = 'RF'
-		OR
-		ReportingCategory = 'GM'
-		OR
-		ReportingCategory = 'RI'
-		OR
-		ReportingCategory = 'RP'
-		OR
-		ReportingCategory = 'RT'
-		OR
-		ReportingCategory = 'GF'
-		OR
-		ReportingCategory = 'SD'
-		OR
-		ReportingCategory = 'SE'
-		OR
-		ReportingCategory = 'SF'
-		OR
-		ReportingCategory = 'SH'
-		OR
-		ReportingCategory = 'SM'
-		OR
-		ReportingCategory = 'SS'
-		OR
-		ReportingCategory = 'TA'
-		OR
-		ReportingCategory = 'GX'
-		
+		ReportingCategory = 'GM'		
+        OR		
+		ReportingCategory = 'GF'		
 	;
 quit;
 
@@ -474,14 +389,14 @@ proc sql;
         	CharterSchool 
        	   ,ReportingCategory
        	   ,input(CohortStudents, best.)
-       	   ,input(Regular_HS_Diploma_Graduates__Co, best.) as MetReq 
+       	   ,input(HS_Grad_Co, best.) as MetReq 
            
 		from
-        	cde_analytic_file_raw;
+        	cde_analytic_file;
         where
         	CohortStudents >= 30
         	and 
-        	is not null(Regular_HS_Diploma_Graduates__Co) 
+        	is not null(HS_Grad_Co) 
     ;
 quit;
 
@@ -501,37 +416,9 @@ proc sql;
 	where 
 		ReportingCategory = 'RA'
 		OR
-		ReportingCategory = 'RB'
-		OR
-		ReportingCategory = 'RD'
-		OR
-		ReportingCategory = 'RF'
-		OR
 		ReportingCategory = 'GM'
 		OR
-		ReportingCategory = 'RI'
-		OR
-		ReportingCategory = 'RP'
-		OR
-		ReportingCategory = 'RT'
-		OR
-		ReportingCategory = 'GF'
-		OR
-		ReportingCategory = 'SD'
-		OR
-		ReportingCategory = 'SE'
-		OR
-		ReportingCategory = 'SF'
-		OR
-		ReportingCategory = 'SH'
-		OR
-		ReportingCategory = 'SM'
-		OR
-		ReportingCategory = 'SS'
-		OR
-		ReportingCategory = 'TA'
-		OR
-		ReportingCategory = 'GX'
+		ReportingCategory = 'GF'		
 	;
 quit;
 
