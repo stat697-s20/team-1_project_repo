@@ -492,7 +492,7 @@ proc sql;
                     AS 
                     Total_EL                                     
                 from
-                    fileselsch;
+                    fileselsch_new;
 quit;
 
 proc sql;
@@ -530,7 +530,7 @@ proc sql;
             AS 
             Total                     
             from
-            filesgradaf
+            filesgradaf_new2
             ;
 quit;
 
@@ -636,7 +636,8 @@ quit;
 proc sql;
     create table cde_analytic_file_raw as
         select
-            coalesce(A.School,cde_part1.School)
+        	cde_part1.CDS_Code
+           ,coalesce(A.School,cde_part1.School)
             AS School
            ,coalesce(A.District,cde_part1.District)
             AS District
@@ -696,7 +697,7 @@ data cde_analytic_file_raw_bad_ids;
         or
         missing(CDS_Code)
         or
-        substr(cat(CDS),8,7) not in ("0000000","0000001")
+        substr(cat(CDS_Code),8,7) not in ("0000000","0000001")
         or
         Total < 30
     then
