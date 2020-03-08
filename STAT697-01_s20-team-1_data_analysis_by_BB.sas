@@ -113,7 +113,7 @@ proc sql;
 quit;
 
 /* I was unable to get this proc report that would
-replace the above proc sql to work */
+replace the above proc sql to work 
 proc report data = cde_analytic_file_raw;
     columns
         CharterSchool       
@@ -125,7 +125,7 @@ proc report data = cde_analytic_file_raw;
         define ReportingCategory / group;          
        ;
 run; 
-
+*/
 
 footnote1 justify=left
 'This proc sql will generate a table that will only contain information about students who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate ate which they are able to meet high school graduation requirments.'
