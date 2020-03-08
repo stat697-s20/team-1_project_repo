@@ -55,7 +55,7 @@ proc sql;
        ,input(Regular_HS_Diploma_Graduates__Co, best.) as MetReq 
        ,Total_EL
     from
-        cde_analytic_file_raw
+        cde_analytic_file
     where
         CohortStudents >= 30
         and
@@ -219,7 +219,7 @@ proc sql;
        ,ReportingCategory
        ,input(Met_UC_CSU_Grad_Req, best.) as Met_UC_CSU_Grad_Req       
     from
-        cde_analytic_file_raw
+        cde_analytic_file
     where
         CohortStudents >= 30
         and
@@ -347,7 +347,7 @@ proc sql;
        ,CohortStudents
        ,Met_UC_CSU_Grad_Req       
     from
-        cde_analytic_file_raw
+        cde_analytic_file
     where
         CohortStudents >= 30        
     order by
