@@ -721,3 +721,61 @@ proc sort
 run;
 
 
+
+
+
+
+
+/* Test combining data with unions */
+proc sql; /* Union all will stack these two tables */
+	create table cohort1 as
+		select * from cohort1718
+		union all
+		select * from cohort1819;
+alter table cohort1
+	drop AggregateLevel 
+		,DASS		 
+		,Seal_of_Biliteracy_Co  
+		,Seal_of_Biliteracy_Ra 	
+	;
+quit;
+
+/*creates CDS_Code in cohort file */
+proc sql;
+	create table cohort as
+		select
+			cats(CountyCode,DistrictCode,SchoolCode)
+			AS
+			CDS_Code
+		   ,CharterSchool		    
+		   ,ReportingCategory
+		   ,CohortStudents
+		   ,HS_Grad_Co
+		   ,HS_Grad_Ra
+		   ,Met_UC_CSU_Req_Co
+		   ,Met_UC_CSU_Req_Ra
+		   
+	 from
+	 	cohort1
+	 ;
+quit;
+
+proc sql; /* left join will match these on the CDS_Code and where Total > 0 removes row with missing values*/
+	create table files as 
+		select A.*, B.*
+		from fileselch_final A
+		left join filesgradaf_final B 
+		on A.CDS_Code=B.CDS_Code
+		where Total >0
+		order by CDS_Code	    
+		;
+quit;
+
+/* may want to try a left union here instead */
+proc sql; /* Master file and CohortStudents has values */
+	create table master as 
+		select * from cohort
+		outer union
+		select * from files
+		;
+quit;
