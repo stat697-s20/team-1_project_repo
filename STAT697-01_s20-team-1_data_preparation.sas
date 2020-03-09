@@ -92,7 +92,7 @@ and setting all cell values to "Text" format.
 */
 %let inputDataset3DSN = fileselsch_final;
 %let inputDataset3URL =
-https://github.com/stat697/team-1_project_repo/raw/master/data/fileselsch.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/fileselsch_final.xlsx
 ;
 %let inputDataset3Type = XLSX;
 
@@ -179,17 +179,19 @@ proc sql;
            ,SchoolCode
            ,CharterSchool
            ,ReportingCategory
-           ,input(CohortStudents, best.) as CohortStudents
-           ,input(HS_Grad_Co, best.) as HS_Grad_Co
-           ,input(HS_Grad_Ra, best.) as HS_Grad_Ra
-           ,input(Met_UC_CSU_Req_Co, best.) as Met_UC_CSU_Req_Co
-           ,input(Met_UC_CSU_Req_Ra, best.) as Met_UC_CSU_Req_Ra
-           ,input(Seal_of_Biliteracy_Co, best.) as Seal_of_Biliteracy_Co           
+           ,CohortStudents
+           ,HS_Grad_Co
+           ,HS_Grad_Ra
+           ,Met_UC_CSU_Req_Co
+           ,Met_UC_CSU_Req_Ra
+           ,Seal_of_Biliteracy_Co          
         from
             cohort1819_Final
         where
             not(missing(CohortStudents))
-        group by
+            and
+            CohortStudents > 30
+        order by
             CharterSchool
     ;
     /* combining the reporting category together */
@@ -225,17 +227,19 @@ proc sql;
            ,SchoolCode
            ,CharterSchool
            ,ReportingCategory
-           ,input(CohortStudents, best.) as CohortStudents
-           ,input(HS_Grad_Co, best.) as HS_Grad_Co
-           ,input(HS_Grad_Ra, best.) as HS_Grad_Ra
-           ,input(Met_UC_CSU_Req_Co, best.) as Met_UC_CSU_Req_Co
-           ,input(Met_UC_CSU_Req_Ra, best.) as Met_UC_CSU_Req_Ra
-           ,input(Seal_of_Biliteracy_Co, best.) as Seal_of_Biliteracy_Co
+           ,CohortStudents
+           ,HS_Grad_Co
+           ,HS_Grad_Ra
+           ,Met_UC_CSU_Req_Co
+           ,Met_UC_CSU_Req_Ra
+           ,Seal_of_Biliteracy_Co
         from
             cohort1718_Final
         where
             not(missing(CohortStudents))
-        group by
+            and
+            CohortStudents > 30
+        order by
             CharterSchool         
     ;
     /* combining the reporting category together */
@@ -269,7 +273,7 @@ create table fileselsch_bad_unique_ids as
     select
         A.*
     from 
-        fileselsch as A
+        fileselsch_final as A
         left join
         (
             select
@@ -294,9 +298,9 @@ create table fileselsch_bad_unique_ids as
         select
             *
         from
-            fileselsch
+            fileselsch_final
         where
-            substr(cat(CDS),8,7) not in ("0000000","0000001")
+            substr(cat(CDS_Code),8,7) not in ("0000000","0000001")
     ;
 quit;
 
@@ -305,36 +309,36 @@ quit;
 repeated, missing, or correspond to non-schools and removing rows where TOTAL is 
 less than 30 to increase accuracy*/
 proc sql;
-create table filesgradaf_bad_unique_ids as
+/*create table filesgradaf_bad_unique_ids as
     select
         A.*
     from 
-        filesgradaf as A
+        filesgradaf_final as A
         left join
         (
             select
                 CDS_Code
                ,count(*) as row_count_for_unique_id_value
             from
-                filesgradaf
+                filesgradaf_final
                 group by
                 CDS_Code
             ) as B
             on A.CDS_Code=B.CDS_Code
         having
         /* Removing repeated, missing, or non-school cooresponing values */
-            row_count_for_unique_id_value > 1
+           * row_count_for_unique_id_value > 1
             or
             missing(CDS_Code)
             or
             substr(cat(CDS_Code),8,7) in ("0000000","0000001")
-    ;
+    ; 
     /* Removing rows corresponding to District Offices and non-public schools */
     create table filesgradaf_new as
         select
             *
         from
-            filesgradaf
+            filesgradaf_final
         where
             substr(cat(CDS_Code),8,7) not in ("0000000","0000001")
     ;
@@ -343,7 +347,7 @@ create table filesgradaf_bad_unique_ids as
         select
             *
         from
-            filesgradaf
+            filesgradaf_final
         where
             TOTAL < 30
             order by CDS_Code
@@ -393,7 +397,7 @@ proc sql;
                     AS
                     Met_UC_CSU_Req_Ra 
                 from
-                  	cohort1819  
+                  	cohort1819_Final  
 ;
 quit;          
 
@@ -434,7 +438,7 @@ proc sql;
                     AS
                     Met_UC_CSU_Req_Ra                                   
                 from
-                    cohort1718
+                    cohort1718_Final
                     ;
 quit;
 
@@ -534,10 +538,10 @@ proc sql;
             ;
 quit;
 
-/*Clear the unnecessary tables*/
+/*Clear the unnecessary tables
 proc sql;
 	drop table work.cohort1718, work.cohort1718_edited, work.cohort1819, work.cohort1819_edited;
-run;
+run;*/
 
 proc sql;
 	create table cde_part1 as
