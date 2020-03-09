@@ -309,7 +309,7 @@ quit;
 repeated, missing, or correspond to non-schools and removing rows where TOTAL is 
 less than 30 to increase accuracy*/
 proc sql;
-/*create table filesgradaf_bad_unique_ids as
+create table filesgradaf_bad_unique_ids as
     select
         A.*
     from 
@@ -327,7 +327,7 @@ proc sql;
             on A.CDS_Code=B.CDS_Code
         having
         /* Removing repeated, missing, or non-school cooresponing values */
-           * row_count_for_unique_id_value > 1
+            row_count_for_unique_id_value > 1
             or
             missing(CDS_Code)
             or
@@ -400,6 +400,11 @@ proc sql;
                   	cohort1819_Final  
 ;
 quit;          
+
+proc sql;
+	alter table A
+		add CDS_Code num label='CDS_Code';
+run;
 
 proc sql;
     create table B as
@@ -641,10 +646,10 @@ proc sql;
            ,ReportingCategory
            ,CohortStudents
            ,HS_Graduates
-           ,CountyName 
-           ,Biliteracy_Rate 
-           ,GED_Count 
-           ,Met_UC_CSU_Grad_Req
+           ,Biliteracy_Co
+           ,Biliteracy_Ra 
+           ,Met_UC_CSU_Req_Co
+           ,Met_UC_CSU_Req_RA
            ,cde_part1.LanguageCode
            ,cde_part1.Language
            ,cde_part1.Kindergarten
@@ -674,7 +679,7 @@ proc sql;
             A
            	full join
             cde_part1
-            on A.School = cde_part1.School
+            on A.CDS_Code = cde_part1.CDS_Code
         	/*order by
             	CDS_Code*/
     ;
