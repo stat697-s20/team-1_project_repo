@@ -16,7 +16,6 @@ title1 justify=left
 title2 justify=left
 'Rationale: Many charters are exempt from variety of laws and regulations affecting other public schools if they continue to meet the terms of their charters.".'
 ;
-
 title3 justify=left
 'Meaning that the course content Charter School may have differences compared to the non-Charter ones. Will it affect the fairness of entering State-Funded Universities after graduating from Charter School and non-Charter Schools?'
 ;
@@ -54,13 +53,13 @@ proc sort
     out=cde_analytic_file_by_Biliteracy
     ;
     by
-        descending Regular_HS_Diploma_Graduates__Co
+        descending HS_Graduates
         ;
     where
-        not(missing(Regular_HS_Diploma_Graduates__Co))
+        not(missing(HS_Graduates))
         and
-        not(missing(Seal_of_Biliteracy__Count_))
-	;
+        not(missing(Biliteracy_Rate))
+		;
 run;
 
 proc corr
@@ -69,7 +68,7 @@ proc corr
     ;
     var 
         Regular_HS_Diploma_Graduates__Co
-        Seal_of_Biliteracy__Count_;
+        Biliteracy_Rate;
     where
         not(missing(Regular_HS_Diploma_Graduates__Co))
         and
@@ -123,10 +122,10 @@ proc sort
     out=cde_analytic_file_by_Biliteracy 
     ;
     by
-        descending Seal_of_Biliteracy__Count_
+        descending Biliteracy_Rate
         ;
     where
-	not(missing(Seal_of_Biliteracy__Count_))
+		not(missing(Biliteracy_Rate))
         and
         not(missing(ReportingCategory))
     ;
@@ -137,7 +136,7 @@ data Biliteracy_out;
 run;
 
 proc sgplot data=Biliteracy_out;
-	histogram Seal_of_Biliteracy__Count_;
+	histogram Biliteracy_Rate;
 run;
 
 proc corr
