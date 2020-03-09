@@ -52,16 +52,16 @@ proc sql;
         CharterSchool
        ,CohortStudents
        ,ReportingCategory
-       ,input(HS_Grad_Co, best.) as MetReq 
+       ,HS_Graduates as MetReq 
        ,Total_EL
     from
         cde_analytic_file
     where
         CohortStudents >= 30
         and
-        not missing(HS_Grad_Co)       
+        not missing(HS_Graduates)       
     order by
-        HS_Grad_Co
+        HS_Graduates
     ;
 quit;
 
@@ -91,7 +91,7 @@ proc report data = cde_analytic_file_raw;
         CharterSchool       
        ,ReportingCategory
        ,CohortStudents
-       ,HS_Grad_Co
+       ,HS_Graduates
        ;
         define CharterSchool / group;
         define ReportingCategory / group;          
@@ -189,7 +189,7 @@ proc sql;
     select 
         CharterSchool
        ,ReportingCategory
-       ,input(Met_UC_CSU_Req_Co, best.) as Met_UC_CSU_Req_Co       
+       ,Met_UC_CSU_Req_Co       
     from
         cde_analytic_file
     where
@@ -306,10 +306,7 @@ proc sql;
 	insert into q3race
 		select * from q3_race;
 	delete from q3race
-		where CharterSchool='All';
-	delete from q3race
-		where 
-			missing(School);
+		where CharterSchool='All';	
 	delete from 
 		q3race
 	where 
@@ -388,15 +385,15 @@ proc sql;
 		select 
         	CharterSchool 
        	   ,ReportingCategory
-       	   ,input(CohortStudents, best.)
-       	   ,input(HS_Grad_Co, best.) as MetReq 
+       	   ,CohortStudents
+       	   ,HS_Graduates as MetReq 
            
 		from
         	cde_analytic_file;
         where
         	CohortStudents >= 30
         	and 
-        	is not null(HS_Grad_Co) 
+        	is not null(HS_Graduates) 
     ;
 quit;
 
@@ -407,10 +404,7 @@ proc sql;
 	insert into q4race
 		select * from q4_race;
 	delete from q4race
-		where CharterSchool='All';
-	delete from q4race
-		where 
-			missing(School);
+		where CharterSchool='All';	
 	delete from 
 		q4race
 	where 
