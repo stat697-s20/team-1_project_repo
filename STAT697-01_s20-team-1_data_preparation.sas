@@ -28,9 +28,9 @@ Biliteracy (Count).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset1DSN = cohort1819_edited;
+%let inputDataset1DSN = cohort1819_final;
 %let inputDataset1URL =
-https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1819_edited.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1819_Final.xlsx
 ;
 %let inputDataset1Type = XLSX;
 
@@ -61,9 +61,9 @@ Biliteracy (Count).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset2DSN = cohort1718_edited;
+%let inputDataset2DSN = cohort1718_final;
 %let inputDataset2URL =
-https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1718_edited.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1718_Final.xlsx
 ;
 %let inputDataset2Type = XLSX;
 
@@ -90,9 +90,9 @@ and setting all cell values to "Text" format.
 
 [Unique ID Schema] The column CDS is a unique id.
 */
-%let inputDataset3DSN = fileselsch;
+%let inputDataset3DSN = fileselsch_final;
 %let inputDataset3URL =
-https://github.com/stat697/team-1_project_repo/raw/master/data/fileselsch.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/fileselsch_final.xlsx
 ;
 %let inputDataset3Type = XLSX;
 
@@ -118,9 +118,9 @@ and setting all cell values to "Text" format.
 [Unique ID Schema] The CDS_CODE in this dataset can be used as the primary key
 for this dataset as each entry has its own unique identification number.
 */
-%let inputDataset4DSN = filesgradaf;
+%let inputDataset4DSN = filesgradaf_final;
 %let inputDataset4URL =
-https://github.com/stat697/team-1_project_repo/raw/master/data/filesgradaf.xlsx
+https://github.com/stat697/team-1_project_repo/raw/master/data/filesgradaf_final.xlsx
 ;
 %let inputDataset4Type = XLSX;
 
@@ -169,93 +169,39 @@ https://github.com/stat697/team-1_project_repo/raw/master/data/filesgradaf.xlsx
 %loadDatasets
 
 
-/* check cohort1819_edited to first remove any non-numeric value and rows of 
+/* check cohort1819_final to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
 proc sql;
     create table cohort1819 as
         select
-            CharterSchool
-           ,ReportingCategory
-           ,input(CohortStudents, 6.) as CohortStudents
-           ,input(Regular_HS_Diploma_Graduates__Co,6.) as Regular_HS_Graduates
-           ,input(VAR8, 6.) as Met_UCCSUReq
-           ,input(Seal_of_Biliteracy__Count_, 5.) as Seal_of_Biliteracy
-           ,SchoolName
-           ,DistrictName
-           ,GED_Completer__Count_
-           ,CountyName
+           *
         from
-            cohort1819_edited
+            cohort1819_final
         where
             not(missing(CohortStudents))
+            and
+            CohortStudents > 30
         group by
             CharterSchool
     ;
-    /* combining the reporting category together */
-    /*create table cohort1819 as
-        select
-            CharterSchool
-           ,ReportingCategory
-           ,sum(CohortStudents) as CohortStudents
-           ,sum(Regular_HS_Graduates) as Regular_HS_Graduates
-           ,sum(Met_UCCSUReq) as Met_UCCSUReq
-           ,sum(Seal_of_Biliteracy) as Seal_of_Biliteracy
-           ,SchoolName
-           ,DistrictName
-           ,GED_Completer__Count_
-           ,CountyName
-        from
-            cohort1819_edited_dup1
-        group by 
-            CharterSchool, ReportingCategory
-        order by
-            ReportingCategory    
-    ;*/
 quit;
 
 
-/* check cohort1718_edited to first remove any non-numeric value and rows of 
+/* check cohort1718_final to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
 proc sql;
     create table cohort1718 as
         select
-            CharterSchool
-           ,ReportingCategory
-	   	   ,input(CohortStudents, 6.) as CohortStudents
-           ,input(Regular_HS_Diploma_Graduates__Co,6.) as Regular_HS_Graduates
-           ,input(VAR8, 6.) as Met_UCCSUReq
-           ,input(Seal_of_Biliteracy__Count_, 5.) as Seal_of_Biliteracy
-           ,SchoolName
-           ,DistrictName
-           ,GED_Completer__Count_
-           ,CountyName
+			*
         from
-            cohort1718_edited
+            cohort1718_final
         where
             not(missing(CohortStudents))
+            and
+            CohortStudents > 30
         group by
             CharterSchool         
     ;
-    /* combining the reporting category together */
-    /*create table cohort1718 as
-        select
-            CharterSchool
-           ,ReportingCategory
-           ,sum(CohortStudents) as CohortStudents
-           ,sum(Regular_HS_Graduates) as Regular_HS_Graduates
-           ,sum(Met_UCCSUReq) as Met_UCCSUReq
-           ,sum(Seal_of_Biliteracy) as Seal_of_Biliteracy
-           ,SchoolName
-           ,DistrictName
-           ,GED_Completer__Count_
-           ,CountyName
-        from
-            cohort1718_edited_dup1
-        group by 
-            CharterSchool, ReportingCategory
-        order by
-            ReportingCategory    
-    ;*/
 quit;
 
 
@@ -348,12 +294,64 @@ create table filesgradaf_bad_unique_ids as
     ;
 quit;
 
+proc sql;
+	create table cohort as
+		select
+			*
+		from
+			cohort1718
+		union all
+		select
+			*
+		from
+			cohort1819;
+	alter table cohort
+		drop
+			AggregateLevel
+		   ,DASS
+		;
+quit;
+
+proc sql;
+	create table files as
+		select
+			A.*
+		   ,B.*
+		from
+			fileselsch_final as A
+		left join
+			filesgradaf_final as B
+		on
+			A.CDS_Code = B.CDS_Code
+		where
+			Total > 0
+		order by
+			CDS_Code
+		;
+quit;
+
+proc sql;
+	create table master as
+		select
+			*
+		from cohort
+		outer union
+		select
+			*
+		from
+			files
+		;
+quit;
+
+
+
 
 /* build analytic dataset from raw datasets imported above, including only the
 columns and minimal data-cleaning/transformation needed to address each
 research questions/objectives in data-analysis files */
 
 /*First Creating smaller table*/
+/*
 proc sql;
     create table A as
         select 
@@ -534,10 +532,7 @@ proc sql;
             ;
 quit;
 
-/*Clear the unnecessary tables*/
-proc sql;
-	drop table work.cohort1718, work.cohort1718_edited, work.cohort1819, work.cohort1819_edited;
-run;
+
 
 proc sql;
 	create table cde_part1 as
@@ -682,12 +677,13 @@ proc sql;
         	/*order by
             	CDS_Code*/
     ;
-quit;
+quit;*/
 
 
 /* Checking for rows with repeating, missing, or cooresponding to 
 non-schools CDS_Codes values and removing rows where Total is less
 than 30 students to increase accuracy*/
+
 data cde_analytic_file_raw_bad_ids;
     set cde_analytic_file_raw;
     by CDS_Code Total;
