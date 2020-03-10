@@ -52,16 +52,16 @@ proc sql;
         CharterSchool
        ,CohortStudents
        ,ReportingCategory
-       ,HS_Graduates as MetReq 
+       ,HS_Grad_Co as MetReq 
        ,Total_EL
     from
-        cde_analytic_file
+        master /*cde_analytic_file*/
     where
         CohortStudents >= 30
         and
-        not missing(HS_Graduates)       
+        not missing(HS_Grad_Co)       
     order by
-        HS_Graduates
+        HS_Grad_Co
     ;
 quit;
 
@@ -191,7 +191,7 @@ proc sql;
        ,ReportingCategory
        ,Met_UC_CSU_Req_Co       
     from
-        cde_analytic_file
+        master /*cde_analytic_file*/
     where
         CohortStudents >= 30
         and
@@ -289,9 +289,9 @@ proc sql;
         CharterSchool
        ,ReportingCategory
        ,CohortStudents
-       ,Met_UC_CSU_Req_Co       
+       ,Met_UC_CSU_Req_Co as MetReq       
     from
-        cde_analytic_file
+        master /*cde_analytic_file*/
     where
         CohortStudents >= 30        
     order by
@@ -331,7 +331,7 @@ run;
 
 proc sgplot data=q3race;
 	yaxis label="Met UC/CSU Req" ;
-    vbar ReportingCategory / response=Met_UC_CSU_Grad_Req
+    vbar ReportingCategory / response=MetReq
         group=CharterSchool
         groupdisplay=Cluster
     	barwidth=0.5
@@ -386,14 +386,14 @@ proc sql;
         	CharterSchool 
        	   ,ReportingCategory
        	   ,CohortStudents
-       	   ,HS_Graduates as MetReq 
+       	   ,HS_Grad_Co as MetReq 
            
 		from
-        	cde_analytic_file;
+        	master /*cde_analytic_file*/;
         where
         	CohortStudents >= 30
         	and 
-        	is not null(HS_Graduates) 
+        	is not null(HS_Grad_Co) 
     ;
 quit;
 
@@ -432,7 +432,7 @@ proc freq data=q4race ;
     tables CharterSchool*ReportingCategory /plots=freqplot ; *cmh chisq all measures riskdiff;
 run;
 
-proc sgplot data=q4Rrace;
+proc sgplot data=q4race;
 	yaxis label=" Odds of HS Graduation" ;
     vbar ReportingCategory / response=MetReq 
     	group=CharterSchool
