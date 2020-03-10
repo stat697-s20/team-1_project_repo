@@ -28,7 +28,7 @@ Biliteracy (Count).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset1DSN = cohort1819_Final;
+%let inputDataset1DSN = cohort1819_final;
 %let inputDataset1URL =
 https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1819_Final.xlsx
 ;
@@ -61,7 +61,7 @@ Biliteracy (Count).
 it reflects the columns of ethnicities in data set "filesgradaf.xlsx" and 
 column "Language" in data set "fileselsch.xlsx".
 */
-%let inputDataset2DSN = cohort1718_Final;
+%let inputDataset2DSN = cohort1718_final;
 %let inputDataset2URL =
 https://github.com/stat697/team-1_project_repo/raw/master/data/cohort1718_Final.xlsx
 ;
@@ -169,24 +169,14 @@ https://github.com/stat697/team-1_project_repo/raw/master/data/filesgradaf_final
 %loadDatasets
 
 
-/* check cohort1819_edited to first remove any non-numeric value and rows of 
+/* check cohort1819_final to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
 proc sql;
-    create table cohort1819 as /* Updated this section */
+    create table cohort1819 as
         select
-            CountyCode
-           ,DistrictCode
-           ,SchoolCode
-           ,CharterSchool
-           ,ReportingCategory
-           ,CohortStudents
-           ,HS_Grad_Co
-           ,HS_Grad_Ra
-           ,Met_UC_CSU_Req_Co
-           ,Met_UC_CSU_Req_Ra
-           ,Seal_of_Biliteracy_Co          
+           *
         from
-            cohort1819_Final
+            cohort1819_final
         where
             not(missing(CohortStudents))
             and
@@ -194,47 +184,17 @@ proc sql;
         order by
             CharterSchool
     ;
-    /* combining the reporting category together */
-    /*create table cohort1819 as
-        select
-            CharterSchool
-           ,ReportingCategory
-           ,sum(CohortStudents) as CohortStudents
-           ,sum(Regular_HS_Graduates) as Regular_HS_Graduates
-           ,sum(Met_UCCSUReq) as Met_UCCSUReq
-           ,sum(Seal_of_Biliteracy) as Seal_of_Biliteracy
-           ,SchoolName
-           ,DistrictName
-           ,GED_Completer__Count_
-           ,CountyName
-        from
-            cohort1819_edited_dup1
-        group by 
-            CharterSchool, ReportingCategory
-        order by
-            ReportingCategory    
-    ;*/
 quit;
 
 
-/* check cohort1718_edited to first remove any non-numeric value and rows of 
+/* check cohort1718_final to first remove any non-numeric value and rows of 
 Cohort Students less than 30 to improve accuracy*/
 proc sql;
-    create table cohort1718 as /* Updated */
+    create table cohort1718 as
         select
-            CountyCode
-           ,DistrictCode
-           ,SchoolCode
-           ,CharterSchool
-           ,ReportingCategory
-           ,CohortStudents
-           ,HS_Grad_Co
-           ,HS_Grad_Ra
-           ,Met_UC_CSU_Req_Co
-           ,Met_UC_CSU_Req_Ra
-           ,Seal_of_Biliteracy_Co
+			*
         from
-            cohort1718_Final
+            cohort1718_final
         where
             not(missing(CohortStudents))
             and
@@ -242,26 +202,6 @@ proc sql;
         order by
             CharterSchool         
     ;
-    /* combining the reporting category together */
-    /*create table cohort1718 as
-        select
-            CharterSchool
-           ,ReportingCategory
-           ,sum(CohortStudents) as CohortStudents
-           ,sum(Regular_HS_Graduates) as Regular_HS_Graduates
-           ,sum(Met_UCCSUReq) as Met_UCCSUReq
-           ,sum(Seal_of_Biliteracy) as Seal_of_Biliteracy
-           ,SchoolName
-           ,DistrictName
-           ,GED_Completer__Count_
-           ,CountyName
-        from
-            cohort1718_edited_dup1
-        group by 
-            CharterSchool, ReportingCategory
-        order by
-            ReportingCategory    
-    ;*/
 quit;
 
 
@@ -317,22 +257,22 @@ create table filesgradaf_bad_unique_ids as
         left join
         (
             select
-                CDS_Code
+                CDS_CODE
                ,count(*) as row_count_for_unique_id_value
             from
                 filesgradaf_final
                 group by
-                CDS_Code
+                CDS_CODE
             ) as B
-            on A.CDS_Code=B.CDS_Code
+            on A.CDS_CODE=B.CDS_CODE
         having
         /* Removing repeated, missing, or non-school cooresponing values */
             row_count_for_unique_id_value > 1
             or
-            missing(CDS_Code)
+            missing(CDS_CODE)
             or
-            substr(cat(CDS_Code),8,7) in ("0000000","0000001")
-    ; 
+            substr(cat(CDS_CODE),8,7) in ("0000000","0000001")
+    ;
     /* Removing rows corresponding to District Offices and non-public schools */
     create table filesgradaf_new as
         select
@@ -340,7 +280,7 @@ create table filesgradaf_bad_unique_ids as
         from
             filesgradaf_final
         where
-            substr(cat(CDS_Code),8,7) not in ("0000000","0000001")
+            substr(cat(CDS_CODE),8,7) not in ("0000000","0000001")
     ;
     /* Removing rows where the student count TOTAL is less than 30 */
     create table filesgradaf_new2 as
@@ -350,349 +290,85 @@ create table filesgradaf_bad_unique_ids as
             filesgradaf_final
         where
             TOTAL < 30
-            order by CDS_Code
+            order by CDS_CODE
     ;
 quit;
 
 
-/* build analytic dataset from raw datasets imported above, including only the
-columns and minimal data-cleaning/transformation needed to address each
-research questions/objectives in data-analysis files */
+*******************************************************************************;
+**************** Code above are good and no need to edit **********************;
+************************** Code below need to review************************* *;
+*******************************************************************************;
 
-/*First Creating smaller table*/
-proc sql;
-    create table A as
-        select 
-                    CountyCode
-                    AS
-                    CountyCode
-                   ,DistrictCode
-                    As
-                    DistrictCode
-                   ,SchoolCode
-                    As
-                    SchoolCode
-                   ,CharterSchool 
-                    AS
-                    CharterSchool
-                   ,ReportingCategory
-                    AS
-                    ReportingCategory
-                   ,CohortStudents
-                    AS
-                    CohortStudents
-                   ,HS_Grad_Co
-                    AS
-                    HS_Graduates
-                   ,Seal_of_Biliteracy_Co
-                    AS
-                    Biliteracy_Co
-                   ,Seal_of_Biliteracy_Ra
-                    AS
-                    Biliteracy_Ra                    
-                   ,Met_UC_CSU_Req_Co
-                    AS
-                    Met_UC_CSU_Req_Co
-                   ,Met_UC_CSU_Req_Ra
-                    AS
-                    Met_UC_CSU_Req_Ra 
-                from
-                  	cohort1819_Final  
-;
-quit;          
 
-proc sql;
-	alter table A
-		add CDS_Code num label='CDS_Code';
-run;
-
-proc sql;
-    create table B as
-        select
-                    CountyCode
-                    AS
-                    CountyCode
-                   ,DistrictCode
-                    As
-                    DistrictCode
-                   ,SchoolCode
-                    As
-                    SchoolCode
-                   ,CharterSchool 
-                    AS
-                    CharterSchool
-                   ,ReportingCategory
-                    AS
-                    ReportingCategory
-                   ,CohortStudents
-                    AS
-                    CohortStudents
-                   ,HS_Grad_Co
-                    AS
-                    HS_Graduates
-                   ,Seal_of_Biliteracy_Co
-                    AS
-                    Biliteracy_Co
-                   ,Seal_of_Biliteracy_Ra
-                    AS
-                    Biliteracy_Ra                    
-                   ,Met_UC_CSU_Req_Co
-                    AS
-                    Met_UC_CSU_Req_Co
-                   ,Met_UC_CSU_Req_Ra
-                    AS
-                    Met_UC_CSU_Req_Ra                                   
-                from
-                    cohort1718_Final
-                    ;
+/* Test combining data with unions */
+proc sql; /* Union all will stack these two tables */
+	create table cohort1 as
+		select * from cohort1718
+		union all
+		select * from cohort1819;
 quit;
 
+/*creates CDS_Code in cohort file */
 proc sql;
-    create table C as
-        select
-                    CDS_Code
-                    AS 
-                    CDS_Code
-                   ,LC
-                    AS
-                    LanguageCode
-                   ,LANGUAGE
-                    AS
-                    Language
-                   ,KDGN
-                    AS
-                    Kindergarten
-                   ,GR_1
-                    AS 
-                    Grade_1
-                   ,GR_2
-                    AS 
-                    Grade_2
-                   ,GR_3
-                    AS 
-                    Grade_3
-                   ,GR_4
-                    AS 
-                    Grade_4
-                   ,GR_5
-                    AS 
-                    Grade_5
-                   ,GR_6
-                    AS 
-                    Grade_6
-                   ,GR_7
-                    AS 
-                    Grade_7
-                   ,GR_8
-                    AS 
-                    Grade_8
-                   ,GR_9
-                    AS 
-                    Grade_9
-                   ,GR_10
-                    AS 
-                    Grade_10
-                   ,GR_11
-                    AS 
-                    Grade_11
-                   ,GR_12
-                    AS 
-                    Grade_12
-                   ,UNGR
-                    AS 
-                    Undergrad 
-                   ,TOTAL_EL
-                    AS 
-                    Total_EL                                     
-                from
-                    fileselsch_new;
-quit;
-
-proc sql;
-    create table D as
-        select
-        	CDS_Code
-            AS 
-            CDS_Code
-           ,HISPANIC
-            AS 
-            Hispanic
-           ,AM_IND
-            AS 
-            American_Indian
-           ,ASIAN
-            AS 
-            Asian
-           ,PAC_ISLD
-            AS 
-            Pacific_Ilander
-           ,FILIPINO
-            AS 
-            Filipino
-           ,AFRICAN_AM
-            AS 
-            African_American
-           ,WHITE
-            AS 
-            White 
-           ,TOTAL
-            AS 
-            Total                     
-            from
-            filesgradaf_new2
-            ;
-quit;
-
-/*Clear the unnecessary tables
-proc sql;
-	drop table work.cohort1718, work.cohort1718_edited, work.cohort1819, work.cohort1819_edited;
-run;*/
-
-proc sql;
-	create table cde_part1 as
+	create table cohort as
 		select
-			coalesce(C.CDS_Code,D.CDS_Code)
-            AS CDS_Code
-           ,C.LanguageCode
-            AS
-            LanguageCode
-           ,LANGUAGE
-            AS
-            Language
-           ,C.Kindergarten
-            AS
-            Kindergarten
-           ,C.Grade_1
-            AS 
-            Grade_1
-           ,C.Grade_2
-            AS 
-            Grade_2
-           ,C.Grade_3
-            AS 
-            Grade_3
-           ,C.Grade_4
-            AS 
-            Grade_4
-           ,C.Grade_5
-            AS 
-            Grade_5
-           ,C.Grade_6
-            AS 
-            Grade_6
-           ,C.Grade_7
-            AS 
-            Grade_7
-           ,C.Grade_8
-            AS 
-            Grade_8
-           ,C.Grade_2
-            AS 
-            Grade_9
-           ,C.Grade_10
-            AS 
-            Grade_10
-           ,C.Grade_11
-            AS 
-            Grade_11
-           ,C.Grade_12
-            AS 
-            Grade_12
-           ,C.Undergrad
-            AS 
-            Undergrad 
-           ,C.TOTAL_EL
-            AS 
-            Total_EL  
-           ,D.Hispanic
-            AS 
-            Hispanic
-           ,D.American_Indian
-            AS 
-            American_Indian
-           ,D.Asian
-            AS 
-            Asian
-           ,D.Pacific_Ilander
-            AS 
-            Pacific_Ilander
-           ,D.Filipino
-            AS 
-            Filipino
-           ,D.African_American
-            AS 
-            African_American
-           ,D.White
-            AS 
-            White 
-           ,D.Total
-            AS 
-            Total            
-        from
-            C
-            full join
-            D
-            on C.CDS_Code = D.CDS_Code
-        	order by
-            	CDS_Code
-    ;
+			cats(CountyCode,DistrictCode,SchoolCode)
+			AS
+			CDS_Code
+		   ,CharterSchool		    
+		   ,ReportingCategory
+		   ,CohortStudents
+		   ,HS_Grad_Co
+		   ,HS_Grad_Ra
+		   ,Met_UC_CSU_Req_Co
+		   ,Met_UC_CSU_Req_Ra
+		   ,Seal_of_Biliteracy_Co  
+		   ,Seal_of_Biliteracy_Ra 
+		   
+	 	from
+	 		cohort1
+	 ;
 quit;
 
-proc sql;
-    create table cde_analytic_file_raw as
-        select
-        	cde_part1.CDS_Code
-           ,CharterSchool
-           ,ReportingCategory
-           ,CohortStudents
-           ,HS_Graduates
-           ,Biliteracy_Co
-           ,Biliteracy_Ra 
-           ,Met_UC_CSU_Req_Co
-           ,Met_UC_CSU_Req_RA
-           ,cde_part1.LanguageCode
-           ,cde_part1.Language
-           ,cde_part1.Kindergarten
-           ,cde_part1.Grade_1
-           ,cde_part1.Grade_2
-           ,cde_part1.Grade_3
-           ,cde_part1.Grade_4
-           ,cde_part1.Grade_5
-           ,cde_part1.Grade_6
-           ,cde_part1.Grade_7
-           ,cde_part1.Grade_8
-           ,cde_part1.Grade_9
-           ,cde_part1.Grade_10
-           ,cde_part1.Grade_11
-           ,cde_part1.Grade_12
-           ,cde_part1.Undergrad 
-           ,cde_part1.Total_EL  
-           ,cde_part1.Hispanic
-           ,cde_part1.American_Indian
-           ,cde_part1.Asian
-           ,cde_part1.Pacific_Ilander
-           ,cde_part1.Filipino
-           ,cde_part1.African_American
-           ,cde_part1.White 
-           ,cde_part1.Total
-        from
-            A
-           	full join
-            cde_part1
-            on A.CDS_Code = cde_part1.CDS_Code
-        	/*order by
-            	CDS_Code*/
-    ;
+proc sql; /* left join will match these on the CDS_Code and where Total > 0 removes row with missing values*/
+	create table files as 
+		select A.*, B.*
+		from 
+			fileselsch_new as A
+		left join 
+			filesgradaf_new as B 
+		on 
+			A.CDS_Code=B.CDS_Code
+		where 
+			Total >0
+		order by 
+			CDS_Code	    
+		;
+quit;
+
+/* may want to try a left union here instead */
+proc sql; /* Master file and CohortStudents has values */
+	create table master as 
+		select * 
+			from 
+				cohort
+		outer union
+		select * 
+			from 
+				files
+		;
 quit;
 
 
 /* Checking for rows with repeating, missing, or cooresponding to 
 non-schools CDS_Codes values and removing rows where Total is less
 than 30 students to increase accuracy*/
-data cde_analytic_file_raw_bad_ids;
-    set cde_analytic_file_raw;
-    by CDS_Code Total;
 
+data cde_analytic_file_raw_bad_ids;
+    set master;
+    by CDS_Code
+    ;
     if
         first.CDS_Code*last.CDS_Code = 0
         or
@@ -712,7 +388,7 @@ run;
 reference variable */
 proc sort
         nodupkey
-        data=cde_analytic_file_raw
+        data=master
         out=cde_analytic_file
     ;
     by
@@ -720,62 +396,3 @@ proc sort
     ;
 run;
 
-
-
-
-
-
-
-/* Test combining data with unions */
-proc sql; /* Union all will stack these two tables */
-	create table cohort1 as
-		select * from cohort1718
-		union all
-		select * from cohort1819;
-alter table cohort1
-	drop AggregateLevel 
-		,DASS		 
-		,Seal_of_Biliteracy_Co  
-		,Seal_of_Biliteracy_Ra 	
-	;
-quit;
-
-/*creates CDS_Code in cohort file */
-proc sql;
-	create table cohort as
-		select
-			cats(CountyCode,DistrictCode,SchoolCode)
-			AS
-			CDS_Code
-		   ,CharterSchool		    
-		   ,ReportingCategory
-		   ,CohortStudents
-		   ,HS_Grad_Co
-		   ,HS_Grad_Ra
-		   ,Met_UC_CSU_Req_Co
-		   ,Met_UC_CSU_Req_Ra
-		   
-	 from
-	 	cohort1
-	 ;
-quit;
-
-proc sql; /* left join will match these on the CDS_Code and where Total > 0 removes row with missing values*/
-	create table files as 
-		select A.*, B.*
-		from fileselch_final A
-		left join filesgradaf_final B 
-		on A.CDS_Code=B.CDS_Code
-		where Total >0
-		order by CDS_Code	    
-		;
-quit;
-
-/* may want to try a left union here instead */
-proc sql; /* Master file and CohortStudents has values */
-	create table master as 
-		select * from cohort
-		outer union
-		select * from files
-		;
-quit;

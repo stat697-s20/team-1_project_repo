@@ -16,7 +16,6 @@ title1 justify=left
 title2 justify=left
 'Rationale: Many charters are exempt from variety of laws and regulations affecting other public schools if they continue to meet the terms of their charters.".'
 ;
-
 title3 justify=left
 'Meaning that the course content Charter School may have differences compared to the non-Charter ones. Will it affect the fairness of entering State-Funded Universities after graduating from Charter School and non-Charter Schools?'
 ;
@@ -54,13 +53,13 @@ proc sort
     out=cde_analytic_file_by_Biliteracy
     ;
     by
-        descending Regular_HS_Diploma_Graduates__Co
+        descending HS_Grad_Co
         ;
     where
-        not(missing(Regular_HS_Diploma_Graduates__Co))
+        not(missing(HS_Grad_Co))
         and
-        not(missing(Seal_of_Biliteracy__Count_))
-	;
+        not(missing(Seal_of_Biliteracy_Co))
+		;
 run;
 
 proc corr
@@ -68,12 +67,12 @@ proc corr
     out=cde_analytic_file_HS_Grad
     ;
     var 
-        Regular_HS_Diploma_Graduates__Co
-        Seal_of_Biliteracy__Count_;
+        HS_Grad_Co
+        Seal_of_Biliteracy_Co;
     where
-        not(missing(Regular_HS_Diploma_Graduates__Co))
+        not(missing(HS_Grad_Co))
         and
-        not(missing(Seal_of_Biliteracy__Count_))
+        not(missing(Seal_of_Biliteracy_Co))
         ;
 run;
 
@@ -123,10 +122,10 @@ proc sort
     out=cde_analytic_file_by_Biliteracy 
     ;
     by
-        descending Seal_of_Biliteracy__Count_
+        descending Seal_of_Biliteracy_Co
         ;
     where
-	not(missing(Seal_of_Biliteracy__Count_))
+		not(missing(Seal_of_Biliteracy_Co))
         and
         not(missing(ReportingCategory))
     ;
@@ -137,7 +136,7 @@ data Biliteracy_out;
 run;
 
 proc sgplot data=Biliteracy_out;
-	histogram Seal_of_Biliteracy__Count_;
+	histogram Seal_of_Biliteracy_Co;
 run;
 
 proc corr
@@ -145,13 +144,13 @@ proc corr
     out=cde_analytic_file_HS_Grad
     ;
     var 
-        HS_Graduates
-        Biliteracy_Rate
+        HS_Grad_Co
+        Seal_of_Biliteracy_Co
         ;
     where
-        not(missing(HS_Graduates))
+        not(missing(HS_Grad_Co))
         and
-        not(missing(Biliteracy_Rate))
+        not(missing(Seal_of_Biliteracy_Co))
         ;
 run;
 
