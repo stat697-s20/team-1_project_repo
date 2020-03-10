@@ -53,12 +53,12 @@ proc sort
     out=cde_analytic_file_by_Biliteracy
     ;
     by
-        descending HS_Graduates
+        descending HS_Grad_Co
         ;
     where
-        not(missing(HS_Graduates))
+        not(missing(HS_Grad_Co))
         and
-        not(missing(Biliteracy_Rate))
+        not(missing(Seal_of_Biliteracy_Co))
 		;
 run;
 
@@ -67,12 +67,12 @@ proc corr
     out=cde_analytic_file_HS_Grad
     ;
     var 
-        Regular_HS_Diploma_Graduates__Co
-        Biliteracy_Rate;
+        HS_Grad_Co
+        Seal_of_Biliteracy_Co;
     where
-        not(missing(Regular_HS_Diploma_Graduates__Co))
+        not(missing(HS_Grad_Co))
         and
-        not(missing(Seal_of_Biliteracy__Count_))
+        not(missing(Seal_of_Biliteracy_Co))
         ;
 run;
 
@@ -122,10 +122,10 @@ proc sort
     out=cde_analytic_file_by_Biliteracy 
     ;
     by
-        descending Biliteracy_Rate
+        descending Seal_of_Biliteracy_Co
         ;
     where
-		not(missing(Biliteracy_Rate))
+		not(missing(Seal_of_Biliteracy_Co))
         and
         not(missing(ReportingCategory))
     ;
@@ -136,7 +136,7 @@ data Biliteracy_out;
 run;
 
 proc sgplot data=Biliteracy_out;
-	histogram Biliteracy_Rate;
+	histogram Seal_of_Biliteracy_Co;
 run;
 
 proc corr
@@ -144,13 +144,13 @@ proc corr
     out=cde_analytic_file_HS_Grad
     ;
     var 
-        HS_Graduates
-        Biliteracy_Rate
+        HS_Grad_Co
+        Seal_of_Biliteracy_Co
         ;
     where
-        not(missing(HS_Graduates))
+        not(missing(HS_Grad_Co))
         and
-        not(missing(Biliteracy_Rate))
+        not(missing(Seal_of_Biliteracy_Co))
         ;
 run;
 

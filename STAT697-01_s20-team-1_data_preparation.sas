@@ -181,7 +181,7 @@ proc sql;
             not(missing(CohortStudents))
             and
             CohortStudents > 30
-        group by
+        order by
             CharterSchool
     ;
 quit;
@@ -199,7 +199,7 @@ proc sql;
             not(missing(CohortStudents))
             and
             CohortStudents > 30
-        group by
+        order by
             CharterSchool         
     ;
 quit;
@@ -213,34 +213,34 @@ create table fileselsch_bad_unique_ids as
     select
         A.*
     from 
-        fileselsch as A
+        fileselsch_final as A
         left join
         (
             select
-                CDS
+                CDS_Code
                ,count(*) as row_count_for_unique_id_value
             from
-                fileselsch
+                fileselsch_final
             group by
-                CDS
+                CDS_Code
             ) as B
-            on A.CDS=B.CDS
+            on A.CDS_Code=B.CDS_Code
         having
         /*Removing repeated, missing, or non-school cooresponing values*/
             row_count_for_unique_id_value > 1
             or
-            missing(CDS)
+            missing(CDS_Code)
             or
-            substr(cat(CDS),8,7) in ("0000000","0000001")
+            substr(cat(CDS_Code),8,7) in ("0000000","0000001")
     ;
     /* Removing rows corresponding to District Offices and non-public schools */
     create table fileselsch_new as
         select
             *
         from
-            fileselsch
+            fileselsch_final
         where
-            substr(cat(CDS),8,7) not in ("0000000","0000001")
+            substr(cat(CDS_Code),8,7) not in ("0000000","0000001")
     ;
 quit;
 
@@ -253,14 +253,14 @@ create table filesgradaf_bad_unique_ids as
     select
         A.*
     from 
-        filesgradaf as A
+        filesgradaf_final as A
         left join
         (
             select
                 CDS_CODE
                ,count(*) as row_count_for_unique_id_value
             from
-                filesgradaf
+                filesgradaf_final
                 group by
                 CDS_CODE
             ) as B
@@ -278,7 +278,7 @@ create table filesgradaf_bad_unique_ids as
         select
             *
         from
-            filesgradaf
+            filesgradaf_final
         where
             substr(cat(CDS_CODE),8,7) not in ("0000000","0000001")
     ;
@@ -287,7 +287,7 @@ create table filesgradaf_bad_unique_ids as
         select
             *
         from
-            filesgradaf
+            filesgradaf_final
         where
             TOTAL < 30
             order by CDS_CODE
@@ -307,10 +307,6 @@ proc sql; /* Union all will stack these two tables */
 		select * from cohort1718
 		union all
 		select * from cohort1819;
-alter table cohort1
-	drop AggregateLevel 
-		,DASS		 	
-	;
 quit;
 
 /*creates CDS_Code in cohort file */
@@ -339,9 +335,9 @@ proc sql; /* left join will match these on the CDS_Code and where Total > 0 remo
 	create table files as 
 		select A.*, B.*
 		from 
-			fileselch_final as A
+			fileselsch_new as A
 		left join 
-			filesgradaf_final as B 
+			filesgradaf_new as B 
 		on 
 			A.CDS_Code=B.CDS_Code
 		where 
@@ -371,8 +367,8 @@ than 30 students to increase accuracy*/
 
 data cde_analytic_file_raw_bad_ids;
     set master;
-    by CDS_Code Total;
-
+    by CDS_Code
+    ;
     if
         first.CDS_Code*last.CDS_Code = 0
         or
