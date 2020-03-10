@@ -294,390 +294,75 @@ create table filesgradaf_bad_unique_ids as
     ;
 quit;
 
+
+*******************************************************************************;
+**************** Code above are good and no need to edit **********************;
+************************** Code below need to review************************* *;
+*******************************************************************************;
+
+
+/* Test combining data with unions */
+proc sql; /* Union all will stack these two tables */
+	create table cohort1 as
+		select * from cohort1718
+		union all
+		select * from cohort1819;
+alter table cohort1
+	drop AggregateLevel 
+		,DASS		 	
+	;
+quit;
+
+/*creates CDS_Code in cohort file */
 proc sql;
 	create table cohort as
 		select
-			*
-		from
-			cohort1718
-		union all
-		select
-			*
-		from
-			cohort1819;
-	alter table cohort
-		drop
-			AggregateLevel
-		   ,DASS
-		;
-quit;
-
-proc sql;
-	create table files as
-		select
-			A.*
-		   ,B.*
-		from
-			fileselsch_final as A
-		left join
-			filesgradaf_final as B
-		on
-			A.CDS_Code = B.CDS_Code
-		where
-			Total > 0
-		order by
+			cats(CountyCode,DistrictCode,SchoolCode)
+			AS
 			CDS_Code
+		   ,CharterSchool		    
+		   ,ReportingCategory
+		   ,CohortStudents
+		   ,HS_Grad_Co
+		   ,HS_Grad_Ra
+		   ,Met_UC_CSU_Req_Co
+		   ,Met_UC_CSU_Req_Ra
+		   ,Seal_of_Biliteracy_Co  
+		   ,Seal_of_Biliteracy_Ra 
+		   
+	 	from
+	 		cohort1
+	 ;
+quit;
+
+proc sql; /* left join will match these on the CDS_Code and where Total > 0 removes row with missing values*/
+	create table files as 
+		select A.*, B.*
+		from 
+			fileselch_final as A
+		left join 
+			filesgradaf_final as B 
+		on 
+			A.CDS_Code=B.CDS_Code
+		where 
+			Total >0
+		order by 
+			CDS_Code	    
 		;
 quit;
 
-proc sql;
-	create table master as
-		select
-			*
-		from cohort
+/* may want to try a left union here instead */
+proc sql; /* Master file and CohortStudents has values */
+	create table master as 
+		select * 
+			from 
+				cohort
 		outer union
-		select
-			*
-		from
-			files
+		select * 
+			from 
+				files
 		;
 quit;
-
-
-
-
-/* build analytic dataset from raw datasets imported above, including only the
-columns and minimal data-cleaning/transformation needed to address each
-research questions/objectives in data-analysis files */
-
-/*First Creating smaller table*/
-/*
-proc sql;
-    create table A as
-        select 
-                    SchoolName
-                    AS
-                    School
-                   ,DistrictName
-                    AS
-                    District
-                   ,CharterSchool 
-                    AS
-                    CharterSchool
-                   ,ReportingCategory
-                    AS
-                    ReportingCategory
-                   ,CohortStudents
-                    AS
-                    CohortStudents
-                   ,Regular_HS_Graduates
-                    AS
-                    HS_Graduates
-                   ,CountyName
-                    AS
-                    CountyName 
-                   ,Seal_of_Biliteracy
-                    AS
-                    Biliteracy_Rate 
-                   ,GED_Completer__Count_
-                    AS
-                    GED_Count 
-                   ,Met_UCCSUReq
-                    AS
-                    Met_UC_CSU_Grad_Req                                  
-                from
-                  	cohort1819  
-;
-quit;          
-
-proc sql;
-    create table B as
-        select
-                    SchoolName
-                    AS
-                    School
-                   ,DistrictName
-                    AS
-                    District
-                   ,CharterSchool 
-                    AS
-                    CharterSchool
-                   ,ReportingCategory
-                    AS
-                    ReportingCategory
-                   ,CohortStudents
-                    AS
-                    CohortStudents
-                   ,Regular_HS_Graduates
-                    AS
-                    HS_Graduates
-                   ,CountyName
-                    AS
-                    CountyName
-                   ,Seal_of_Biliteracy
-                    AS
-                    Biliteracy_Rate 
-                   ,GED_Completer__Count_
-                    AS
-                    GED_Count 
-                   ,Met_UCCSUReq
-                    AS
-                    Met_UC_CSU_Grad_Req                                   
-                from
-                    cohort1718
-                    ;
-quit;
-
-proc sql;
-    create table C as
-        select
-                    CDS
-                    AS CDS_Code
-                   ,SCHOOL
-                    AS School
-                   ,DISTRICT
-                    AS
-                    District
-                   ,LC
-                    AS
-                    LanguageCode
-                   ,LANGUAGE
-                    AS
-                    Language
-                   ,KDGN
-                    AS
-                    Kindergarten
-                   ,GR_1
-                    AS 
-                    Grade_1
-                   ,GR_2
-                    AS 
-                    Grade_2
-                   ,GR_3
-                    AS 
-                    Grade_3
-                   ,GR_4
-                    AS 
-                    Grade_4
-                   ,GR_5
-                    AS 
-                    Grade_5
-                   ,GR_6
-                    AS 
-                    Grade_6
-                   ,GR_7
-                    AS 
-                    Grade_7
-                   ,GR_8
-                    AS 
-                    Grade_8
-                   ,GR_9
-                    AS 
-                    Grade_9
-                   ,GR_10
-                    AS 
-                    Grade_10
-                   ,GR_11
-                    AS 
-                    Grade_11
-                   ,GR_12
-                    AS 
-                    Grade_12
-                   ,UNGR
-                    AS 
-                    Undergrad 
-                   ,TOTAL_EL
-                    AS 
-                    Total_EL                                     
-                from
-                    fileselsch_new;
-quit;
-
-proc sql;
-    create table D as
-        select
-        	CDS_CODE
-            AS CDS_Code
-            ,SCHOOL
-            AS School
-            ,DISTRICT
-            AS
-            District
-            ,HISPANIC
-            AS 
-            Hispanic
-            ,AM_IND
-            AS 
-            American_Indian
-            ,ASIAN
-            AS 
-            Asian
-            ,PAC_ISLD
-            AS 
-            Pacific_Ilander
-            ,FILIPINO
-            AS 
-            Filipino
-            ,AFRICAN_AM
-            AS 
-            African_American
-            ,WHITE
-            AS 
-            White 
-            ,TOTAL
-            AS 
-            Total                     
-            from
-            filesgradaf_new2
-            ;
-quit;
-
-
-
-proc sql;
-	create table cde_part1 as
-		select
-			coalesce(C.CDS_Code,D.CDS_Code)
-            AS CDS_Code
-           ,coalesce(C.School,D.School)
-            AS School
-           ,coalesce(C.District,D.District)
-            AS District
-		   ,C.LanguageCode
-            AS
-            LanguageCode
-           ,LANGUAGE
-            AS
-            Language
-           ,C.Kindergarten
-            AS
-            Kindergarten
-           ,C.Grade_1
-            AS 
-            Grade_1
-           ,C.Grade_2
-            AS 
-            Grade_2
-           ,C.Grade_3
-            AS 
-            Grade_3
-           ,C.Grade_4
-            AS 
-            Grade_4
-           ,C.Grade_5
-            AS 
-            Grade_5
-           ,C.Grade_6
-            AS 
-            Grade_6
-           ,C.Grade_7
-            AS 
-            Grade_7
-           ,C.Grade_8
-            AS 
-            Grade_8
-           ,C.Grade_2
-            AS 
-            Grade_9
-           ,C.Grade_10
-            AS 
-            Grade_10
-           ,C.Grade_11
-            AS 
-            Grade_11
-           ,C.Grade_12
-            AS 
-            Grade_12
-           ,C.Undergrad
-            AS 
-            Undergrad 
-           ,C.TOTAL_EL
-            AS 
-            Total_EL  
-           ,D.Hispanic
-            AS 
-            Hispanic
-           ,D.American_Indian
-            AS 
-            American_Indian
-           ,D.Asian
-            AS 
-            Asian
-           ,D.Pacific_Ilander
-            AS 
-            Pacific_Ilander
-           ,D.Filipino
-            AS 
-            Filipino
-           ,D.African_American
-            AS 
-            African_American
-           ,D.White
-            AS 
-            White 
-           ,D.Total
-            AS 
-            Total            
-        from
-            C
-            full join
-            D
-            on C.CDS_Code = D.CDS_Code
-        	order by
-            	CDS_Code
-    ;
-quit;
-
-proc sql;
-    create table cde_analytic_file_raw as
-        select
-        	cde_part1.CDS_Code
-           ,coalesce(A.School,cde_part1.School)
-            AS School
-           ,coalesce(A.District,cde_part1.District)
-            AS District
-           ,CharterSchool
-           ,ReportingCategory
-           ,CohortStudents
-           ,HS_Graduates
-           ,CountyName 
-           ,Biliteracy_Rate 
-           ,GED_Count 
-           ,Met_UC_CSU_Grad_Req
-           ,cde_part1.LanguageCode
-           ,cde_part1.Language
-           ,cde_part1.Kindergarten
-           ,cde_part1.Grade_1
-           ,cde_part1.Grade_2
-           ,cde_part1.Grade_3
-           ,cde_part1.Grade_4
-           ,cde_part1.Grade_5
-           ,cde_part1.Grade_6
-           ,cde_part1.Grade_7
-           ,cde_part1.Grade_8
-           ,cde_part1.Grade_9
-           ,cde_part1.Grade_10
-           ,cde_part1.Grade_11
-           ,cde_part1.Grade_12
-           ,cde_part1.Undergrad 
-           ,cde_part1.Total_EL  
-           ,cde_part1.Hispanic
-           ,cde_part1.American_Indian
-           ,cde_part1.Asian
-           ,cde_part1.Pacific_Ilander
-           ,cde_part1.Filipino
-           ,cde_part1.African_American
-           ,cde_part1.White 
-           ,cde_part1.Total
-        from
-            A
-           	full join
-            cde_part1
-            on A.School = cde_part1.School
-        	/*order by
-            	CDS_Code*/
-    ;
-quit;*/
 
 
 /* Checking for rows with repeating, missing, or cooresponding to 
@@ -685,7 +370,7 @@ non-schools CDS_Codes values and removing rows where Total is less
 than 30 students to increase accuracy*/
 
 data cde_analytic_file_raw_bad_ids;
-    set cde_analytic_file_raw;
+    set master;
     by CDS_Code Total;
 
     if
@@ -707,7 +392,7 @@ run;
 reference variable */
 proc sort
         nodupkey
-        data=cde_analytic_file_raw
+        data=master
         out=cde_analytic_file
     ;
     by
@@ -715,57 +400,3 @@ proc sort
     ;
 run;
 
-
-/* Test combining data with unions */
-proc sql; /* Union all will stack these two tables */
-	create table cohort1 as
-		select * from cohort1718
-		union all
-		select * from cohort1819;
-alter table cohort1
-	drop AggregateLevel 
-		,DASS		 
-		,Seal_of_Biliteracy_Co  
-		,Seal_of_Biliteracy_Ra 	
-	;
-quit;
-
-/*creates CDS_Code in cohort file */
-proc sql;
-	create table cohort as
-		select
-			cats(CountyCode,DistrictCode,SchoolCode)
-			AS
-			CDS_Code
-		   ,CharterSchool		    
-		   ,ReportingCategory
-		   ,CohortStudents
-		   ,HS_Grad_Co
-		   ,HS_Grad_Ra
-		   ,Met_UC_CSU_Req_Co
-		   ,Met_UC_CSU_Req_Ra
-		   
-	 from
-	 	cohort1
-	 ;
-quit;
-
-proc sql; /* left join will match these on the CDS_Code and where Total > 0 removes row with missing values*/
-	create table files as 
-		select A.*, B.*
-		from fileselch_final A
-		left join filesgradaf_final B 
-		on A.CDS_Code=B.CDS_Code
-		where Total >0
-		order by CDS_Code	    
-		;
-quit;
-
-/* may want to try a left union here instead */
-proc sql; /* Master file and CohortStudents has values */
-	create table master as 
-		select * from cohort
-		outer union
-		select * from files
-		;
-quit;
