@@ -55,15 +55,9 @@ proc sql;
        ,HS_Grad_Co as MetReq 
        ,Total_EL
     from
-        master /*cde_analytic_file*/
-    where
-        CohortStudents >= 30
-        and
-        not missing(HS_Grad_Co)       
-    order by
-        HS_Grad_Co
+        master     
     ;
-quit;
+quit; 
 
 proc sql;
 	create table q1gender
@@ -84,43 +78,32 @@ proc sql;
 	;
 quit;
 
-/* I was unable to get this proc report that would
-replace the above proc sql to work 
-proc report data = cde_analytic_file_raw;
-    columns
-        CharterSchool       
-       ,ReportingCategory
-       ,CohortStudents
-       ,HS_Graduates
-       ;
-        define CharterSchool / group;
-        define ReportingCategory / group;          
-       ;
-run; 
-*/
+
+proc report data = q1gender;
+ column
+ 	CharterSchool
+	ReportingCategory
+	MetReq
+	CohortStudents	
+	MetReq = pctMetReq
+ ;	
+	define CharterSchool / group;
+	define ReportingCategory / group;
+	define MetReq / group sum  "MetReq";
+	define CohortStudents / group sum "CohortStudents";	
+	define pctMetReq / analysis across PCTSUM format =percent7.1;
+run;
 
 footnote1 justify=left
-'This proc sql will generate a table that will only contain information about students who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate ate which they are able to meet high school graduation requirments.'
+'This proc sql and proc report will generate a table that will only contain information about students who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate ate which they are able to meet high school graduation requirments.'
 ;
 
-proc logistic data=q1gender; 
-    class CharterSchool (ref="Yes") / param=reference;
-    freq MetReq;
-    model ReportingCategory(ref="GF") = CharterSchool / link=glogit;
-    output out= type_pred PREDPROBS=I;
-run;
-
-proc freq data=q1gender;
-    weight MetReq;
-    tables CharterSchool*ReportingCategory /plots=freqplot ; *cmh chisq all measures riskdiff;
-run;
-
 footnote2 justify=left
-'In the plot it appears that female students are meeting high school graduation requirments at a higher rate than their male peers in both the charter school and public school learing environment.'
+'In the both the table and plot it appears that female students are meeting high school graduation requirments at about the same or slightly higher rate than their male peers in both the charter school and public school learing environment. This also shows that neither groups perform as well in a charter school setting as they do in a public school.'
 ;
 
 footnote3 justify=left
-'From this output further analysis can be used to determine which type of learning envirnonment best serves male and female students in meeting high school graduation requirements.'
+'From this output further analysis can be used to determine which other factors contribute to the drastic differences that affects both groups ability in meeting high school graduation equirements.'
 ;
 
 proc sgplot data=q1gender;
@@ -191,13 +174,7 @@ proc sql;
        ,ReportingCategory
        ,Met_UC_CSU_Req_Co       
     from
-        master /*cde_analytic_file*/
-    where
-        CohortStudents >= 30
-        and
-        not missing(Met_UC_CSU_Req_Co)       
-    order by
-        Met_UC_CSU_Req_Co
+        master 
     ;
 quit;
 
@@ -227,7 +204,7 @@ footnote3 justify=left
 /* Bar plot of MetReq for Gender Male vs Gender Female  */
 proc sgplot data=q2gender;
 	yaxis label="Met UC/CSU Req" ;
-    vbar ReportingCategory / response=Met_UC_CSU_Grad_Req
+    vbar ReportingCategory / response=Met_UC_CSU_Req_Co
         group=CharterSchool
         groupdisplay=Cluster
     	barwidth=0.5
@@ -291,11 +268,7 @@ proc sql;
        ,CohortStudents
        ,Met_UC_CSU_Req_Co as MetReq       
     from
-        master /*cde_analytic_file*/
-    where
-        CohortStudents >= 30        
-    order by
-        Met_UC_CSU_Req_Co
+        master 
     ;
 quit;
 
@@ -322,13 +295,6 @@ footnote2 justify=left
 'In the above table and plot it appears that Hispanic students have at least a slightly higher odds of meeting the UC/CSU admissions requirements than their White peers in both the charter school and public school learing environment, with their greates odd of meeting the requirements in a charter school. We can also see that the odds of a White student meeting the admissions requirments is lower at a charter school vs a public school.'
 ;
 
-proc logistic data=q3race;
-    class CharterSchool (ref='YES') / param=reference;
-    freq MetReq;
-    model type(ref='RW')=ReportingCategory / link=glogit;
-    output out=type_pred PREDPROBS=YES;
-run;
-
 proc sgplot data=q3race;
 	yaxis label="Met UC/CSU Req" ;
     vbar ReportingCategory / response=MetReq
@@ -354,8 +320,8 @@ title2 justify=left
 'Rationale: Rationale: From the odds we can gain a better perspective on the success rates of an underserved/ underrepresented student populations compared to their "White, not Hispanic" peers.'
 ;
 
-footnote1 justify=left;
-'This assumes that communities with a higher proportion of ELs/LEP students have the same access to educational (financial) resources as communities with fewer.' 
+footnote1 justify=left
+'This assumes that communities with a higher proportion of ELs/LEP students have the same access to educational (financial) resources as communities with fewer.'
 ;
 
 /*
@@ -389,11 +355,7 @@ proc sql;
        	   ,HS_Grad_Co as MetReq 
            
 		from
-        	master /*cde_analytic_file*/;
-        where
-        	CohortStudents >= 30
-        	and 
-        	is not null(HS_Grad_Co) 
+        	master 
     ;
 quit;
 
@@ -416,29 +378,13 @@ proc sql;
 	;
 quit;
 
-footnote2 justify=left;
+footnote2 justify=left
 'In the above table and plot it appears that the odds of either student population meeting high school graduation requirments has shifted lower from the odds of them meeting admissions requirements for UC/CSU admissions, which was unexpected.'
 ;
-
-proc logistic data=q4race; 
-    class CharterSchool (ref="Yes") / param=reference ;
-    freq MetReq;
-    model ReportingCategory(ref="RH") = CharterSchool / link=glogit;
-    output out= type_pred PREDPROBS=I;
-run;
 
 proc freq data=q4race ;
     weight MetReq;
     tables CharterSchool*ReportingCategory /plots=freqplot ; *cmh chisq all measures riskdiff;
-run;
-
-proc sgplot data=q4race;
-	yaxis label=" Odds of HS Graduation" ;
-    vbar ReportingCategory / response=MetReq 
-    	group=CharterSchool
-    	groupdisplay=Cluster
-    	barwidth=.5
-    	transparency=0.2;
 run;
 
 /* clear titles/footnotes */
