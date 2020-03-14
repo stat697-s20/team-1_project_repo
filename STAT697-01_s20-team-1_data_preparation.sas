@@ -295,21 +295,21 @@ create table filesgradaf_bad_unique_ids as
 quit;
 
 
-*******************************************************************************;
-**************** Code above are good and no need to edit **********************;
-************************** Code below need to review************************* *;
-*******************************************************************************;
-
-
-/* Test combining data with unions */
-proc sql; /* Union all will stack these two tables */
+/* build analytic dataset from raw datasets imported above, including only the
+columns and minimal data-cleaning/transformation needed to address each
+research questions/objectives in data-analysis files */
+proc sql; 
 	create table cohort1 as
-		select * from cohort1718
+		select * 
+        from 
+            cohort1718
 		union all
-		select * from cohort1819;
+		select * 
+        from 
+            cohort1819
+    ;
 quit;
 
-/*creates CDS_Code in cohort file */
 proc sql;
 	create table cohort as
 		select
@@ -324,14 +324,13 @@ proc sql;
 		   ,Met_UC_CSU_Req_Co
 		   ,Met_UC_CSU_Req_Ra
 		   ,Seal_of_Biliteracy_Co  
-		   ,Seal_of_Biliteracy_Ra 
-		   
+		   ,Seal_of_Biliteracy_Ra 		   
 	 	from
 	 		cohort1
 	 ;
 quit;
 
-proc sql; /* left join will match these on the CDS_Code and where Total > 0 removes row with missing values*/
+proc sql; 
 	create table files as 
 		select A.*, B.*
 		from 
@@ -344,20 +343,19 @@ proc sql; /* left join will match these on the CDS_Code and where Total > 0 remo
 			Total >0
 		order by 
 			CDS_Code	    
-		;
+	;
 quit;
 
-/* may want to try a left union here instead */
-proc sql; /* Master file and CohortStudents has values */
+proc sql; 
 	create table master as 
 		select * 
 			from 
 				cohort
 		outer union
 		select * 
-			from 
-				files
-		;
+		from 
+			files
+	;
 quit;
 
 
