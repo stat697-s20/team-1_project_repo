@@ -367,7 +367,7 @@ than 30 students to increase accuracy*/
 
 data cde_analytic_file_raw_bad_ids;
     set master;
-    by CDS_Code
+    /*by CDS_Code*/
     ;
     if
         first.CDS_Code*last.CDS_Code = 0
