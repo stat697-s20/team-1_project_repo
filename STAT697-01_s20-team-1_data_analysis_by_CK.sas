@@ -109,7 +109,7 @@ decimals which is impossible for number of counts.
 
 Methodology: We can use porc sort to find which ethnicity has the most number
 of Biliteracy Rate to see how the ethnicity and language affects the graduate
-rate.
+rate. Then we use barchart to see the rate of Diploma Graduates across the three races with biliteracy, White, Hispanic and Asian.
 
 Followup Steps: We should see the entries that without a numerical value as it 
 doesn't contains a figure of the reporting category. We should filter it for 
@@ -131,27 +131,64 @@ proc sort
     ;
 run;
 
-data Biliteracy_out;
-	set cde_analytic_file_by_Biliteracy (obs=30);
+proc report data=cde_analytic_file_by_Biliteracy
+			out=Biliteracy_out;
+	column CharterSchool ReportingCategory CohortStudents Seal_of_Biliteracy_Co Seal_of_Biliteracy_Ra HS_Grad_Co HS_Grad_Ra Diff_Rate;
+	define CharterSchool / group;
+	define ReportingCategory / group;
+	define CohortStudents / sum;
+	define Seal_of_Biliteracy_Co / sum;
+	define HS_Grad_Co / sum;
+	define Seal_of_Biliteracy_Ra / computed format=percent8.;
+	define HS_Grad_Ra / computed format=percent8.;
+	define Diff_Rate / computed format=percent8.;
+	
+	
+	compute Seal_of_Biliteracy_Ra;
+		Seal_of_Biliteracy_Ra=Seal_of_Biliteracy_Co.sum/CohortStudents.sum;
+	endcomp;
+	
+	compute HS_Grad_Ra;
+		HS_Grad_Ra=HS_Grad_Co.sum/CohortStudents.sum;
+	endcomp;
+	
+	compute Diff_Rate;
+		Diff_Rate=HS_Grad_Ra - Seal_of_Biliteracy_Ra;
+	endcomp;
 run;
 
+title "Student's Seal of Biliteracy and Graduation Count";
 proc sgplot data=Biliteracy_out;
-	histogram Seal_of_Biliteracy_Co;
+	vbar ReportingCategory / response=CohortStudents
+	dataskin=pressed barwidth=0.3
+    baselineattrs=(thickness=0)
+	discreteoffset=-0.3;
+	vbar ReportingCategory / response=Seal_of_Biliteracy_Co
+	dataskin=pressed barwidth=0.3 
+    baselineattrs=(thickness=0)
+	discreteoffset=0.3;
+	vbar ReportingCategory / response=HS_Grad_Co
+	dataskin=pressed barwidth=0.3 
+    baselineattrs=(thickness=0)
+	discreteoffset=0;
+	yaxis label='Student Counts';
 run;
 
-proc corr
-    data=cde_analytic_file
-    out=cde_analytic_file_HS_Grad
-    ;
-    var 
-        HS_Grad_Co
-        Seal_of_Biliteracy_Co
-        ;
-    where
-        not(missing(HS_Grad_Co))
-        and
-        not(missing(Seal_of_Biliteracy_Co))
-        ;
+title "Student's Seal of Biliteracy Rate and Graduation Rate";
+proc sgplot data=Biliteracy_out;
+	vbar ReportingCategory / response=Seal_of_Biliteracy_Ra
+	dataskin=pressed barwidth=0.3 
+    baselineattrs=(thickness=0)
+	discreteoffset=-0.3;
+	vbar ReportingCategory / response=HS_Grad_Ra
+	dataskin=pressed barwidth=0.3 
+    baselineattrs=(thickness=0)
+	discreteoffset=0;
+	vbar ReportingCategory / response=Diff_Rate
+	dataskin=pressed barwidth=0.3 
+    baselineattrs=(thickness=0)
+	discreteoffset=0.3;
+	yaxis label='Rate';
 run;
 
 
@@ -188,7 +225,10 @@ also exclude the data with Not Reported in the column ReportingCategory as it
 doesn't have any value for analysis.
 
 Methodology: Using proc sgplot to plot the distribution of total number of 
-english learner according to their "reporting category". 
+english learner according to their "reporting category". Then we use proc corr 
+to see the correlation between Asian and Hispanic graduation counts. Here we 
+exclude White because we assume the first language of students with ethicity 
+White is English.
 
 Followup Steps: There is a possible way to see if there are differences in
 comparing difference language users, their graduation rate and those kids
@@ -197,9 +237,46 @@ of different first language students in different counties.
 */
 
 
-proc sgplot data=cde_analytic_file;
-    histogram Total_EL;
+proc sort
+    data=cde_analytic_file
+    out=English_Learner_Out;
+    ;
+    by
+        descending CohortStudents
+        ;
+    where
+		not(missing(CohortStudents))
+		and
+		ReportingCategory in ('RH','RA')
+    ;
 run;
+
+proc report data=English_Learner_Out
+			out=English_Learner_Out1;
+	column ReportingCategory CohortStudents HS_Grad_Co HS_Grad_Ra;
+	define ReportingCategory / group;
+	define CohortStudents / sum;
+	define HS_Grad_Co / sum;
+	define HS_Grad_Ra / computed format=percent8.;
+	
+	compute HS_Grad_Ra;
+		HS_Grad_Ra = HS_Grad_Co.sum/CohortStudents.sum;
+	endcomp;
+run;
+
+proc sgplot data=English_Learner_Out1;
+	hbar ReportingCategory;
+run;
+
+proc corr
+	data=English_Learner_Out
+	out=English_Learner;
+	var
+		CohortStudents
+		HS_Grad_Co
+	;
+run;
+		
 
 /* clear titles and footnotes */
 title;
