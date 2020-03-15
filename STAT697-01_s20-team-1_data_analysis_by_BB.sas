@@ -14,11 +14,9 @@ title1 justify=left
 'Question 1 of 4: What are the odds of a male student graduating from high school compared to a female student.'
 ;
 
-
 title2 justify=left
 'Rationale: Having an understading of how the various factors effect each gender could help schools determine which type of learning environment best serves students in meeting the requirements to graduate from high school. This could also help understand any descrepencies in meeting admissions requirements for a UC or CSU.'
 ;
-
 
 /*
 Note: This utilizes the Regular_HS_Diploma_Graduates__Ra as the response and 
@@ -43,13 +41,8 @@ be counted and non schools, continuation schools, and independent study schools
 would not be included to improve the accuracy of the analysis.
 */
 
-
 title3 justify=left
 'Selecting variables of interest that may impact a student in meeting high school graduation requirements'
-;
-
-footnote1 justify=left
-'The above table focuses on students in the data set who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate ate which they are able to meet high school graduation requierments. From the table, we can see that female and male studetents are fairly even in their ability to meet high school graduation requirements with female students performing slightly better than their male peers. Even more significant, is that both genders are able to meet the requirements for high school graduation at a far better rate in the public school (Charter School = No) learning environment compared to the Charter School (Charter School = Yes) learning environment.'
 ;
 
 proc sql;
@@ -76,6 +69,10 @@ proc sql;
     ;
 quit; 
 
+footnote1 justify=left
+'The above table focuses on students in the data set who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate at which they are able to meet high school graduation requirements. From the table, we can see that female and male students are fairly even in their ability to meet high school graduation requirements with female students performing slightly better than their male peers by less than 0.5% in public schools and 0.8% in charter schools. Of greater significance is that both genders are able to meet the requirements for high school graduation at a far better rate in the public school (Charter School = No) learning environment compared to the Charter School (Charter School = Yes) learning environment, as neither are meeting the requirement above a 5%. Further analysis can be used to determine what other factors are contributing to the drastic differences that affects both groups ability in meeting high school graduation equirements between public and charter school learning envirnonments.'
+;
+
 proc report data = q1gender;
  column
  	CharterSchool
@@ -83,7 +80,7 @@ proc report data = q1gender;
 	MetReq
 	CohortStudents	
 	MetReq = pctMetReq
- ;	
+    ;	
 	define CharterSchool / group "Charter School Indicator";
 	define ReportingCategory / group "Student Reporting Category";
 	define MetReq / group sum format=comma18.0 noprint  "Met Graduation Requirement" ;
@@ -91,23 +88,15 @@ proc report data = q1gender;
 	define pctMetReq / analysis across PCTSUM format =percent7.1 "% Met Requirement";
 run;
 
-title; footnote;
-/*
-footnote1 justify=left
-'This proc sql and proc report will generate a table that will only contain information about students who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate ate which they are able to meet high school graduation requirments.'
-;*/
+ /* clear titles/footnotes */
+title;
+footnote;
 
-footnote2 justify=left
-'In the both the table and plot it appears that female students are meeting high school graduation requirments at about the same or slightly higher rate than their male peers in both the charter school and public school learing environment. This also shows that neither groups perform as well in a charter school setting as they do in a public school.'
+footnote1 justify=left
+'From the plot, we can see the significant difference for each group in meeting the high school graduation requirements in each learning environment.'
 ;
 
-/*
-footnote3 justify=left
-'From this output further analysis can be used to determine which other factors contribute to the drastic differences that affects both groups ability in meeting high school graduation equirements.'
-;*/
-
-proc sgplot data=q1gender;
-	
+proc sgplot data=q1gender;	
 	xaxis values=('GF' 'GM') valuesdisplay=('Female' 'Male');
 	xaxis label= "Students Who Met High School Graduation Requirements";	
 	yaxis label="School Type";	
@@ -118,12 +107,6 @@ proc sgplot data=q1gender;
     	barwidth=.5
     	transparency=0.2;
 run;
-
-title;
-
-footnote3 justify=left
-'From this output further analysis can be used to determine which other factors contribute to the drastic differences that affects both groups ability in meeting high school graduation equirements.'
-;
 
 /* clear titles/footnotes */
 title;
@@ -169,11 +152,7 @@ title3 justify=left
 ;
 
 footnote1 justify=left
-'The above table focuses on students in the data set who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate ate which they are able to meet the UC/CSU admissions requirements. From the table, we can see that female are meeting the requirements at a higher rate than their male peers, with female students meeting the requirements at a rate of 51% compared to their male peers at 39.5%. Once again, even more significant is that both genders are able to meet the requirements for admission into a UC/CSU at a far better rate in the public school (Charter School = No) learning environment compared to the Charter School (Charter School = Yes) learning environment, with female students and male students meeting the requirements at a meer 5.3% and 4.2% rate respectively.'
-;
-
-footnote2 justify=left
-'From this, we can say that the learning environment of a charter school vs a public school has minimal effect on a students ability to meet UC/CSU admissions requirements.'
+'The above table focuses on students in the data set who are classified as either Gender Male (GM) or Gender Female (GF) as well as the rate at which they are able to meet the UC/CSU admissions requirements. From the table, we can see that females are meeting the requirements at a higher rate than their male peers, with female students meeting the requirements at a rate of 51% compared to their male peers at 39.5%. Once again, both genders are able to meet the requirements for admission into a UC/CSU at a far better rate in the public school (Charter School = No) learning environment compared to the Charter School (Charter School = Yes) learning environment, with female students and male students meeting the requirements at a meer 5.3% and 4.2% rate respectively. Additionally, further analysis can be utilized to determine what other factors are contributing to the drastic differences that affects both groups ability in meeting UC/CSU admissions requirements between public and charter school learning environments.'
 ;
 
 proc sql;
@@ -199,15 +178,6 @@ proc sql;
     ;
 quit;
 
-
-footnote3 justify=left
-'From this histogram, we can see that the odds of a male or a female student meeting the UC/CSU requirements is roughly equivalent at either a Charter School or Public School, with male students having a slightly higher odds of meeting the requirements at a charter school and female students having a slightly higher odds of meeting the requirements at a public school'
-;
-
-footnote4 justify=left
-'In the above plot it appears that female students are meeting the UC/CSU admissions requirements at a higher rate than their male peers in both the charter school and public school learing environment. This was an expected trend since it followed the odds for this same population meeting high school graduation requirements.'
-;
-
 proc report data = q2gender;
  column
  	CharterSchool
@@ -222,8 +192,14 @@ proc report data = q2gender;
 	define CohortStudents / group sum format=comma18.0 noprint "Total Students in Cohort";	
 	define pctMetReq / analysis across PCTSUM format =percent7.1 "% Met Requirement";
 run;
+
+ /* clear titles/footnotes */
 title; 
 footnote;
+
+footnote3 justify=left
+'In the above plot it appears that female students are meeting the UC/CSU admissions requirements at a higher rate than their male peers in both the charter school and public school learing environment.' 
+;
 
 /* Bar plot of MetReq for Gender Male vs Gender Female  */
 proc sgplot data=q2gender;    
@@ -278,15 +254,6 @@ the teacher populations that may effect the odds of a Hispanic student or 'White
 non Hispanic' student meeting UC/CSU admissions requirements.
 */
 
-
-title2 justify=left
-'Proc freq analysis to determine the odd that a Hispanic Student will meet admission requirements attending a charter school compared to a "White, not Hispanic" student.'
-;
-
-footnote1 justify=left
-'Spanish ELs/LEP students make up the largest portion of this student population as they represent 15% of ELs/LEP students'
-;
-
 proc sql;
     create table q3race as
     select 
@@ -310,10 +277,8 @@ proc sql;
     ;
 quit;
 
-
-
 footnote2 justify=left
-'In the above table and plot it appears that Hispanic students have at least a slightly higher odds of meeting the UC/CSU admissions requirements than their White peers in both the charter school and public school learing environment, with their greates odd of meeting the requirements in a charter school. We can also see that the odds of a White student meeting the admissions requirments is lower at a charter school vs a public school.'
+'Since English Learning Students (ELs/LEP) speaking Spanish make up the largest proportion of this student population as they represent 15% of ELs/LEP students, they were selected to investigate the rate at which this population was able to meet the UC/CSU admissions requirements. In the above table and plot it appears that Hispanic (RW) students have a higher odds of meeting the UC/CSU admissions requirements than their White (RW) peers in both the charter school and public school learing environment, with their greatest odds of meeting the requirements in a charter school. In the public school (Charter School = No) learning environment, we can see that Hispanic students are meeting the admissions requirements at about a 20% higher rate, and meeting those same requirements at about a 5% higher rate in the charter school (Charter School = Yes) learning environment. Once again we can also see that each student populations ability to meet the admissions requirments is significantly lower at a charter school vs a public school.'
 ;
 
 proc report data = q3race;
@@ -330,7 +295,14 @@ proc report data = q3race;
 	define CohortStudents / group sum format=comma18.0 noprint "Total Students in Cohort";	
 	define pctMetReq / analysis across PCTSUM format =percent7.1 "% Met Requirement";    
 run;
-title; footnote;
+
+ /* clear titles/footnotes */
+title; 
+footnote;
+
+footnote3 justify=left
+'In the above plot it appears that Hispanic (RH) students are meeting the UC/CSU admissions requirements at a higher rate than their White (RW) peers in both the charter school and public school learing environment.' 
+;
 
 proc sgplot data=q3race;	
 	xaxis values=('RH' 'RW') valuesdisplay=('Hispanic' 'White');
@@ -410,7 +382,7 @@ proc sql;
 quit;
 
 footnote2 justify=left
-'In the above table and plot it appears that the odds of either student population meeting high school graduation requirments has shifted lower from the odds of them meeting admissions requirements for UC/CSU admissions, which was unexpected.'
+'Since English Learning Students (ELs/LEP) speaking Spanish make up the largest proportion of this student population as they represent 15% of ELs/LEP students, they were selected to investigate the rate at which this population was able to meet high school graduation requirements. In the table it appears that Hispanic (RW) students have a higher odds of meeting high school graduation requirements than their White (RW) peers in both the charter school and public school learning environment, with their greatest odds of meeting the requirements in a charter school. In the public school (Charter School = No) learning environment, we can see that Hispanic students are meeting the admissions requirements at about a 30% higher rate, and meeting those same requirements at about a 3% higher rate in the charter school (Charter School = Yes) learning environment. The gap between each group in the public school learning environment is much greater than that seen for meeting UC/CSU admissions requirements. Once again we can also see that each student populations ability to meet the high school graduation requirements is significantly lower at a charter school vs a public school.'
 ;
 
 proc report data = q4race;
@@ -427,15 +399,21 @@ proc report data = q4race;
 	define CohortStudents / group sum format=comma18.0 noprint "Total Students in Cohort";	
 	define pctMetReq / analysis across PCTSUM format =percent7.1 "% Met Requirement";    
 run;
-title; footnote;
-proc sgplot data=q4race ;
-	*title"Count of Students Who Met High School Graduation Requirements";
+
+ /* clear titles/footnotes */
+title; 
+footnote;
+
+footnote3 justify=left
+'In the graph it appears that Hispanic (RH) students are meeting the UC/CSU admissions requirements at a higher rate than their White (RW) peers in both the charter school and public school learing environment, with a more significant difference in public schools.' 
+;
+
+proc sgplot data=q4race;	
 	xaxis values=('RH' 'RW') valuesdisplay=('Hispanic' 'White');
 	xaxis label= "Students Who Met High School Graduation Requirements";	
 	yaxis label="School Type" ;	
 	yaxis values = ('No' 'Yes') valuesdisplay=('Public School' 'Charter School');	
-    hbar CharterSchool / response=MetReq datalabel  
-     	
+    hbar CharterSchool / response=MetReq datalabel      	
     	group=ReportingCategory
     	groupdisplay=Cluster
     	barwidth=.5
