@@ -138,7 +138,7 @@ decimals which is impossible for number of counts.
 
 Methodology: We can use porc sort to find which ethnicity has the most number
 of Biliteracy Rate to see how the ethnicity and language affects the graduate
-rate.
+rate. Then we use barchart to see the rate of Diploma Graduates across the three races with biliteracy, White, Hispanic and Asian.
 
 Followup Steps: We should see the entries that without a numerical value as it 
 doesn't contains a figure of the reporting category. We should filter it for 
@@ -243,7 +243,10 @@ also exclude the data with Not Reported in the column ReportingCategory as it
 doesn't have any value for analysis.
 
 Methodology: Using proc sgplot to plot the distribution of total number of 
-english learner according to their "reporting category". 
+english learner according to their "reporting category". Then we use proc corr 
+to see the correlation between Asian and Hispanic graduation counts. Here we 
+exclude White because we assume the first language of students with ethicity 
+White is English.
 
 Followup Steps: There is a possible way to see if there are differences in
 comparing difference language users, their graduation rate and those kids
