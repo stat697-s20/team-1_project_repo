@@ -49,8 +49,8 @@ also is a factor affecting the percentage of meeting UC/CSU Grad requirement.
 
 
 proc sort
-    data=cde_analytic_file
-    out=cde_analytic_file_by_Biliteracy
+    data=master
+    out=CharterGradRate
     ;
     by
         descending HS_Grad_Co
@@ -59,23 +59,52 @@ proc sort
         not(missing(HS_Grad_Co))
         and
         not(missing(Seal_of_Biliteracy_Co))
+        and
+        CharterSchool in ('Yes', 'No')
 		;
 run;
 
-proc corr
-    data=cde_analytic_file
-    out=cde_analytic_file_HS_Grad
-    ;
-    var 
-        HS_Grad_Co
-        Seal_of_Biliteracy_Co;
-    where
-        not(missing(HS_Grad_Co))
-        and
-        not(missing(Seal_of_Biliteracy_Co))
-        ;
+proc report data=CharterGradRate
+			out=CharterGradRateReport;
+	column CharterSchool CohortStudents HS_Grad_Co Met_UC_CSU_Req_Co HS_Grad_Rate Met_UC_CSU_Req_Rate;
+	define CharterSchool / group;
+	define CohortStudents / sum noprint;
+	define HS_Grad_Co / sum noprint;
+	define Met_UC_CSU_Req_Co / sum noprint;
+	define HS_Grad_Rate / computed format=percent8. 'High School Graduation Rate';
+	define Met_UC_CSU_Req_Rate / computed format=percent8. 'Met UC/CSU Entry Requirement Rate';
+	
+	compute HS_Grad_Rate;
+		HS_Grad_Rate=HS_Grad_Co.sum/CohortStudents.sum;
+	endcomp;
+	
+	compute Met_UC_CSU_Req_Rate;
+		Met_UC_CSU_Req_Rate=Met_UC_CSU_Req_Co.sum/CohortStudents.sum;
+	endcomp;
 run;
 
+title "Charter School and non-Charter School student's performance on meeting UC/CSU Entry Requirement";
+proc sgplot data=CharterGradRateReport;
+	hbar CharterSchool / response=Met_UC_CSU_Req_Rate
+	datalabel
+	barwidth=0.3 
+    baselineattrs=(thickness=0)
+	discreteoffset=0;
+	xaxis label='Rate';
+	yaxis label='Types of School (Charter/Non-Charter)';
+run;
+
+/*
+title "Charter School and non-Charter School student's performance on High School Graduation Rate";
+proc sgplot data=CharterGradRateReport;
+	hbar CharterSchool / response=HS_Grad_Rate
+	datalabel
+	barwidth=0.3
+    baselineattrs=(thickness=0)
+	discreteoffset=0;
+	xaxis label='Rate';
+	yaxis label='Types of School (Charter/Non-Charter)';
+run;*/
 
 /* clear titles and footnotes */
 title;
@@ -118,8 +147,8 @@ more accurate result. Also, we can try to see if there are correlation between t
 
 
 proc sort
-    data=cde_analytic_file
-    out=cde_analytic_file_by_Biliteracy 
+    data=master
+    out=Biliteracy_analysis 
     ;
     by
         descending Seal_of_Biliteracy_Co
@@ -128,20 +157,20 @@ proc sort
 		not(missing(Seal_of_Biliteracy_Co))
         and
         not(missing(ReportingCategory))
+        and
+        ReportingCategory in ('RA','RH','RW')
     ;
 run;
 
-proc report data=cde_analytic_file_by_Biliteracy
+proc report data=Biliteracy_analysis 
 			out=Biliteracy_out;
-	column CharterSchool ReportingCategory CohortStudents Seal_of_Biliteracy_Co Seal_of_Biliteracy_Ra HS_Grad_Co HS_Grad_Ra Diff_Rate;
-	define CharterSchool / group;
-	define ReportingCategory / group;
-	define CohortStudents / sum;
-	define Seal_of_Biliteracy_Co / sum;
-	define HS_Grad_Co / sum;
-	define Seal_of_Biliteracy_Ra / computed format=percent8.;
-	define HS_Grad_Ra / computed format=percent8.;
-	define Diff_Rate / computed format=percent8.;
+	column ReportingCategory CohortStudents Seal_of_Biliteracy_Co Seal_of_Biliteracy_Ra HS_Grad_Co HS_Grad_Ra;
+	define ReportingCategory / group 'Ethicity';
+	define CohortStudents / sum noprint;
+	define Seal_of_Biliteracy_Co / sum noprint;
+	define HS_Grad_Co / sum noprint;
+	define Seal_of_Biliteracy_Ra / computed format=percent8. 'Biliteracy Rate';
+	define HS_Grad_Ra / computed format=percent8. 'High School Graduation Rate';
 	
 	
 	compute Seal_of_Biliteracy_Ra;
@@ -151,45 +180,34 @@ proc report data=cde_analytic_file_by_Biliteracy
 	compute HS_Grad_Ra;
 		HS_Grad_Ra=HS_Grad_Co.sum/CohortStudents.sum;
 	endcomp;
-	
-	compute Diff_Rate;
-		Diff_Rate=HS_Grad_Ra - Seal_of_Biliteracy_Ra;
-	endcomp;
 run;
 
-title "Student's Seal of Biliteracy and Graduation Count";
-proc sgplot data=Biliteracy_out;
-	vbar ReportingCategory / response=CohortStudents
-	dataskin=pressed barwidth=0.3
-    baselineattrs=(thickness=0)
-	discreteoffset=-0.3;
-	vbar ReportingCategory / response=Seal_of_Biliteracy_Co
-	dataskin=pressed barwidth=0.3 
-    baselineattrs=(thickness=0)
-	discreteoffset=0.3;
-	vbar ReportingCategory / response=HS_Grad_Co
-	dataskin=pressed barwidth=0.3 
-    baselineattrs=(thickness=0)
-	discreteoffset=0;
-	yaxis label='Student Counts';
+proc corr data=Biliteracy_analysis noprob nosimple PEARSON SPEARMAN;
+	var 
+	Seal_of_Biliteracy_Co
+	HS_Grad_Co
+	;
+	title 'Pearson and Spearman Correlation between Biliteracy and High School Graduation Student Count';
 run;
 
-title "Student's Seal of Biliteracy Rate and Graduation Rate";
+/*title "Student's Seal of Biliteracy Rate and Graduation Rate";
 proc sgplot data=Biliteracy_out;
-	vbar ReportingCategory / response=Seal_of_Biliteracy_Ra
-	dataskin=pressed barwidth=0.3 
+	hbar ReportingCategory / response=Seal_of_Biliteracy_Ra
+	datalabel
+	legendlabel='Seal of Biliteracy Rate'
+	barwidth=0.3 
     baselineattrs=(thickness=0)
-	discreteoffset=-0.3;
-	vbar ReportingCategory / response=HS_Grad_Ra
-	dataskin=pressed barwidth=0.3 
+	discreteoffset=-0.15;
+	hbar ReportingCategory / response=HS_Grad_Ra
+	datalabel
+	legendlabel='High School Graduation Rate'
+	categoryorder=respasc
+	barwidth=0.3 
     baselineattrs=(thickness=0)
-	discreteoffset=0;
-	vbar ReportingCategory / response=Diff_Rate
-	dataskin=pressed barwidth=0.3 
-    baselineattrs=(thickness=0)
-	discreteoffset=0.3;
-	yaxis label='Rate';
-run;
+	discreteoffset=0.15;
+	xaxis label='Rate';
+	yaxis label='Ethicity';
+run;*/
 
 
 /* clear titles and footnotes */
@@ -201,15 +219,15 @@ footnote;
 * Research Question 3 Analysis Starting Point;
 *******************************************************************************;
 title1 justify=left
-'Question 3 of 3: Will students with first language other than English affect the graduation rate in high school?'
+'Question 3 of 3: Will students with first language other than English reduce as they spend more time in school?'
 ;
 
 title2 justify=left
-'Rationale: This would help identify if further need on English language preparation for younger students is required. As they may need extra resources to absorb knowledge that are taught by English.'
+'Rationale: This would help identify if further need on English language preparation for younger students is required. As they will considered as English Learners and may need extra help on studies'
 ;
 
 footnote1 justify=left
-"In here we are just consider the learning ability of students based the first language of the student only"
+"In here we are just consider the top 10 languages that California School English Learner Speaks"
 ;
 
 /*
@@ -237,45 +255,127 @@ of different first language students in different counties.
 */
 
 
-proc sort
-    data=cde_analytic_file
-    out=English_Learner_Out;
-    ;
-    by
-        descending CohortStudents
-        ;
-    where
-		not(missing(CohortStudents))
-		and
-		ReportingCategory in ('RH','RA')
+proc sql noprint;
+	create table noprintEnglish_Learner_Out as
+	select 
+		LANGUAGE,sum(KDGN) as KDGN, sum(GR_1) as GR_1, sum(GR_2) as GR_2, sum(GR_3) as GR_3, sum(GR_4) as GR_4, sum(GR_5) as GR_5, sum(GR_6) as GR_6, sum(GR_6) as GR_6, sum(GR_7) as GR_7, sum(GR_8) as GR_8, sum(GR_9) as GR_9, sum(GR_10) as GR_10, sum(GR_11) as GR_11, sum(GR_12) as GR_12, sum(UNGR) as UNGR, sum(TOTAL_EL) as TOTAL_EL 
+	from 
+		master
+	where
+		not(missing(TOTAL_EL))
+	group by
+		LANGUAGE
+	order by
+		TOTAL_EL desc
     ;
 run;
 
-proc report data=English_Learner_Out
-			out=English_Learner_Out1;
-	column ReportingCategory CohortStudents HS_Grad_Co HS_Grad_Ra;
-	define ReportingCategory / group;
-	define CohortStudents / sum;
-	define HS_Grad_Co / sum;
-	define HS_Grad_Ra / computed format=percent8.;
-	
-	compute HS_Grad_Ra;
-		HS_Grad_Ra = HS_Grad_Co.sum/CohortStudents.sum;
-	endcomp;
+title 'Top 10 Number of English Learner of students having first language other than English by School Grade';
+proc report data=English_Learner_Out(obs=10);
+	column LANGUAGE KDGN GR_1 GR_2 GR_3 GR_4 GR_5 GR_6 GR_7 GR_8 GR_9 GR_10 GR_11 GR_12 UNGR TOTAL_EL;
+	define LANGUAGE / 'Language';
+	define KDGN / 'Kindergarten';
+	define GR_1 / 'Grade 1';
+	define GR_2 / 'Grade 2';
+	define GR_3 /'Grade 3';
+	define GR_4 / 'Grade 4';
+	define GR_5 / 'Grade 5';
+	define GR_6 /'Grade 6';
+	define GR_7 / 'Grade 7';
+	define GR_8 / 'Grade 8';
+	define GR_9 / 'Grade 9';
+	define GR_10 / 'Grade 10';
+	define GR_11 / 'Grade 11';
+	define GR_12 / 'Grade 12';
+	define UNGR / 'Undergraduate';
+	define TOTAL_EL / 'Total Number';
+run;
+
+proc sql noprint outobs=10;
+	create table English_Learner_Out1 as
+	select 
+		LANGUAGE,sum(KDGN) as KDGN, sum(GR_1) as GR_1, sum(GR_2) as GR_2, sum(GR_3) as GR_3, sum(GR_4) as GR_4, sum(GR_5) as GR_5, sum(GR_6) as GR_6, sum(GR_7) as GR_7, sum(GR_8) as GR_8, sum(GR_9) as GR_9, sum(GR_10) as GR_10, sum(GR_11) as GR_11, sum(GR_12) as GR_12, sum(UNGR) as UNGR, sum(TOTAL_EL) as TOTAL_EL 
+	from 
+		master
+	where
+		not(missing(TOTAL_EL))
+	group by
+		LANGUAGE
+	order by
+		TOTAL_EL desc
+    ;
 run;
 
 proc sgplot data=English_Learner_Out1;
-	hbar ReportingCategory;
+	hbar LANGUAGE/response=TOTAL_EL
+	datalabel
+	legendlabel='High School Graduation Rate'
+	categoryorder=respasc
+	barwidth=0.3 
+    baselineattrs=(thickness=0)
+	discreteoffset=0.15;
+	xaxis label='Count';
+	yaxis label='Language';
 run;
 
-proc corr
-	data=English_Learner_Out
-	out=English_Learner;
-	var
-		CohortStudents
-		HS_Grad_Co
-	;
+proc sql outobs=3;
+	create table English_Learner_Out2 as
+	select 
+		*
+	from
+		English_Learner_Out1
+	order by
+		TOTAL_EL desc
+    ;
 run;
+
+title "Student Count in High School that are English Learners (Top 3 Number of Language User)";
+proc sgplot data=English_Learner_Out2;
+	vbar LANGUAGE / response=GR_6
+	datalabel
+	legendlabel='Grade 6'
+	barwidth=0.1 
+    baselineattrs=(thickness=0)
+	discreteoffset=-0.3;
+	vbar LANGUAGE / response=GR_7
+	datalabel
+	legendlabel='Grade 7'
+	barwidth=0.1 
+    baselineattrs=(thickness=0)
+	discreteoffset=-0.2;
+	vbar LANGUAGE / response=GR_8
+	datalabel
+	legendlabel='Grade 8'
+	barwidth=0.1 
+    baselineattrs=(thickness=0)
+	discreteoffset=-0.1;
+	vbar LANGUAGE / response=GR_9
+	datalabel
+	legendlabel='Grade 9'
+	barwidth=0.1 
+    baselineattrs=(thickness=0)
+	discreteoffset=0;
+	vbar LANGUAGE / response=GR_10
+	datalabel
+	legendlabel='Grade 10'
+	barwidth=0.1 
+    baselineattrs=(thickness=0)
+	discreteoffset=0.1;
+	vbar LANGUAGE / response=GR_11
+	datalabel
+	legendlabel='Grade 11'
+	barwidth=0.1 
+    baselineattrs=(thickness=0)
+	discreteoffset=0.2;
+	vbar LANGUAGE / response=GR_12
+	datalabel
+	legendlabel='Grade 12'
+	barwidth=0.1 
+    baselineattrs=(thickness=0)
+	discreteoffset=0.3;
+	yaxis label = 'Studnet Count';
+	xaxis label = 'Language';
+run;	
 		
 
 /* clear titles and footnotes */
