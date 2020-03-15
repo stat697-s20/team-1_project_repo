@@ -94,17 +94,6 @@ proc sgplot data=CharterGradRateReport;
 	yaxis label='Types of School (Charter/Non-Charter)';
 run;
 
-/*
-title "Charter School and non-Charter School student's performance on High School Graduation Rate";
-proc sgplot data=CharterGradRateReport;
-	hbar CharterSchool / response=HS_Grad_Rate
-	datalabel
-	barwidth=0.3
-    baselineattrs=(thickness=0)
-	discreteoffset=0;
-	xaxis label='Rate';
-	yaxis label='Types of School (Charter/Non-Charter)';
-run;*/
 
 /* clear titles and footnotes */
 title;
@@ -190,25 +179,6 @@ proc corr data=Biliteracy_analysis noprob nosimple PEARSON SPEARMAN;
 	title 'Pearson and Spearman Correlation between Biliteracy and High School Graduation Student Count';
 run;
 
-/*title "Student's Seal of Biliteracy Rate and Graduation Rate";
-proc sgplot data=Biliteracy_out;
-	hbar ReportingCategory / response=Seal_of_Biliteracy_Ra
-	datalabel
-	legendlabel='Seal of Biliteracy Rate'
-	barwidth=0.3 
-    baselineattrs=(thickness=0)
-	discreteoffset=-0.15;
-	hbar ReportingCategory / response=HS_Grad_Ra
-	datalabel
-	legendlabel='High School Graduation Rate'
-	categoryorder=respasc
-	barwidth=0.3 
-    baselineattrs=(thickness=0)
-	discreteoffset=0.15;
-	xaxis label='Rate';
-	yaxis label='Ethicity';
-run;*/
-
 
 /* clear titles and footnotes */
 title;
@@ -227,7 +197,7 @@ title2 justify=left
 ;
 
 footnote1 justify=left
-"In here we are just consider the top 10 languages that California School English Learner Speaks"
+"In the final analysis we consider the top 3 languages that California School English Learner Speaks"
 ;
 
 /*
@@ -306,10 +276,11 @@ proc sql noprint outobs=10;
     ;
 run;
 
+title 'Number of English Learners by their first language in all school grades';
 proc sgplot data=English_Learner_Out1;
 	hbar LANGUAGE/response=TOTAL_EL
 	datalabel
-	legendlabel='High School Graduation Rate'
+	legendlabel='Number of Students'
 	categoryorder=respasc
 	barwidth=0.3 
     baselineattrs=(thickness=0)
