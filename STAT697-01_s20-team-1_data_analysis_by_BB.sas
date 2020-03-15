@@ -424,5 +424,3 @@ run;
 /* clear titles/footnotes */
 title;
 footnote;
-
-
